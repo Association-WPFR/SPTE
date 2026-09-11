@@ -1,3 +1,7 @@
+// @ts-nocheck
+// Conversion mécanique depuis pageAction/script.js (comportement inchangé). Le vrai typage
+// de ce fichier est prévu en Phase 3, pas dans cette conversion WXT.
+
 const settingsForm = document.querySelector('#settings-form');
 const isFirefox = !chrome.app;
 
@@ -22,8 +26,8 @@ function saveSettings() {
 	const gpcontentBig = document.querySelector('#settings-gpcontent-big');
 	const gpcontentMaxWitdh = document.querySelector('#settings-gpcontent-maxwidth');
 	const gpActiveGlossary = document.querySelector('#settings-importglossary');
-	chrome.storage.local.get('spteSettings', (data) => {
-		if (chrome.runtime.error || !locales) {	return;	}
+	browser.storage.local.get('spteSettings', (data) => {
+		if (browser.runtime.error || !locales) {	return;	}
 		let settings = {};
 		if (data.spteSettings) {
 			settings = data.spteSettings;
@@ -54,16 +58,16 @@ function saveSettings() {
 		settings.spteGpcontentMaxWitdh = gpcontentMaxWitdh.value;
 		settings.spteActiveGlossary = gpActiveGlossary.checked ? 'true' : 'false';
 
-		chrome.storage.local.set({ spteSettings: settings }, () => {
-			if (chrome.runtime.error) {	console.log('Impossible d’enregistrer les paramètres'); }
-			chrome.tabs.reload({ bypassCache: true });
+		browser.storage.local.set({ spteSettings: settings }, () => {
+			if (browser.runtime.error) {	console.log('Impossible d’enregistrer les paramètres'); }
+			browser.tabs.reload({ bypassCache: true });
 		});
 	});
 }
 
 function restoreSettings() {
-	chrome.storage.local.get('spteSettings', (data) => {
-		if (chrome.runtime.error) {	return;	}
+	browser.storage.local.get('spteSettings', (data) => {
+		if (browser.runtime.error) {	return;	}
 		const colorWord = document.querySelector('#settings-color__word');
 		const colorQuote = document.querySelector('#settings-color__quote');
 		const colorChar = document.querySelector('#settings-color__char');
@@ -79,8 +83,8 @@ function restoreSettings() {
 			blackToolTip.checked = 'checked';
 			frenchFlag.checked = 'checked';
 			gpActiveGlossary.checked = 'checked';
-			chrome.storage.local.set({ spteSettings: initSettings }, () => {
-				if (chrome.runtime.error) {	console.log('Impossible d’initialiser les paramètres'); }
+			browser.storage.local.set({ spteSettings: initSettings }, () => {
+				if (browser.runtime.error) {	console.log('Impossible d’initialiser les paramètres'); }
 			});
 		}
 		if (!data.spteSettings || !colorWord || !colorQuote || !colorChar || !blackToolTip || !betterReadability || !locales || !frenchFlag || !gpcontentBig || !gpcontentMaxWitdh || !gpcontentMaxWitdh) { return; }
@@ -113,8 +117,8 @@ function restoreSettings() {
 			frenchFlag.checked = (data.spteSettings.spteFrenchFlag === 'false') ? '' : 'checked';
 		} else {
 			frenchFlag.checked = 'checked';
-			chrome.storage.local.set({ spteSettings: initSettings }, () => {
-				if (chrome.runtime.error) {	console.log('Impossible d’enregistrer les paramètres'); }
+			browser.storage.local.set({ spteSettings: initSettings }, () => {
+				if (browser.runtime.error) {	console.log('Impossible d’enregistrer les paramètres'); }
 			});
 		}
 

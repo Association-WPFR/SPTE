@@ -1,3 +1,20 @@
+/* ==========================================================================
+   Sommaire
+   1. Base
+   2. Onglets (Réglages / À propos)
+   3. Conteneur principal de la popup
+   4. En-tête / logo
+   5. Panneau de réglages
+   6. Formulaire
+   7. Boutons
+   8. Interrupteur (toggle)
+   9. Divers
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Base
+   ========================================================================== */
+
 html {
     text-rendering: optimizeLegibility;
     -moz-osx-font-smoothing: grayscale;
@@ -5,6 +22,10 @@ html {
     -webkit-font-smoothing: antialiased;
     background: rgb(231 230 239);
 }
+
+/* ==========================================================================
+   2. Onglets (Réglages / À propos)
+   ========================================================================== */
 
 label.tab {
     cursor: pointer;
@@ -35,24 +56,23 @@ label.tab {
 }
 
 #one:checked~.panels #one-panel,
-#two:checked~.panels #two-panel,
-#three:checked~.panels #three-panel {
+#two:checked~.panels #two-panel {
     display: block;
 }
 
 #one:checked~.tabs #one-tab,
-#two:checked~.tabs #two-tab,
-#three:checked~.tabs #three-tab {
+#two:checked~.tabs #two-tab {
     background: white;
     color: #000;
     font-weight: bold;
 }
 
-#settings-popup {
-    width: 365px;
-}
+/* ==========================================================================
+   3. Conteneur principal de la popup
+   ========================================================================== */
 
 #settings-popup {
+    width: 365px;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     padding: 10px 5px 5px 5px;
@@ -64,6 +84,10 @@ fieldset {
     padding: 4px 10px 4px 20px;
     background: rgba(243, 242, 251, .8);
 }
+
+/* ==========================================================================
+   4. En-tête / logo
+   ========================================================================== */
 
 header {
     text-align: center;
@@ -93,7 +117,10 @@ h2 {
     margin: 0;
 }
 
-#settings-url-list,
+/* ==========================================================================
+   5. Panneau de réglages
+   ========================================================================== */
+
 #extension-settings {
     overflow: hidden;
     transition: 2s;
@@ -102,6 +129,10 @@ h2 {
 .hidden {
     display: none;
 }
+
+/* ==========================================================================
+   6. Formulaire
+   ========================================================================== */
 
 form {
     font-family: 'Public Sans', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
@@ -127,6 +158,8 @@ span.hint {
     margin-top: 7px;
 }
 
+/* Réglages des couleurs (surlignage des avertissements) */
+
 .settings-color legend {
     width: 100%;
     float: left;
@@ -145,6 +178,8 @@ span.hint {
 .settings-color-field+.settings-color-field+.settings-color-field {
     margin-right: 0;
 }
+
+/* Champs de saisie */
 
 input {
     display: block;
@@ -186,6 +221,10 @@ input[type=password].invalid {
     border-bottom: 1px solid red;
 }
 
+/* ==========================================================================
+   7. Boutons
+   ========================================================================== */
+
 button {
     margin-top: 12px;
     width: 100%;
@@ -195,7 +234,7 @@ button {
     transition: all .2s ease;
     border: 0;
     border-radius: 4px;
-    cursor: hand;
+    cursor: pointer;
 }
 
 button.fieldset-btn-lnk {
@@ -217,7 +256,7 @@ button.fieldset-btn-lnk:hover,
 button.fieldset-btn-lnk:focus,
 button.fieldset-btn-lnk:active {
     color: black;
-    border: 2px;
+    border: 2px solid;
     background: transparent;
 }
 
@@ -227,15 +266,10 @@ input[type=text]:focus {
     outline: none;
 }
 
-input[type=submit] {
-    width: 54px;
-    height: 18px;
-    margin-top: 12px;
-    margin-left: auto;
-    margin-right: auto;
-}
+/* ==========================================================================
+   8. Interrupteur (toggle)
+   ========================================================================== */
 
-/* Toggle css */
 .toggle {
     display: none;
 }
@@ -251,11 +285,7 @@ input[type=submit] {
 }
 
 .toggle::-moz-selection,
-.toggle:after::-moz-selection,
-.toggle:before::-moz-selection,
 .toggle *::-moz-selection,
-.toggle *:after::-moz-selection,
-.toggle *:before::-moz-selection,
 .toggle+.toggle-btn::-moz-selection {
     background: none;
 }
@@ -321,6 +351,10 @@ input[type=submit] {
     margin-bottom: 2px;
 }
 
+/* ==========================================================================
+   9. Divers
+   ========================================================================== */
+
 .whatisthat {
     font-family: arial, Arial, Helvetica, sans-serif;
     position: absolute;
@@ -333,14 +367,6 @@ input[type=submit] {
 .toggle-container {
     display: inline-block;
     width: 100%;
-}
-
-.toggle-light:checked+.toggle-btn {
-    background: black;
-}
-
-.toggle-light:hover+.toggle-btn:hover {
-    background: #ff3030;
 }
 
 #settings-gpcontent-maxwidth,

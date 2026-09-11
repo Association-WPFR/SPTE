@@ -1,14 +1,36 @@
-const charTitle = 'Caractères à vérifier : ';
+import {
+	rgxBadWords,
+	rgxSingleQuotes,
+	rgxSlash,
+	rgxOpenHook,
+	rgxOpenParenthesis,
+	rgxOpenBrace,
+	rgxEllipsis,
+	rgxPeriod,
+	rgxComma,
+	rgxCloseHook,
+	rgxCloseParenthesis,
+	rgxCloseBrace,
+	rgxExclamationPoint,
+	rgxPlusSign,
+	rgxQuestionMark,
+	rgxColon,
+	rgxSemiColon,
+	rgxClosingFrQuote,
+	rgxOpenFrQuote,
+} from './regex';
+
+export const charTitle = 'Caractères à vérifier : ';
 const charClass = 'sp-warning--char';
 const spaceBeforeTitle = 'Espace précédente manquante ou espace suivante en trop';
 const spaceAfterTitle = 'Précédé par une espace ou caractère suivant collé ou suivi par une espace finale';
 const nbkSpaceBeforeTitle = 'Non précédé par une espace insécable ou non suivi par une espace';
 const nbkSpaceAfterTitle = 'Non précédé par une espace ou non suivi par une espace insécable';
 
-let cases = {
+export const cases = {
 	badWords: {
 		name: '',
-		title: 'Mots déconseillés ou mal orthographiés : ',
+		title: 'Mots déconseillés ou mal orthographiés : ',
 		message: 'Mot déconseillé ou mal orthographié',
 		cssClass: 'sp-warning--word',
 		counter: 0,
@@ -16,7 +38,7 @@ let cases = {
 	},
 	quotes: {
 		name: 'apostrophe droite',
-		title: 'Apostrophes droites : ',
+		title: 'Apostrophes droites : ',
 		message: 'Apostrophe droite au lieu d’une apostrophe courbe',
 		cssClass: 'sp-warning--quote',
 		counter: 0,

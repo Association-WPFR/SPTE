@@ -1,0 +1,23 @@
+{
+  "name": "spte",
+  "version": "2.0.0",
+  "description": "Extension de vérification typographique pour les traductions françaises de WordPress sur translate.wordpress.org.",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.70.0",
+    "wxt": "^0.21.4"
+  }
+}

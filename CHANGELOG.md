@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0] - xx septembre 2026
+### Added
+- Fichier LICENSE (GPL v2+)
+- Mise en place de WXT (package.json, wxt.config.ts) : fondation pour la génération automatique des manifests Chrome et Firefox et la migration vers TypeScript
+
+### Changed
+- Réécriture du README (mise à jour des contenus, des liens, de l’information au sujet de la reprise du projet par WPFR.net, remerciements à Loïc évidemment)
+
+### Fixed
+- wip
+
 ## [2.0.0] - 01 mai 2023
 ### Changed
 
@@ -24,7 +35,7 @@
 
 ### Fixed
 - Correction du surlignement des mots qui parfois passaient à la ligne et créaient des traits rouges verticaux
-- Suppression des mots potentiellement utilisés dans d'autres locales du fichier data.js
+- Suppression des mots potentiellement utilisés dans d’autres locales du fichier data.js
 - Corrige les faux positif avec les pluriels en x entre parenthèses (x)
 
 ## [1.0.7] - 24 septembre 2021
@@ -48,7 +59,7 @@
 
 ## [1.0.3] - 1 septembre 2021
 ### Fixed
-- Correction sur la persistance du choix de l'affichage qui ne fonctionnait pas avec les lignes sans traductions. (voir précédente version)
+- Correction sur la persistance du choix de l’affichage qui ne fonctionnait pas avec les lignes sans traductions. (voir précédente version)
 
 ## [1.0.2] - 1 septembre 2021
 ### Added
@@ -65,7 +76,7 @@
 ### Changed
 - Amélioration de la regex parenthèse fermante pour ne plus surligner celles suivies d’une espace insécable suivie d’un caractère unique (voir wiki pour plus d’information).
 ### Fixed
-- Correction de la regex des deux points qui dysfonctionnait. Bug remonté par Clément Polito sur slack. La regex a été refaite et simplifiée, ce qui fera réapparaitre des faux positifs, mais qui la fera fonctionner dans les cas nécessaires. J'envisage de gérer autrement les exceptions mais cela demandera plus de travail. 
+- Correction de la regex des deux points qui dysfonctionnait. Bug remonté par Clément Polito sur slack. La regex a été refaite et simplifiée, ce qui fera réapparaitre des faux positifs, mais qui la fera fonctionner dans les cas nécessaires. J’envisage de gérer autrement les exceptions mais cela demandera plus de travail. 
 Sous ce bug s’en cachait un autre à savoir l’utilisation des deux points dans le aria label de l’erreur qui provoquait un bug.
 
 ## [1.0.0.5] - 8 juin 2021
@@ -76,7 +87,7 @@ Sous ce bug s’en cachait un autre à savoir l’utilisation des deux points da
 
 ## [1.0.0.4] - 4 juin 2021
 ### Added
-- Import des expressions du glossaire officiel : une requête est effectuée 1 fois par 24h et ajoute aux fautes de frappes surlignées par SPTE les mots du glossaire. Les mots importés sont ceux de la colonne 1 dont la valeur est différente de ceux de la colonne 3 pour éviter de surligner les mots qui sont identiques en français et en anglais. De plus, chaque mot importé est dupliqué avec ajout d'un s final pour tenter de trouver et surligner les pluriels.
+- Import des expressions du glossaire officiel : une requête est effectuée 1 fois par 24h et ajoute aux fautes de frappes surlignées par SPTE les mots du glossaire. Les mots importés sont ceux de la colonne 1 dont la valeur est différente de ceux de la colonne 3 pour éviter de surligner les mots qui sont identiques en français et en anglais. De plus, chaque mot importé est dupliqué avec ajout d’un s final pour tenter de trouver et surligner les pluriels.
 
 ## [1.0.0.3] - 8 mai 2021
 ### Fixed
@@ -98,7 +109,7 @@ Sous ce bug s’en cachait un autre à savoir l’utilisation des deux points da
 ### Changed
 - Remplacement des info-bulles des avertissements par des aria-label couplés à des pseudo-éléments. Les info-bulles deviennent accessibles
 - Remplacement des span des avertissements par des liens a pour les rendre accessibles au clavier
-- Changement de la police utilisée pour le caractère i d’information pour de l'arial sans-serif afin de le rendre compatible Linux
+- Changement de la police utilisée pour le caractère i d’information pour de l’arial sans-serif afin de le rendre compatible Linux
 - remise à vide du champs de saisie Cohérence lorsqu’on ferme la popup
 - au clic sur Cocher Tous/Les avertissements en rouge : si 0 lignes alors on masque la notice
 - amélioration visibilité des liens Livres (menu secondaire) par défaut
@@ -126,7 +137,7 @@ Sous ce bug s’en cachait un autre à savoir l’utilisation des deux points da
 - Déplacement des styles dans une feuille de style externe
 - Ajout d’un paramètre enregistré (en LocalStorage) pour masquer/afficher la légende qui prend de la place
 ### Fixed
-- Retrait des checkbox que j'avais bêtement intégré aux formulaires existants, ce qui les intégrait aux requêtes
+- Retrait des checkbox que j’avais bêtement intégré aux formulaires existants, ce qui les intégrait aux requêtes
 
 ## [0.9.9.8] - 11 Nov 2020
 ### Added
@@ -148,7 +159,7 @@ Sous ce bug s’en cachait un autre à savoir l’utilisation des deux points da
 
 ## [0.9.9.6] - 23 Oct 2020
 ### Added
-- Changement de l'ordre des locales pour faire passer la française en premier afin de la rendre plus facilement accessible. FrenchFlagPowaa :D
+- Changement de l’ordre des locales pour faire passer la française en premier afin de la rendre plus facilement accessible. FrenchFlagPowaa :D
 ### Changed
 - Restructuration du code en plusieurs fichiers automatiquement chargés par le navigateur dans l’ordre de déclaration du manifeste
 - Séparation du readme et du changelog et passage de ce dernier au format keepachangelog (frenchifié)
@@ -178,21 +189,21 @@ Sous ce bug s’en cachait un autre à savoir l’utilisation des deux points da
 
 ## [0.9.9.2] - 7 Oct 2020
 ### Removed
-- Annulation gain de place en CSS qui provoquait un bug d'affichage pour les >PTE
+- Annulation gain de place en CSS qui provoquait un bug d’affichage pour les >PTE
 
 ## [0.9.9.1] - 7 Oct 2020
 ### Fixed
 - Suppression détection des apostrophes simples encadrant un paramètre, exemple : '%s'
 - Suppression détection des signes slash doublés
-- Correction slash lorsque suivi par un supérieur dans le cas d'une balise XHTML auto-fermante
+- Correction slash lorsque suivi par un supérieur dans le cas d’une balise XHTML auto-fermante
 
 ## [0.9.9.0] - 6 Oct 2020
 ### Added
-- Ajout jpg et jpeg aux extensions et suppression de l'avertissement sur les apostrophes simples lorsqu'elles sont précédées par href=
+- Ajout jpg et jpeg aux extensions et suppression de l’avertissement sur les apostrophes simples lorsqu’elles sont précédées par href=
 - Ajout commentaire sur GlotDict dans readme et js
-- Ajout 'Melle' aux badwords
+- Ajout « Melle » aux badwords
 ### Fixed
-- Suppression de la détection du guillement français ouvrant lorsqu'en début de chaîne
+- Suppression de la détection du guillement français ouvrant lorsqu’en début de chaîne
 - Suppression des exceptions rendues inutiles par le traitement unitaire de chaque caractère
 
 ## [0.9.8.9] - 6 Oct 2020
