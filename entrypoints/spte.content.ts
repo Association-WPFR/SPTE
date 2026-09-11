@@ -15,12 +15,14 @@ export default defineContentScript({
 
 		// SLUG (identifiant de la locale).
 		let currentProjectLocaleSlug = '';
-		const breadcrumb = document.querySelector('.breadcrumb li:last-child a');
-		if (breadcrumb) {
-			const subs = breadcrumb.href.split('/');
-			currentProjectLocaleSlug = subs[subs.length - 3];
+		const pathSegments = window.location.pathname.split('/').filter(Boolean);
+		if (pathSegments.length >= 2) {
+			currentProjectLocaleSlug = pathSegments[pathSegments.length - 2];
 		}
 		currentProjectLocaleSlug = (currentProjectLocaleSlug === '') ? 'fr' : currentProjectLocaleSlug;
+
+		// Élément déclencheur de la popup de cohérence, pour restaurer le focus à sa fermeture.
+		let popupTriggerElement = null;
 
 		// Liens externes utilisés par SPTE.
 		const typographyURL = 'https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/';
@@ -46,7 +48,7 @@ export default defineContentScript({
 
 		// Principaux éléments créés.
 		const gpSeparator = createElement('SPAN', { class: 'separator' }, '•');
-		const spPopup = createElement('DIV', { id: 'sp-the-popup', class: 'sp-the-popup--hidden' });
+		const spPopup = createElement('DIV', { id: 'sp-the-popup', class: 'sp-the-popup--hidden', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Résultats de cohérence', tabindex: '-1' });
 		const spGDNoticesContainer = createElement('DIV', { id: 'sp-gd-notices-container' });
 		const spConsistency = createElement('DIV', { id: 'sp-consist-container' });
 		const spConsistencyLabel = createElement('LABEL', { for: 'sp-consist__text' }, 'Cohérence d’une chaîne');
@@ -91,8 +93,8 @@ export default defineContentScript({
 
 		// Empêche les balises de GlotDict dans l’aperçu en forçant ses réglages, car quand GlotDict s’exécute après SPTE, il ne s’attend pas à trouver des balises et peut planter.
 		function preventGlotDictTags() {
-			localStorage.setItem('gd_curly_apostrophe_warning', 'true');
-			localStorage.setItem('gd_no_non_breaking_space', 'true');
+			localStorage.setItem('gd_curly_apostrophe_highlight', 'true');
+			localStorage.setItem('gd_non_breaking_space_highlight', 'true');
 		}
 
 		// Affiche la chaîne traduite sans aucune balise.
@@ -217,7 +219,7 @@ export default defineContentScript({
 						const tooltip = (type === 'Space' || type === 'nbkSpaces') ? `${cases[type].message}` : `&#171; ${string} &#187;&#10; ${cases[type].message}`;
 
 						textWithoutTags = textWithoutTags.replace(string, '');
-						return `<a href="#" aria-label="${ariaLabel}" data-message="${tooltip}" class="${cases[type].cssClass}">${string}</a>`;
+						return `<span tabindex="0" aria-label="${ariaLabel}" data-message="${tooltip}" class="${cases[type].cssClass}">${string}</span>`;
 					}
 					return string;
 				});
@@ -248,8 +250,6 @@ export default defineContentScript({
 				if (!cases[item].counter) {
 					continue;
 				}
-
-				addStyle(`.${cases[item].cssClass}`, `${cases[item].style}`);
 
 				if (cases[item].title && cases[item].title !== charTitle) {
 					let counter = document.querySelector(`.${cases[item].cssClass}.sp-warning-title`);
@@ -436,6 +436,7 @@ export default defineContentScript({
 		function checkConsistency() {
 			const inputValue = spConsistencyInputText.value;
 			if (inputValue === '') { return; }
+			popupTriggerElement = document.activeElement;
 			spPopup.classList.remove('sp-the-popup--hidden');
 			const URL = `https://translate.wordpress.org/consistency/?search=${inputValue}&set=${currentProjectLocaleSlug}%2Fdefault&`;
 			fetch(URL).then((response) => response.text()).then((data) => {
@@ -445,6 +446,7 @@ export default defineContentScript({
 				} else {
 					spPopup.innerHTML = '<h1 style="text-align:center;margin:2em auto;">Aucun résultat</h1>';
 				}
+				spPopup.focus();
 			});
 		}
 
@@ -453,18 +455,16 @@ export default defineContentScript({
 				spPopup.innerHTML = '';
 				spPopup.classList.add('sp-the-popup--hidden');
 				spConsistencyInputText.value = '';
+				if (popupTriggerElement) {
+					popupTriggerElement.focus();
+					popupTriggerElement = null;
+				}
 			}
 		}
 
 		function declareEvents() {
 			document.addEventListener('click', (e) => {
 				closePopup(e);
-			});
-
-			document.querySelectorAll('a[class*="sp-warning--"],.sp-nbkspaces--showing,.sp-spaces--showing').forEach((warning) => {
-				warning.addEventListener('click', (e) => {
-					e.preventDefault();
-				});
 			});
 
 			document.addEventListener('keyup', (e) => {
@@ -577,7 +577,9 @@ export default defineContentScript({
 			frenchFlag(spteSettings.spteFrenchFlag);
 		}
 
-		function launchProcess(spteSettings = {}) {
+		function launchProcess(spteSettings) {
+			const hasExistingSettings = spteSettings !== undefined;
+			spteSettings = spteSettings || {};
 			const todayDate = new Date();
 			if (spteSettings.spteActiveGlossary === 'false') {
 				mainProcesses(spteSettings);
@@ -614,7 +616,7 @@ export default defineContentScript({
 						mainProcesses(spteSettings);
 
 						let settings = {};
-						if (spteSettings) {
+						if (hasExistingSettings) {
 							settings = spteSettings;
 							settings.spteLastUpdateGlossary = todayDate.toISOString().substring(0, 10);
 							settings.spteGlossary = difference;
