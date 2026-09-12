@@ -11,13 +11,15 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.10.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.0",
     "wxt": "^0.21.4"
   }
 }
