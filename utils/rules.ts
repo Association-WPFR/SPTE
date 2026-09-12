@@ -56,11 +56,22 @@ function escapeRegExp(str: string) {
 
 const fileExtensions = data.fileExtensions.join('|');
 
+// Contexte partagé par rgxColon/rgxComma : exclut un caractère quand il est entouré par un
+// bloc `{{ }}` ou `[[ ]]` (interpolation JS, ex: {{foo:bar}}, [[a,b]]). Voir issue #27.
+const doubleBracketGuard = '(?:(?<=\\{\\{[a-zA-Z0-9:,]*)(?=[a-zA-Z0-9:,]*\\}\\})|(?<=\\[\\[[a-zA-Z0-9:,]*)(?=[a-zA-Z0-9:,]*\\]\\]))';
+
 // Détecte les mots déconseillés. https://github.com/Association-WPFR/SPTE/wiki/rgxBadWords
 export const rgxBadWords = new RegExp(`(?<=[\\s,:;"']|^)(?<!«\\s)${data.badWord.map(escapeRegExp).join('(?=[\\s,.:;"\']|$)|(?<=[\\s,:;"\']|^)(?<!«\\s)')}(?=[\\s,.:;"']|$)`, 'gmi');
 
-// Détecte les apostrophes droites. https://github.com/Association-WPFR/SPTE/wiki/rgxSingleQuotes
-export const rgxSingleQuotes = new RegExp('(?<!href\\=|href\\=\'[a-z0-9.]*?|%[a-z])\u0027', 'gm');
+// Détecte les apostrophes droites et l'apostrophe courbe inversée (U+2018, à ne pas confondre
+// avec U+2019 qui est la bonne apostrophe courbe et ne doit jamais être signalée).
+// https://github.com/Association-WPFR/SPTE/wiki/rgxSingleQuotes
+export const rgxSingleQuotes = new RegExp('(?<!href\\=|href\\=\'[a-z0-9.]*?|%[a-z])[\u0027\u2018]', 'gm');
+
+// Détecte les guillemets doubles droits (à remplacer par des guillemets français « »). Exclut
+// les guillemets d'un attribut HTML (href="...", title="..."), puisque le texte traité peut
+// contenir du HTML inline. https://github.com/Association-WPFR/SPTE/wiki/rgxDoubleQuotes
+export const rgxDoubleQuotes = new RegExp('(?<!href\\=|href\\="[^"]*?|title\\=|title\\="[^"]*?)"', 'gm');
 
 // Détecte la barre oblique. https://github.com/Association-WPFR/SPTE/wiki/rgxSlash
 export const rgxSlash = new RegExp(`(?<= |\u00a0)\\${data.slash}(?!\\${data.slash}|\\&gt\\;|\\}{2}|\\]{2})|(?<!\\${data.slash})\\${data.slash}(?= |\u00a0)`, 'gmi');
@@ -72,10 +83,10 @@ export const rgxOpenHook = new RegExp(`(?<! |\\${data.openHook}|^)\\${data.openH
 export const rgxOpenParenthesis = new RegExp(`(?<![ ]|^)\\${data.openParenthesis}(?!\\%|\\)|s\\)|x\\)|e\\)|es\\)|nt\\)|vent\\))|(?<!^)\\${data.openParenthesis}(?=[ |\u00a0])`, 'gmi');
 
 // Détecte l’accolade ouvrante. https://github.com/Association-WPFR/SPTE/wiki/rgxOpenBrace
-export const rgxOpenBrace = new RegExp(`(?<! |\\${data.openBrace}|^)\\${data.openBrace}(?!\\${data.openBrace})|\\${data.openBrace}(?=[ |\u00a0])`, 'gmi');
+export const rgxOpenBrace = new RegExp(`(?<! |\\${data.openBrace}|^)\\${data.openBrace}(?!\\${data.openBrace})|\\${data.openBrace}(?=[ |\u00a0])(?![ \u00a0][a-zA-Z0-9]+\\${data.closeBrace})`, 'gmi');
 
 // Détecte les points de suspension. https://github.com/Association-WPFR/SPTE/wiki/rgxEllipsis
-export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)`, 'gmi');
+export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)|\\.\\.\\.`, 'gmi');
 
 // Détecte le point. https://github.com/Association-WPFR/SPTE/wiki/rgxPeriod
 // NOTE (2026-09-12) : la 2e alternative ci-dessous est censée détecter un point collé entre
@@ -87,7 +98,7 @@ export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${dat
 export const rgxPeriod = new RegExp(`(?<= |\u00a0)\\${data.period}(?!${fileExtensions})|(?<![a-zÀ-ú0-9\\${data.period}]*?)\\${data.period}(?=[a-zÀ-ú0-9])|\\${data.period}( $|\u00a0$)`, 'gmi');
 
 // Détecte la virgule. https://github.com/Association-WPFR/SPTE/wiki/rgxComma
-export const rgxComma = new RegExp(`(?<=[ |\u00a0])\\${data.comma}|\\${data.comma}(?=[a-zÀ-ú]| $|\u00a0$)`, 'gmi');
+export const rgxComma = new RegExp(`(?<=[ |\u00a0])\\${data.comma}(?!${doubleBracketGuard})|\\${data.comma}(?!${doubleBracketGuard})(?=[a-zÀ-ú]| $|\u00a0$)`, 'gmi');
 
 // Détecte le crochet fermant. https://github.com/Association-WPFR/SPTE/wiki/rgxCloseHook
 export const rgxCloseHook = new RegExp(`(?<=[ |\u00a0])\\${data.closeHook}|(?<!\\${data.closeHook})\\${data.closeHook}(?=[a-zÀ-ú0-9]| $|\u00a0$)`, 'gmi');
@@ -99,7 +110,7 @@ export const rgxCloseParenthesis = new RegExp(`(?<= |\u00a0|\\([a-d]|\\([f-r]|\\
 export const rgxCloseBrace = new RegExp(`(?<=[ |\u00a0])\\${data.closeBrace}|(?<!\\${data.closeBrace})\\${data.closeBrace}(?=[a-zÀ-ú0-9]|\u00a0| $|\u00a0$)`, 'gmi');
 
 // Détecte le point d’exclamation. https://github.com/Association-WPFR/SPTE/wiki/rgxExclamationPoint
-export const rgxExclamationPoint = new RegExp(`(?<!\u00a0|^)\\${data.exclamationPoint}|\\${data.exclamationPoint}(?! |$)`, 'gmi');
+export const rgxExclamationPoint = new RegExp(`(?<!\u00a0|^)\\${data.exclamationPoint}(?!important)|\\${data.exclamationPoint}(?!important)(?! |$)`, 'gmi');
 
 // Détecte le signe plus. https://github.com/Association-WPFR/SPTE/wiki/rgxPlusSign
 export const rgxPlusSign = new RegExp(`(?<!\u00a0|google|^)\\${data.plusSign}|\\${data.plusSign}(?! |$)`, 'gmi');
@@ -108,10 +119,10 @@ export const rgxPlusSign = new RegExp(`(?<!\u00a0|google|^)\\${data.plusSign}|\\
 export const rgxQuestionMark = new RegExp(`(?<!\u00a0|\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}|(?<!\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}(?! |$)`, 'gmi');
 
 // Détecte les deux points. https://github.com/Association-WPFR/SPTE/wiki/rgxColon
-export const rgxColon = new RegExp(`(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa)${data.colon}(?= )|(?<=\u00a0)${data.colon}(?! |$)|(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa)${data.colon}(?! )`, 'gmi');
+export const rgxColon = new RegExp(`(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?= )|(?<=\u00a0)${data.colon}(?! |$)|(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?! )`, 'gmi');
 
 // Détecte le point-virgule. https://github.com/Association-WPFR/SPTE/wiki/rgxSemiColon
-export const rgxSemiColon = new RegExp(`(?<!\u00a0|:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}|(?<!:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?! )`, 'gmi');
+export const rgxSemiColon = new RegExp(`(?<!\u00a0|:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?!$)|(?<!:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?! |$)`, 'gmi');
 
 // Détecte le guillemet français fermant. https://github.com/Association-WPFR/SPTE/wiki/rgxClosingFrQuote
 export const rgxClosingFrQuote = new RegExp(`(?<!\u00a0)${data.closingFrQuote}|${data.closingFrQuote}(?! |\\.|\\,|\u00a0\\?|\u00a0\\!|\u00a0\\:|\u00a0\\;|$)`, 'gmi');
@@ -162,6 +173,16 @@ export const rules: TypographyRule[] = [
 		cssClass: 'sp-warning--quote',
 		counter: 0,
 		regex: rgxSingleQuotes,
+	},
+	{
+		id: 'doubleQuotes',
+		name: 'guillemet double droit',
+		title: 'Guillemets doubles droits : ',
+		message: 'Guillemet double droit au lieu des guillemets français « »',
+		severity: 'certain',
+		cssClass: 'sp-warning--quote',
+		counter: 0,
+		regex: rgxDoubleQuotes,
 	},
 	{
 		id: 'slash',
@@ -341,7 +362,7 @@ export const rules: TypographyRule[] = [
 		severity: 'info',
 		cssClass: 'sp-spaces--showing',
 		counter: 0,
-		regex: /^ | $/gm,
+		regex: /^ | $| {2}/gm,
 	},
 	{
 		id: 'nbkSpaces',

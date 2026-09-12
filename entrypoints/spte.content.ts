@@ -262,7 +262,9 @@ export default defineContentScript({
 				if (rule.title && rule.title !== charTitle) {
 					let counter = document.querySelector(`.${rule.cssClass}.sp-warning-title`);
 					if (counter) {
-						counter.textContent = rule.counter;
+						// Deux règles peuvent partager le même cssClass (ex: quotes/doubleQuotes) :
+						// on cumule plutôt que d'écraser le compteur de la première.
+						counter.textContent = Number(counter.textContent) + rule.counter;
 					} else {
 						const title = createElement('SPAN', {}, rule.title);
 						counter = createElement('SPAN', { class: `${rule.cssClass} sp-warning-title` }, rule.counter);
@@ -304,7 +306,7 @@ export default defineContentScript({
 				characters.parentNode.remove();
 			}
 			const quotes = document.querySelector('.sp-warning-title.sp-warning--quote');
-			if (rulesById.get('quotes').counter === 0 && quotes) {
+			if (rulesById.get('quotes').counter === 0 && rulesById.get('doubleQuotes').counter === 0 && quotes) {
 				quotes.parentNode.remove();
 			}
 		}
