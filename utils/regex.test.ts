@@ -20,6 +20,7 @@ import {
 	rgxSemiColon,
 	rgxClosingFrQuote,
 	rgxOpenFrQuote,
+	rgxEpicenePunctuation,
 	rules,
 } from './rules';
 
@@ -38,10 +39,19 @@ describe('rgxBadWords', () => {
 		expect(matches(rgxBadWords, 'Le fichier est un plug-in.')).toEqual(['plug-in']);
 	});
 	it('ne détecte rien dans un mot qui ne fait pas partie de la liste', () => {
-		expect(matches(rgxBadWords, 'Ceci est un plugin WordPress.')).toEqual([]);
+		expect(matches(rgxBadWords, 'Ceci est une extension WordPress.')).toEqual([]);
 	});
 	it('ignore un mot précédé de « guillemet + espace » (citation)', () => {
 		expect(matches(rgxBadWords, 'On dit « responsif » par erreur.')).toEqual([]);
+	});
+	// Anglicismes ajoutés le 2026-09-12 (wp-fr-typo §3.2), sélection resserrée aux termes sans
+	// ambiguïté en français standard.
+	it.each([
+		'plugin', 'greffon', 'uploader', 'downloader', 'customiser', 'updater', 'mr',
+		'sidebar', 'shortcode', 'tooltip', 'breadcrumb', 'changelog', 'thumbnail',
+		'addon', 'add-on', 'mu-plugin', 'back-end', 'front-end', 'capabilities',
+	])('détecte l’anglicisme "%s"', (word) => {
+		expect(matches(rgxBadWords, `Un mot ici : ${word} et la suite.`)).toEqual([word]);
 	});
 });
 
@@ -285,6 +295,27 @@ describe('rgxOpenFrQuote', () => {
 	});
 	it('ignore un guillemet ouvrant suivi d\'une espace insécable', () => {
 		expect(matches(rgxOpenFrQuote, '« texte')).toEqual([]);
+	});
+});
+
+describe('rgxEpicenePunctuation', () => {
+	it('détecte un point utilisé au lieu du point médian', () => {
+		expect(matches(rgxEpicenePunctuation, 'Les administrateur.rice sont invités.')).toEqual(['.rice']);
+	});
+	it('détecte un tiret utilisé au lieu du point médian', () => {
+		expect(matches(rgxEpicenePunctuation, 'Les utilisateur-rice peuvent se connecter.')).toEqual(['-rice']);
+	});
+	it('détecte un astérisque utilisé au lieu du point médian, avec le pluriel', () => {
+		expect(matches(rgxEpicenePunctuation, 'Bienvenue aux abonné*e*s du site.')).toEqual(['*e*s']);
+	});
+	it('ne signale jamais le point médian correct (U+00B7)', () => {
+		expect(matches(rgxEpicenePunctuation, 'Les administrateur·rice sont invités.')).toEqual([]);
+	});
+	it('ignore un ordinal français ("2e", pas de séparateur)', () => {
+		expect(matches(rgxEpicenePunctuation, 'La 2e édition est disponible.')).toEqual([]);
+	});
+	it('ignore "e-mail" (le e précède le tiret, pas l’inverse)', () => {
+		expect(matches(rgxEpicenePunctuation, 'Envoyer un e-mail de confirmation.')).toEqual([]);
 	});
 });
 

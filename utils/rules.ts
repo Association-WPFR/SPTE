@@ -21,6 +21,30 @@ const data = {
 		'roter l\'image',
 		'responsif',
 		's4est',
+		// Anglicismes ajoutés le 2026-09-12, sélection resserrée depuis la table "Termes critiques"
+		// de thierrypigot/wp-fr-typo (SKILL.md §3.2) : uniquement des mots qui n'ont jamais de sens
+		// correct en français standard, quel que soit le contexte (contrairement à des mots de la
+		// même table comme "paramètres" ou "motif", qui sont des mots français ordinaires ailleurs
+		// et créeraient de faux positifs s'ils étaient ajoutés ici).
+		'plugin',
+		'greffon',
+		'uploader',
+		'downloader',
+		'customiser',
+		'updater',
+		'mr',
+		'sidebar',
+		'shortcode',
+		'tooltip',
+		'breadcrumb',
+		'changelog',
+		'thumbnail',
+		'addon',
+		'add-on',
+		'mu-plugin',
+		'back-end',
+		'front-end',
+		'capabilities',
 	],
 	slash: '/',
 	openHook: '[',
@@ -129,6 +153,13 @@ export const rgxClosingFrQuote = new RegExp(`(?<!\u00a0)${data.closingFrQuote}|$
 
 // Détecte le guillemet français ouvrant. https://github.com/Association-WPFR/SPTE/wiki/rgxOpenFrQuote
 export const rgxOpenFrQuote = new RegExp(`(?<! |^)${data.openFrQuote}|${data.openFrQuote}(?!\u00a0|$)`, 'gmi');
+
+// Détecte un point médian mal formé (écriture épicène) : caractère de substitution
+// (point, tiret, astérisque) utilisé à la place du vrai point médian U+00B7 (·).
+// Validation uniquement (le point médian correctement formé n'est jamais signalé) —
+// pas de détection de l'ABSENCE d'écriture inclusive, ni de suggestion de reformulation,
+// décision de Jason (2026-09-12) pour ce premier jet, cf. TODO.md.
+export const rgxEpicenePunctuation = /(?<=[a-zÀ-ú])[.\-*](?:e|rice|trice|ve|euse|esse|ale|ère|enne|ienne|elle)(?:[.\-*]s)?(?=[\s,.;:!?)»]|$)/gm;
 
 export const charTitle = 'Caractères à vérifier : ';
 export const charClass = 'sp-warning--char';
@@ -353,6 +384,16 @@ export const rules: TypographyRule[] = [
 		cssClass: charClass,
 		counter: 0,
 		regex: rgxOpenFrQuote,
+	},
+	{
+		id: 'epicenePunctuation',
+		name: 'point médian mal formé',
+		title: charTitle,
+		message: 'Le point médian de l’écriture inclusive doit utiliser le caractère · (U+00B7), pas un point, un tiret ou un astérisque',
+		severity: 'toVerify',
+		cssClass: charClass,
+		counter: 0,
+		regex: rgxEpicenePunctuation,
 	},
 	{
 		id: 'Space',
