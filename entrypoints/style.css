@@ -490,79 +490,81 @@
    9. Meilleure lisibilité (thème alternatif optionnel)
    ========================================================================== */
 
-.sp-better-readability .navigation-main a {
-	color: rgba(255, 255, 255, .9);
-}
+.sp-better-readability {
+	.navigation-main a {
+		color: rgba(255, 255, 255, .9);
+	}
 
-.sp-better-readability .gp-content,
-.sp-better-readability .gp-content textarea,
-.sp-better-readability .gp-content input,
-.sp-better-readability .gp-content [class*="sp-warning--"],
-.sp-better-readability .gp-content [class*="sp-warning--"]:hover,
-.sp-better-readability .gp-content [class*="sp-warning--"]:focus,
-.sp-better-readability .gp-content [class*="sp-warning--"]:active {
-	color: black;
-}
+	.gp-content,
+	.gp-content textarea,
+	.gp-content input,
+	.gp-content [class*="sp-warning--"],
+	.gp-content [class*="sp-warning--"]:hover,
+	.gp-content [class*="sp-warning--"]:focus,
+	.gp-content [class*="sp-warning--"]:active {
+		color: black;
+	}
 
-.sp-better-readability .gp-content .sp-warning--word,
-.sp-better-readability .gp-content .sp-warning--word:hover,
-.sp-better-readability .gp-content .sp-warning--word:focus,
-.sp-better-readability .gp-content .sp-warning--word:active {
-	color: white;
-}
+	.gp-content .sp-warning--word,
+	.gp-content .sp-warning--word:hover,
+	.gp-content .sp-warning--word:focus,
+	.gp-content .sp-warning--word:active {
+		color: white;
+	}
 
-.sp-better-readability .actionlist a,
-.sp-better-readability .actionlist a:link,
-.sp-better-readability .actionlist a:visited,
-.sp-better-readability .gp-content a,
-.sp-better-readability #wporg-footer ul li a,
-.sp-better-readability .gp-content .meta a {
-	color: #014BA0;
-}
+	.actionlist a,
+	.actionlist a:link,
+	.actionlist a:visited,
+	.gp-content a,
+	#wporg-footer ul li a,
+	.gp-content .meta a {
+		color: #014BA0;
+	}
 
-.sp-better-readability .actionlist a:hover,
-.sp-better-readability .actionlist a:focus,
-.sp-better-readability .actionlist a:active,
-.sp-better-readability .actionlist a:link:hover,
-.sp-better-readability .actionlist a:link:focus,
-.sp-better-readability .actionlist a:link:active,
-.sp-better-readability .gp-content a:hover,
-.sp-better-readability .gp-content a:focus,
-.sp-better-readability .gp-content a:active,
-.sp-better-readability #wporg-footer ul li a:hover,
-.sp-better-readability #wporg-footer ul li a:focus,
-.sp-better-readability #wporg-footer ul li a:active,
-.sp-better-readability .gp-content .meta a:hover,
-.sp-better-readability .gp-content .meta a:focus,
-.sp-better-readability .gp-content .meta a:active {
-	color: #066fe7;
-}
+	.actionlist a:hover,
+	.actionlist a:focus,
+	.actionlist a:active,
+	.actionlist a:link:hover,
+	.actionlist a:link:focus,
+	.actionlist a:link:active,
+	.gp-content a:hover,
+	.gp-content a:focus,
+	.gp-content a:active,
+	#wporg-footer ul li a:hover,
+	#wporg-footer ul li a:focus,
+	#wporg-footer ul li a:active,
+	.gp-content .meta a:hover,
+	.gp-content .meta a:focus,
+	.gp-content .meta a:active {
+		color: #066fe7;
+	}
 
-.sp-better-readability .sp-results__title {
-	color: #df0d0c;
-}
+	.sp-results__title {
+		color: #df0d0c;
+	}
 
-.sp-better-readability .sp-warning--word {
-	background-color: #ec130e;
-}
+	.sp-warning--word {
+		background-color: #ec130e;
+	}
 
-.sp-better-readability .sp-warning--quote {
-	box-shadow: #ec130e 0px 0px 0px 2px inset;
-}
+	.sp-warning--quote {
+		box-shadow: #ec130e 0px 0px 0px 2px inset;
+	}
 
-.sp-better-readability .gp-content input,
-.sp-better-readability .gp-content textarea,
-.sp-better-readability .gp-content select,
-.sp-better-readability .paging a,
-.sp-better-readability .paging span {
-	border-color: #afafaf !important;
-}
+	.gp-content input,
+	.gp-content textarea,
+	.gp-content select,
+	.paging a,
+	.paging span {
+		border-color: #afafaf !important;
+	}
 
-.sp-better-readability .paging .current {
-	border-color: coral !important;
-}
+	.paging .current {
+		border-color: coral !important;
+	}
 
-.sp-better-readability .panel-header__bubble {
-	text-transform: uppercase;
-	background: white;
+	.panel-header__bubble {
+		text-transform: uppercase;
+		background: white;
+	}
 }

@@ -254,6 +254,11 @@ describe('rgxEllipsis', () => {
 	it('détecte des points de suspension suivis d’une espace insécable finale', () => {
 		expect(matches(rgxEllipsis, 'et…' + '\u00a0')).toEqual(['…']);
 	});
+	// Même investigation que pour rgxComma (2026-09-12) : comportement figé, pas un bug.
+	it('détecte aussi des points de suspension collés à × ou ÷ (comportement actuel, pas un bug)', () => {
+		expect(matches(rgxEllipsis, 'et…×trois')).toHaveLength(1);
+		expect(matches(rgxEllipsis, 'et…÷trois')).toHaveLength(1);
+	});
 });
 
 describe('rgxPeriod', () => {
@@ -299,6 +304,17 @@ describe('rgxComma', () => {
 	});
 	it('ignore une virgule entre des chiffres (Ex: nombre décimal)', () => {
 		expect(matches(rgxComma, '3,5 grammes')).toEqual([]);
+	});
+	// Investigué le 2026-09-12 (question de Jason, vérifié contre le guide fr.wordpress.org qui ne
+	// traite pas × ni ÷) : la plage [a-zÀ-ú] utilisée pour détecter "collé à un mot" inclut par
+	// erreur les symboles × (U+00D7) et ÷ (U+00F7), qui tombent dans cet intervalle Unicode sans
+	// être des lettres. Comportement actuel figé ici : PAS un bug fonctionnel identifié, puisque
+	// dans ce contexte (détection d'un manque d'espace après une virgule), signaler une virgule
+	// collée à × ou ÷ reste un verdict typographiquement correct — le symbole se comporte comme
+	// n'importe quel caractère "collé" glisserait dans la même situation. Gardé tel quel.
+	it('détecte aussi une virgule collée à × ou ÷ (comportement actuel, pas un bug)', () => {
+		expect(matches(rgxComma, 'un,×deux')).toHaveLength(1);
+		expect(matches(rgxComma, 'un,÷deux')).toHaveLength(1);
 	});
 });
 
