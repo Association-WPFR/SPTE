@@ -640,7 +640,18 @@ export default defineContentScript({
 						browser.storage.local.set({ spteSettings: settings }, () => {
 							if (browser.runtime.error) {	console.log('Impossible d’initialiser les paramètres'); }
 						});
+					} else {
+						// Format CSV inattendu (colonne "en" introuvable) : on ne bloque pas tout,
+						// SPTE continue avec la liste de mots déconseillés déjà en place.
+						console.log('Glossaire officiel : format inattendu, SPTE continue sans le glossaire à jour.');
+						mainProcesses(spteSettings);
 					}
+				}).catch(() => {
+					// Le téléchargement du glossaire a échoué (réseau, wp.org indisponible...) : sans ce
+					// filet, mainProcesses() n'était jamais appelé et SPTE semblait totalement inactif,
+					// sans le moindre indice pour comprendre pourquoi.
+					console.log('Glossaire officiel : téléchargement impossible, SPTE continue sans le glossaire à jour.');
+					mainProcesses(spteSettings);
 				});
 			}
 		}
