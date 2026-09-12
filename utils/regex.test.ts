@@ -19,7 +19,7 @@ import {
 	rgxSemiColon,
 	rgxClosingFrQuote,
 	rgxOpenFrQuote,
-} from './regex';
+} from './rules';
 
 // Tests de caractérisation : figent le comportement ACTUEL du moteur de règles
 // (regex.ts) avant sa consolidation en Phase 3 (format TypographyRule[] unique).

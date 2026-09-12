@@ -1,13 +1,16 @@
 // @ts-nocheck
 // Conversion mécanique depuis spte.js (comportement inchangé). Le vrai typage de ce fichier
 // est prévu en Phase 3 (consolidation du moteur de règles), pas dans cette conversion WXT.
-import { cases, charTitle } from '../utils/styles';
+import { rules, charTitle, charClass } from '../utils/rules';
 import { addStyle, createElement } from '../utils/helpers';
 import './style.css';
 
 export default defineContentScript({
 	matches: ['https://translate.wordpress.org/*'],
 	main() {
+		// Accès rapide à une règle par son id (remplace l'accès direct par clé d'objet
+		// de l'ancien format `cases[id]`, devenu un tableau `rules: TypographyRule[]`).
+		const rulesById = new Map(rules.map((rule) => [rule.id, rule]));
 		// Vérification de la localisation.
 		const onTranslateWordPressRoot = (/https:\/\/translate\.wordpress\.org\//).test(window.location.href);
 
@@ -178,14 +181,14 @@ export default defineContentScript({
 
 			// on mémorise le texte sans les balises.
 			let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
-			// pour chaque cas typographique...
-			for (const type in cases) {
-				text = text.replace(cases[type].regex, (string) => {
+			// pour chaque règle typographique...
+			for (const rule of rules) {
+				text = text.replace(rule.regex, (string) => {
 					// Si le cas est présent dans le texte mais pas dans textWithoutTags, il ne doit pas être traité.
-					if (!textWithoutTags.match(cases[type].regex)) {
+					if (!textWithoutTags.match(rule.regex)) {
 						// Ce qui est IMPORTANT dans ce procédé pour éviter les vérifications à l’intérieur des balises,
-						// c’est que l’ordre de "replace(cases[type].regex)" soit le même que celui du "textWithoutTags.replace(string, '')" qui suit,
-						// et que seul le premier élément de "textWithoutTags.match(cases[type].regex)" soit vérifié ici.
+						// c’est que l’ordre de "replace(rule.regex)" soit le même que celui du "textWithoutTags.replace(string, '')" qui suit,
+						// et que seul le premier élément de "textWithoutTags.match(rule.regex)" soit vérifié ici.
 						return string;
 					}
 
@@ -193,35 +196,35 @@ export default defineContentScript({
 					switch (newStatus) {
 					case 'rejected':
 						if (oldStatus !== 'old') {
-							cases[type].counter--;
+							rule.counter--;
 						}
 						break;
 					case 'fuzzy':
 						if (oldStatus === 'rejected') {
-							cases[type].counter++;
+							rule.counter++;
 						}
 						break;
 					case 'current':
 						if (oldStatus !== 'waiting') {
-							cases[type].counter++;
+							rule.counter++;
 						}
 						break;
 					case 'waiting':
 						if (oldStatus !== 'current') {
-							cases[type].counter++;
+							rule.counter++;
 						}
 						break;
 					default:
-						cases[type].counter++;
+						rule.counter++;
 						break;
 					}
 					if (newStatus !== 'rejected') {
-						const ariaName = (type === 'badWords') ? `${string}. ` : `${cases[type].name}. `;
-						const ariaLabel = (type === 'Space' || type === 'nbkSpaces') ? `${cases[type].message}` : `${ariaName} ${cases[type].message}`;
-						const tooltip = (type === 'Space' || type === 'nbkSpaces') ? `${cases[type].message}` : `&#171; ${string} &#187;&#10; ${cases[type].message}`;
+						const ariaName = (rule.id === 'badWords') ? `${string}. ` : `${rule.name}. `;
+						const ariaLabel = (rule.id === 'Space' || rule.id === 'nbkSpaces') ? `${rule.message}` : `${ariaName} ${rule.message}`;
+						const tooltip = (rule.id === 'Space' || rule.id === 'nbkSpaces') ? `${rule.message}` : `&#171; ${string} &#187;&#10; ${rule.message}`;
 
 						textWithoutTags = textWithoutTags.replace(string, '');
-						return `<span tabindex="0" aria-label="${ariaLabel}" data-message="${tooltip}" class="${cases[type].cssClass}">${string}</span>`;
+						return `<span tabindex="0" aria-label="${ariaLabel}" data-message="${tooltip}" class="${rule.cssClass}">${string}</span>`;
 					}
 					return string;
 				});
@@ -248,25 +251,25 @@ export default defineContentScript({
 			let nbCharacter = 0;
 			let nbTotal = 0;
 
-			for (const item in cases) {
-				if (!cases[item].counter) {
+			for (const rule of rules) {
+				if (!rule.counter) {
 					continue;
 				}
 
-				if (cases[item].title && cases[item].title !== charTitle) {
-					let counter = document.querySelector(`.${cases[item].cssClass}.sp-warning-title`);
+				if (rule.title && rule.title !== charTitle) {
+					let counter = document.querySelector(`.${rule.cssClass}.sp-warning-title`);
 					if (counter) {
-						counter.textContent = cases[item].counter;
+						counter.textContent = rule.counter;
 					} else {
-						const title = createElement('SPAN', {}, cases[item].title);
-						counter = createElement('SPAN', { class: `${cases[item].cssClass} sp-warning-title` }, cases[item].counter);
+						const title = createElement('SPAN', {}, rule.title);
+						counter = createElement('SPAN', { class: `${rule.cssClass} sp-warning-title` }, rule.counter);
 						title.append(counter);
 						resultsData.append(title);
 					}
-					nbTotal += cases[item].counter;
-				} else if (cases[item].title === charTitle) {
-					nbCharacter += cases[item].counter;
-					nbTotal += cases[item].counter;
+					nbTotal += rule.counter;
+				} else if (rule.title === charTitle) {
+					nbCharacter += rule.counter;
+					nbTotal += rule.counter;
 				}
 			}
 
@@ -298,7 +301,7 @@ export default defineContentScript({
 				characters.parentNode.remove();
 			}
 			const quotes = document.querySelector('.sp-warning-title.sp-warning--quote');
-			if (cases.quotes.counter === 0 && quotes) {
+			if (rulesById.get('quotes').counter === 0 && quotes) {
 				quotes.parentNode.remove();
 			}
 		}
@@ -538,12 +541,12 @@ export default defineContentScript({
 		}
 
 		function getGlossaryRegex(glossary) {
-			const badWordsRegexPattern = cases.badWords.regex.source;
+			const badWordsRegexPattern = rulesById.get('badWords').regex.source;
 			// on duplique chaque mot avec un s final pour pouvoir traiter les pluriels.
 			const glossaryWithPlurals = glossary.reduce((a, i) => a.concat(i, `${i}s`), []);
 			const glossaryRegexPattern = `${glossaryWithPlurals.join('(?=[\\s,:;"\']|$)|(?<=[\\s,:;"\']|^)(?<!«\\s)')}(?=[\\s,.:;"']|$)`;
 			const newRgxBadWords = new RegExp(`${badWordsRegexPattern}|${glossaryRegexPattern}`, 'gm');
-			cases.badWords.regex = newRgxBadWords;
+			rulesById.get('badWords').regex = newRgxBadWords;
 		}
 
 		function mainProcesses(spteSettings) {
