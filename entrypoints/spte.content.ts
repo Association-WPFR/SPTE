@@ -2,7 +2,7 @@
 // Conversion mécanique depuis spte.js (comportement inchangé). Le vrai typage de ce fichier
 // est prévu en Phase 3 (consolidation du moteur de règles), pas dans cette conversion WXT.
 import { rules, charTitle, charClass } from '../utils/rules';
-import { addStyle, createElement } from '../utils/helpers';
+import { addStyle, createElement, parseCsv } from '../utils/helpers';
 import './style.css';
 
 export default defineContentScript({
@@ -32,6 +32,9 @@ export default defineContentScript({
 		// Liens externes utilisés par SPTE.
 		const typographyURL = 'https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/';
 		const glossaryURL = `https://translate.wordpress.org/locale/${currentProjectLocaleSlug}/default/glossary/`;
+		// Export CSV officiel du glossaire (colonnes en,fr,pos,description), plus robuste que le
+		// scraping HTML de la page ci-dessus qui servait auparavant à la fois d'affichage et de source de données.
+		const glossaryExportURL = `${glossaryURL}-export/`;
 
 		// Réglages (localStorage ne gère pas les booléens).
 		let lsHideCaption = localStorage.getItem('spteHideCaption') === 'true';
@@ -594,27 +597,16 @@ export default defineContentScript({
 				getGlossaryRegex(spteSettings.spteGlossary);
 				mainProcesses(spteSettings);
 			} else {
-				fetch(glossaryURL).then((response) => response.text()).then((dataGlossary) => {
-					let table = dataGlossary.replace(/(\r\n|\n|\r)/gm, '').match(/(?<=glossary">)(.*?)(?=<\/table>)/gmi);
-					if (table && table[0]) {
-						table = `<table class="glossary">${table[0]}</table>}`;
-						const html = new DOMParser().parseFromString(table, 'text/html');
-
-						const headers = Array.from(
-							html.querySelectorAll('.glossary tr:first-child th'),
-							(th) => th.textContent.trim(),
-						);
-
-						const tabGlossary = Array.from(headers, () => []);
-						for (const tr of html.querySelectorAll('.glossary tr:nth-child(n + 2):not(.editor)')) {
-							if (!tr.textContent.toLowerCase().includes('spte') && !tr.textContent.toLowerCase().includes('[np]')) {
-								[...tr.children].forEach((th, i) => {
-									tabGlossary[i].push(th.textContent.trim().toLowerCase());
-								});
-							}
-						}
-
-						const difference = tabGlossary[0].filter((x) => !tabGlossary[2].includes(x));
+				fetch(glossaryExportURL).then((response) => response.text()).then((dataGlossary) => {
+					const rows = parseCsv(dataGlossary);
+					const header = rows[0];
+					const enIndex = header ? header.indexOf('en') : -1;
+					if (enIndex !== -1) {
+						const entries = rows.slice(1);
+						const difference = entries
+							.filter((row) => !row.some((field) => field.toLowerCase().includes('spte') || field.toLowerCase().includes('[np]')))
+							.map((row) => (row[enIndex] || '').trim().toLowerCase())
+							.filter((term) => term !== '');
 
 						getGlossaryRegex(difference);
 
