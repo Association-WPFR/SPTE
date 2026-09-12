@@ -20,7 +20,7 @@ import {
 	rgxOpenFrQuote,
 } from './regex';
 
-export const charTitle = 'Caractères à vérifier : ';
+export const charTitle = 'Caractères à vérifier : ';
 const charClass = 'sp-warning--char';
 const spaceBeforeTitle = 'Espace précédente manquante ou espace suivante en trop';
 const spaceAfterTitle = 'Précédé par une espace ou caractère suivant collé ou suivi par une espace finale';
@@ -30,7 +30,7 @@ const nbkSpaceAfterTitle = 'Non précédé par une espace ou non suivi par une e
 export const cases = {
 	badWords: {
 		name: '',
-		title: 'Mots déconseillés ou mal orthographiés : ',
+		title: 'Mots déconseillés ou mal orthographiés : ',
 		message: 'Mot déconseillé ou mal orthographié',
 		cssClass: 'sp-warning--word',
 		counter: 0,
@@ -38,7 +38,7 @@ export const cases = {
 	},
 	quotes: {
 		name: 'apostrophe droite',
-		title: 'Apostrophes droites : ',
+		title: 'Apostrophes droites : ',
 		message: 'Apostrophe droite au lieu d’une apostrophe courbe',
 		cssClass: 'sp-warning--quote',
 		counter: 0,

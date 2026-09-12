@@ -9,7 +9,11 @@
 - Réécriture du README (mise à jour des contenus, des liens, de l’information au sujet de la reprise du projet par WPFR.net, remerciements à Loïc évidemment)
 
 ### Fixed
-- wip
+- Réglages jamais correctement initialisés au premier lancement, provoquant un retéléchargement en boucle du glossaire officiel
+- Locales supplémentaires (fr-be, fr-ca…) qui ne fonctionnaient plus
+- Compatibilité avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
+- Accessibilité : mots signalés non focusables au clavier, cases à cocher des réglages sans nom accessible, popup de recherche de cohérence sans gestion du focus
+- Plusieurs bugs CSS (curseur invalide, bordure et couleurs de l'interrupteur incorrectes, sélecteurs obsolètes)
 
 ## [2.0.0] - 01 mai 2023
 ### Changed
@@ -223,7 +227,7 @@ Sous ce bug s’en cachait un autre à savoir l’utilisation des deux points da
 ## [0.9.8.6] - 5 Oct 2020
 ### Added
 - Ajout de liens vers le glossaire et les règles typographiques
-- ajout des mots "popup", "popups", "responsif" aux badWords
+- ajout des mots « popup », « popups », « responsif » aux badWords
 ### Fixed
 - correction apportée lorsqu’en sortie de correction sur une chaîne comprenant un espace insécable la coloration de GlotDict réapparaissait
 

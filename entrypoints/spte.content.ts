@@ -8,15 +8,17 @@ import './style.css';
 export default defineContentScript({
 	matches: ['https://translate.wordpress.org/*'],
 	main() {
-		// Feuille de styles.
-		const styleSheet = document.head.appendChild(document.createElement('style')).sheet;
 		// Vérification de la localisation.
 		const onTranslateWordPressRoot = (/https:\/\/translate\.wordpress\.org\//).test(window.location.href);
 
-		// SLUG (identifiant de la locale).
+		// SLUG (identifiant de la locale) : dérivé du chemin de l'URL (/projects/.../<locale>/<set>/
+		// ou /locale/<locale>/...), en ne retenant le segment que s'il ressemble vraiment à un slug
+		// de locale GlotPress (ex: fr, fr-be, fr-ca) — sinon on retombe sur 'fr' comme avant, plutôt
+		// que de retenir un segment de chemin qui n'a rien à voir (ex: 'wp-plugins', 'default').
 		let currentProjectLocaleSlug = '';
 		const pathSegments = window.location.pathname.split('/').filter(Boolean);
-		if (pathSegments.length >= 2) {
+		const localeSlugPattern = /^[a-z]{2,3}(-[a-z0-9]{2,6})?$/;
+		if (pathSegments.length >= 2 && localeSlugPattern.test(pathSegments[pathSegments.length - 2])) {
 			currentProjectLocaleSlug = pathSegments[pathSegments.length - 2];
 		}
 		currentProjectLocaleSlug = (currentProjectLocaleSlug === '') ? 'fr' : currentProjectLocaleSlug;
@@ -70,7 +72,7 @@ export default defineContentScript({
 		const glossaryLink = createElement('P', { class: 'sp-results__caption sp-results__caption--link' });
 		glossaryLink.innerHTML = `Consultez <a class="sp-caption-link sp-caption-link--glossary" target="_blank" href="${glossaryURL}">le glossaire officiel</a> à respecter pour les mots.`;
 		const hideCaption = createElement('A', { id: 'sp-results__toggle-caption', href: '#', title: 'Légende' });
-		const spFilters = createElement('DIV', { class: 'sp-controls__filters' }, 'Afficher  ');
+		const spFilters = createElement('DIV', { class: 'sp-controls__filters' }, 'Afficher  ');
 		const showEverything = createElement('INPUT', { type: 'radio', id: 'sp-show-all-translations', name: 'showEverything', value: 'showEverything', checked: 'checked' });
 		const showEverythingLabel = createElement('LABEL', { for: 'sp-show-all-translations' }, 'Tout');
 		const showOnlyWarning = createElement('INPUT', { type: 'radio', id: 'sp-show-only-warnings', name: 'showOnlyWarning', value: 'showOnlyWarning' });
@@ -172,7 +174,7 @@ export default defineContentScript({
 			let text = translation.innerHTML;
 
 			// Pour la compatibilité des regex, on remplace les entités HTML d’espace insécable par le vrai caractère.
-			text = text.replaceAll(/&nbsp;/gmi, ' ');
+			text = text.replaceAll(/&nbsp;/gmi, ' ');
 
 			// on mémorise le texte sans les balises.
 			let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
@@ -277,7 +279,7 @@ export default defineContentScript({
 				resultsData.append(title);
 			}
 
-			resultsTitle.textContent = `éléments à vérifier : ${nbTotal}`;
+			resultsTitle.textContent = `éléments à vérifier : ${nbTotal}`;
 
 			if (nbTotal && !resultsTitle.classList.contains('sp-results__title')) {
 				resultsTitle.classList.add('sp-results__title');

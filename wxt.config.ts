@@ -16,10 +16,10 @@ export default defineConfig({
     },
 
     // Identifiant Firefox obligatoire pour publier/mettre à jour sur l’AMO.
-    // ⚠️ Valeur provisoire — à remplacer par l’identifiant réel de la fiche SPTE existante avant toute publication.
+    // Doit correspondre exactement à l’identifiant de la fiche SPTE existante sur l’AMO.
     browser_specific_settings: {
       gecko: {
-        id: 'spte@wpfr.net',
+        id: 'contact@wpfr.net',
         strict_min_version: '109.0',
       },
     },

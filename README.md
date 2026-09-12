@@ -29,7 +29,7 @@ Cette extension est utilisable sur https://translate.wordpress.org/ et permet de
 * les espaces insécables en blanc
 * les espaces sécables en début et en fin de chaîne en bleu
 
-les erreurs suivantes :
+ainsi que les erreurs suivantes :
 * les apostrophes droites au lieu d’apostrophes courbes
 * les mots déconseillés : on peut trouver les mots à privilégier en utilisant l’extension GlotDict ou en consultant le glossaire (https://translate.wordpress.org/locale/fr/default/glossary/).
 * les erreurs de typographie listées par le guide du traducteur (https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/)

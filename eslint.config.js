@@ -17,6 +17,11 @@ export default tseslint.config(
 		languageOptions: {
 			globals: wxtGlobals,
 		},
+		rules: {
+			// Des espaces insécables (U+00A0) sont volontairement utilisées dans des template
+			// strings pour respecter les règles typographiques françaises (ex: avant un ':').
+			'no-irregular-whitespace': ['error', { skipTemplates: true }],
+		},
 	},
 	{
 		// Ces fichiers sont des conversions mécaniques temporaires (@ts-nocheck en tête) —

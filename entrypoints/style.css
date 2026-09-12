@@ -148,7 +148,7 @@
 }
 
 #sp-results__link-glossary::before {
-	content: ' | '
+	content: ' | '
 }
 
 #sp-results__toggle-header {
@@ -288,7 +288,7 @@
 }
 
 .sp-caption-link::after {
-	content: '  📕';
+	content: '  📕';
 	font-size: .85rem;
 	font-style: normal;
 	vertical-align: 1px;
