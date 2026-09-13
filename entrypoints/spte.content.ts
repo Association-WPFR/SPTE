@@ -126,6 +126,9 @@ export default defineContentScript({
 		function addEditorHighlighter(translation) {
 			const preview = translation.closest('tr');
 			const brother = preview.nextElementSibling;
+			// La toute dernière ligne du tableau n'a pas de ligne suivante (même prudence que
+			// pour td.actions et le filtre Tout/Avertissements, cf. TODO.md).
+			if (!brother) { return; }
 			const brotherHighlighter = brother.querySelector('.sp-editor-highlighter') || null;
 			if (brotherHighlighter) {
 				brother.querySelector('.sp-editor-highlighter').parentNode.removeChild(brother.querySelector('.sp-editor-highlighter'));
@@ -349,14 +352,19 @@ export default defineContentScript({
 
 			spSelectErrors.addEventListener('change', () => {
 				let nbSelectedRows = 0;
+				// Même prudence que dans rowsDisplay() : certaines lignes n'ont pas de case à
+				// cocher en première colonne, sans quoi l'exception arrête la boucle en plein milieu.
 				if (spSelectErrors.checked) {
 					document.querySelectorAll('tr.preview.sp-has-spte-error').forEach((el) => {
-						el.firstElementChild.firstElementChild.checked = 'checked';
+						const checkbox = el.firstElementChild?.firstElementChild;
+						if (!checkbox) { return; }
+						checkbox.checked = 'checked';
 						nbSelectedRows++;
 					});
 				} else {
 					document.querySelectorAll('tr.preview.sp-has-spte-error').forEach((el) => {
-						el.firstElementChild.firstElementChild.checked = '';
+						const checkbox = el.firstElementChild?.firstElementChild;
+						if (checkbox) { checkbox.checked = ''; }
 					});
 					nbSelectedRows = 0;
 				}
