@@ -614,12 +614,26 @@ export default defineContentScript({
 					const rows = parseCsv(dataGlossary);
 					const header = rows[0];
 					const enIndex = header ? header.indexOf('en') : -1;
-					if (enIndex !== -1) {
-						const entries = rows.slice(1);
-						const difference = entries
-							.filter((row) => !row.some((field) => field.toLowerCase().includes('spte') || field.toLowerCase().includes('[np]')))
-							.map((row) => (row[enIndex] || '').trim().toLowerCase())
-							.filter((term) => term !== '');
+					const frIndex = header ? header.indexOf('fr') : -1;
+					if (enIndex !== -1 && frIndex !== -1) {
+						const entries = rows.slice(1)
+							.filter((row) => !row.some((field) => field.toLowerCase().includes('spte') || field.toLowerCase().includes('[np]')));
+
+						// On ne garde un terme anglais que si au moins une de ses traductions officielles
+						// diffère du mot anglais lui-même (sinon rien à signaler : un mot identique en
+						// français et en anglais, ex. « dimensions », « plugin », ne doit pas être surligné
+						// à chaque occurrence légitime). Ne résout pas le cas d'un terme ayant plusieurs sens
+						// dont un seul diffère (ex. « support » nom vs verbe) : ça reste signalé, faute de
+						// pouvoir distinguer le sens utilisé dans la traduction — limitation connue.
+						const termsWithDifferentTranslation = new Set();
+						entries.forEach((row) => {
+							const en = (row[enIndex] || '').trim().toLowerCase();
+							const fr = (row[frIndex] || '').trim().toLowerCase();
+							if (en !== '' && fr !== '' && en !== fr) {
+								termsWithDifferentTranslation.add(en);
+							}
+						});
+						const difference = [...termsWithDifferentTranslation];
 
 						getGlossaryRegex(difference);
 
