@@ -8,8 +8,7 @@
    6. Barre de contrôles (filtres d'affichage des résultats)
    7. Divers
    8. Media queries
-   9. Mode sombre : lisibilité du texte hérité
-   10. Meilleure lisibilité (thème alternatif optionnel)
+   9. Meilleure lisibilité (thème alternatif optionnel)
    ========================================================================== */
 
 /* ==========================================================================
@@ -62,16 +61,10 @@
    ========================================================================== */
 
 .sp-editor-highlighter {
-	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
-	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress).
-	   Pas de `color` forcé ici : ce bloc clone du texte GlotPress existant (couleur héritée du
-	   contexte "source-details", pas forcément noir — un `color:#1a1a1a` forcé a provoqué une
-	   régression visuelle constatée en test réel le 2026-09-13, un texte gris devenu noir). */
-	color-scheme: light dark;
 	margin: 1em 0;
 	padding: 10px 3px;
 	font-size: 15px;
-	background-color: light-dark(#d9e1e8, #2a3540);
+	background-color: #d9e1e8;
 }
 
 /* Neutralise le surlignage jaune posé par GlotDict sur les mêmes chaînes
@@ -92,12 +85,6 @@
 }
 
 #sp-the-popup {
-	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
-	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress).
-	   Pas de `color` forcé ici : ce bloc affiche du HTML renvoyé tel quel par GlotPress (table
-	   de cohérence), avec ses propres couleurs de statut — même risque de régression constaté
-	   sur .sp-editor-highlighter (texte gris forcé en noir) en test réel le 2026-09-13. */
-	color-scheme: light dark;
 	display: block;
 	position: fixed;
 	left: 50%;
@@ -112,7 +99,7 @@
 	transform: translate(-50%, -50%);
 	overflow-y: scroll;
 	padding: .8em;
-	background: light-dark(white, #23232b);
+	background: white;
 	box-shadow: 0 0 3px 3px rgba(0, 0, 0, .2);
 	transition: width .8s ease;
 }
@@ -206,15 +193,9 @@
 }
 
 .sp-results__data {
-	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
-	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress).
-	   Pas de `color` forcé : ce bandeau est injecté dans `.filter-toolbar` de GlotPress, dont
-	   le contexte de couleur héritée n'est pas entièrement sous contrôle de SPTE — même risque
-	   de régression constaté sur .sp-editor-highlighter en test réel le 2026-09-13. */
-	color-scheme: light dark;
 	padding: 6px 1em 5px;
 	margin-top: .3em;
-	background: light-dark(#f3f2fb, #2a2a33);
+	background: #f3f2fb;
 	display: -ms-flexbox;
 	display: flex;
 	-ms-flex-align: center;
@@ -231,13 +212,9 @@
 }
 
 .sp-results__captions {
-	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
-	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress).
-	   Pas de `color` forcé, même raison que .sp-results__data ci-dessus. */
-	color-scheme: light dark;
 	position: relative;
 	padding: .1em 9em .9em .9em;
-	background: light-dark(#f4f3f7, #2a2a33);
+	background: #f4f3f7;
 	margin-top: -7px;
 	text-align: center;
 }
@@ -510,29 +487,7 @@
 }
 
 /* ==========================================================================
-   9. Mode sombre : lisibilité du texte hérité
-   ========================================================================== */
-
-/* GlotPress n'a pas de thème sombre propre : le texte qu'on hérite de la page (couleur fixe,
-   pensée pour un fond clair) reste sombre même quand nos fonds passent en sombre via
-   light-dark() ci-dessus — sans ceci le texte devient illisible (texte sombre sur fond sombre,
-   constaté en test réel le 2026-09-13/14). On force une couleur claire UNIQUEMENT en mode
-   sombre, jamais en mode clair (qui marchait déjà très bien), pour éviter de reproduire la
-   régression inverse déjà rencontrée (couleur forcée en permanence sur du contenu GlotPress
-   cloné qui avait sa propre couleur héritée en mode clair). Les éléments qui ont leur propre
-   couleur explicite (ex: badges de statut dans la table de cohérence) ne sont pas affectés :
-   `color` hérité ne s'applique qu'aux éléments qui n'en définissent pas déjà une. */
-@media (prefers-color-scheme: dark) {
-	.sp-editor-highlighter,
-	#sp-the-popup,
-	.sp-results__data,
-	.sp-results__captions {
-		color: #e8e8ec;
-	}
-}
-
-/* ==========================================================================
-   10. Meilleure lisibilité (thème alternatif optionnel)
+   9. Meilleure lisibilité (thème alternatif optionnel)
    ========================================================================== */
 
 .sp-better-readability {
