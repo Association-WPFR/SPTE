@@ -27,7 +27,7 @@ html {
     --text-color: light-dark(#1a1a1a, #e8e8ec);
     --text-active-tab: light-dark(#000, #f0f0f4);
     --text-muted: light-dark(#888, #aaa);
-    --border-color: light-dark(#d6d6d6, #4a4a55);
+    --border-color: light-dark(#d6d6d6, #83838f);
     --text-link: light-dark(#4f4f69, #b3b3d1);
     --text-link-hover: light-dark(black, white);
 
