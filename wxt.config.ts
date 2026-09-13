@@ -12,7 +12,7 @@ export default defineConfig({
 
   manifest: {
     name: 'SPTE',
-    description: 'Extension de vérification typographique pour les traductions françaises de WordPress sur translate.wordpress.org.',
+    description: 'Extension d\'aide à la traduction WordPress permettant de visualiser des éléments à améliorer et des erreurs à corriger sur https://translate.wordpress.org/.',
     permissions: ['storage', 'tabs'],
     icons: {
       16: '/icons/icon16.png',

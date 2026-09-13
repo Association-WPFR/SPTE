@@ -1,7 +1,7 @@
 {
   "name": "spte",
-  "version": "2.0.0",
-  "description": "Extension de vérification typographique pour les traductions françaises de WordPress sur translate.wordpress.org.",
+  "version": "3.0.0",
+  "description": "Extension d'aide à la traduction WordPress permettant de visualiser des éléments à améliorer et des erreurs à corriger sur https://translate.wordpress.org/.",
   "type": "module",
   "scripts": {
     "dev": "wxt",
