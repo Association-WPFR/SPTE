@@ -160,9 +160,13 @@ export default defineContentScript({
 			if (lsShowOnlyWarning) {
 				document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)').forEach((el) => {
 					el.style.display = 'none';
-					if (bulkActions) {
+					// Certaines lignes (ex: historique de révision) n'ont pas de case à cocher en
+					// première colonne — sans ce contrôle, l'exception arrête net le traitement de
+					// toutes les lignes suivantes de la boucle (bug confirmé en test réel le 2026-09-14).
+					const checkbox = el.firstElementChild?.firstElementChild;
+					if (bulkActions && checkbox) {
 						// On décoche les éléments masqués pour éviter un traitement en masse des lignes non visibles.
-						el.firstElementChild.firstElementChild.checked = '';
+						checkbox.checked = '';
 					}
 				});
 			}
