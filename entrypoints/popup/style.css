@@ -116,7 +116,7 @@ header>img {
 img#icon {
     display: inline-block;
     width: 27px;
-    height: 27px;
+    height: auto;
     margin-left: -38px;
     margin-right: 5px;
 }
