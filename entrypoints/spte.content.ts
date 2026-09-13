@@ -82,7 +82,7 @@ export default defineContentScript({
 		const showEverything = createElement('INPUT', { type: 'radio', id: 'sp-show-all-translations', name: 'showEverything', value: 'showEverything', checked: 'checked' });
 		const showEverythingLabel = createElement('LABEL', { for: 'sp-show-all-translations' }, 'Tout');
 		const showOnlyWarning = createElement('INPUT', { type: 'radio', id: 'sp-show-only-warnings', name: 'showOnlyWarning', value: 'showOnlyWarning' });
-		const showOnlyWarningLabel = createElement('LABEL', { for: 'sp-show-only-warnings' }, 'Les avertissements');
+		const showOnlyWarningLabel = createElement('LABEL', { for: 'sp-show-only-warnings' }, 'Les avertissements (de cette page)');
 		showEverything.checked = lsShowOnlyWarning ? '' : 'checked';
 		showOnlyWarning.checked = lsShowOnlyWarning ? 'checked' : '';
 		spFilters.append(showEverything, showEverythingLabel, showOnlyWarning, showOnlyWarningLabel);
