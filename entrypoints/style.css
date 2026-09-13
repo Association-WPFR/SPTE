@@ -206,12 +206,14 @@
 
 .sp-results__data {
 	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
-	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress). */
+	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress).
+	   Pas de `color` forcé : ce bandeau est injecté dans `.filter-toolbar` de GlotPress, dont
+	   le contexte de couleur héritée n'est pas entièrement sous contrôle de SPTE — même risque
+	   de régression constaté sur .sp-editor-highlighter en test réel le 2026-09-13. */
 	color-scheme: light dark;
 	padding: 6px 1em 5px;
 	margin-top: .3em;
 	background: light-dark(#f3f2fb, #2a2a33);
-	color: light-dark(#1a1a1a, #e8e8ec);
 	display: -ms-flexbox;
 	display: flex;
 	-ms-flex-align: center;
@@ -229,12 +231,12 @@
 
 .sp-results__captions {
 	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
-	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress). */
+	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress).
+	   Pas de `color` forcé, même raison que .sp-results__data ci-dessus. */
 	color-scheme: light dark;
 	position: relative;
 	padding: .1em 9em .9em .9em;
 	background: light-dark(#f4f3f7, #2a2a33);
-	color: light-dark(#1a1a1a, #e8e8ec);
 	margin-top: -7px;
 	text-align: center;
 }
