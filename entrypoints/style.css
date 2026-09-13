@@ -61,10 +61,14 @@
    ========================================================================== */
 
 .sp-editor-highlighter {
+	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
+	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress). */
+	color-scheme: light dark;
 	margin: 1em 0;
 	padding: 10px 3px;
 	font-size: 15px;
-	background-color: #d9e1e8;
+	background-color: light-dark(#d9e1e8, #2a3540);
+	color: light-dark(#1a1a1a, #e8e8ec);
 }
 
 /* Neutralise le surlignage jaune posé par GlotDict sur les mêmes chaînes
@@ -85,6 +89,9 @@
 }
 
 #sp-the-popup {
+	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
+	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress). */
+	color-scheme: light dark;
 	display: block;
 	position: fixed;
 	left: 50%;
@@ -99,7 +106,8 @@
 	transform: translate(-50%, -50%);
 	overflow-y: scroll;
 	padding: .8em;
-	background: white;
+	background: light-dark(white, #23232b);
+	color: light-dark(#1a1a1a, #e8e8ec);
 	box-shadow: 0 0 3px 3px rgba(0, 0, 0, .2);
 	transition: width .8s ease;
 }
@@ -193,9 +201,13 @@
 }
 
 .sp-results__data {
+	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
+	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress). */
+	color-scheme: light dark;
 	padding: 6px 1em 5px;
 	margin-top: .3em;
-	background: #f3f2fb;
+	background: light-dark(#f3f2fb, #2a2a33);
+	color: light-dark(#1a1a1a, #e8e8ec);
 	display: -ms-flexbox;
 	display: flex;
 	-ms-flex-align: center;
@@ -212,9 +224,13 @@
 }
 
 .sp-results__captions {
+	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
+	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress). */
+	color-scheme: light dark;
 	position: relative;
 	padding: .1em 9em .9em .9em;
-	background: #f4f3f7;
+	background: light-dark(#f4f3f7, #2a2a33);
+	color: light-dark(#1a1a1a, #e8e8ec);
 	margin-top: -7px;
 	text-align: center;
 }
