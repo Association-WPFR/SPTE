@@ -8,7 +8,8 @@
    6. Barre de contrôles (filtres d'affichage des résultats)
    7. Divers
    8. Media queries
-   9. Meilleure lisibilité (thème alternatif optionnel)
+   9. Mode sombre : lisibilité du texte hérité
+   10. Meilleure lisibilité (thème alternatif optionnel)
    ========================================================================== */
 
 /* ==========================================================================
@@ -509,7 +510,29 @@
 }
 
 /* ==========================================================================
-   9. Meilleure lisibilité (thème alternatif optionnel)
+   9. Mode sombre : lisibilité du texte hérité
+   ========================================================================== */
+
+/* GlotPress n'a pas de thème sombre propre : le texte qu'on hérite de la page (couleur fixe,
+   pensée pour un fond clair) reste sombre même quand nos fonds passent en sombre via
+   light-dark() ci-dessus — sans ceci le texte devient illisible (texte sombre sur fond sombre,
+   constaté en test réel le 2026-09-13/14). On force une couleur claire UNIQUEMENT en mode
+   sombre, jamais en mode clair (qui marchait déjà très bien), pour éviter de reproduire la
+   régression inverse déjà rencontrée (couleur forcée en permanence sur du contenu GlotPress
+   cloné qui avait sa propre couleur héritée en mode clair). Les éléments qui ont leur propre
+   couleur explicite (ex: badges de statut dans la table de cohérence) ne sont pas affectés :
+   `color` hérité ne s'applique qu'aux éléments qui n'en définissent pas déjà une. */
+@media (prefers-color-scheme: dark) {
+	.sp-editor-highlighter,
+	#sp-the-popup,
+	.sp-results__data,
+	.sp-results__captions {
+		color: #e8e8ec;
+	}
+}
+
+/* ==========================================================================
+   10. Meilleure lisibilité (thème alternatif optionnel)
    ========================================================================== */
 
 .sp-better-readability {
