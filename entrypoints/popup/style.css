@@ -16,10 +16,26 @@
    ========================================================================== */
 
 html {
+    /* Mode sombre natif : le navigateur choisit automatiquement la valeur light-dark()
+       adaptée selon le thème système/navigateur de l'utilisateur (aucun JS nécessaire). */
+    color-scheme: light dark;
+    --bg-page: light-dark(rgb(231 230 239), #1e1e24);
+    --bg-panel: light-dark(#fffffff6, #2a2a33f6);
+    --bg-fieldset: light-dark(rgba(243, 242, 251, .8), rgba(40, 40, 50, .8));
+    --bg-input: light-dark(white, #33333d);
+    --bg-active-tab: light-dark(white, #33333d);
+    --text-color: light-dark(#1a1a1a, #e8e8ec);
+    --text-active-tab: light-dark(#000, #f0f0f4);
+    --text-muted: light-dark(#888, #aaa);
+    --border-color: light-dark(#d6d6d6, #4a4a55);
+    --text-link: light-dark(#4f4f69, #b3b3d1);
+    --text-link-hover: light-dark(black, white);
+
     text-rendering: optimizeLegibility;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
-    background: rgb(231 230 239);
+    background: var(--bg-page);
+    color: var(--text-color);
 }
 
 /* ==========================================================================
@@ -37,7 +53,7 @@ label.tab {
 }
 
 .panels {
-    background: #fffffff6;
+    background: var(--bg-panel);
     width: 100%;
     border-radius: 3px;
     overflow: hidden;
@@ -61,8 +77,8 @@ label.tab {
 
 #one:checked~.tabs #one-tab,
 #two:checked~.tabs #two-tab {
-    background: white;
-    color: #000;
+    background: var(--bg-active-tab);
+    color: var(--text-active-tab);
     font-weight: bold;
 }
 
@@ -81,7 +97,7 @@ fieldset {
     margin: 10px;
     border: 0;
     padding: 4px 10px 4px 20px;
-    background: rgba(243, 242, 251, .8);
+    background: var(--bg-fieldset);
 }
 
 /* ==========================================================================
@@ -110,7 +126,7 @@ img#icon {
 }
 
 h2 {
-    color: #888;
+    color: var(--text-muted);
     font-size: 120%;
     font-weight: 200;
     margin: 0;
@@ -202,15 +218,18 @@ select {
     float: right;
     height: 22px;
     border: 0;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-input);
+    color: var(--text-color);
 }
 
 input[type=text],
 input[type=password] {
     width: 100%;
     height: 22px;
-    border: 1px solid #d6d6d6;
-    background: white;
+    border: 1px solid var(--border-color);
+    background: var(--bg-input);
+    color: var(--text-color);
     box-sizing: border-box;
     margin: 3px 0;
 }
@@ -240,7 +259,7 @@ button.fieldset-btn-lnk {
     float: right;
     height: auto;
     background: transparent;
-    color: #4f4f69;
+    color: var(--text-link);
     text-decoration: underline;
     width: auto;
     margin-top: 0;
@@ -254,14 +273,14 @@ button:active {
 button.fieldset-btn-lnk:hover,
 button.fieldset-btn-lnk:focus,
 button.fieldset-btn-lnk:active {
-    color: black;
+    color: var(--text-link-hover);
     border: 2px solid;
     background: transparent;
 }
 
 input[type=text]:focus {
     border: 0;
-    border-bottom: 1px solid #888;
+    border-bottom: 1px solid var(--text-muted);
     outline: none;
 }
 
