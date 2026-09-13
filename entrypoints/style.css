@@ -62,13 +62,15 @@
 
 .sp-editor-highlighter {
 	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
-	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress). */
+	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress).
+	   Pas de `color` forcé ici : ce bloc clone du texte GlotPress existant (couleur héritée du
+	   contexte "source-details", pas forcément noir — un `color:#1a1a1a` forcé a provoqué une
+	   régression visuelle constatée en test réel le 2026-09-13, un texte gris devenu noir). */
 	color-scheme: light dark;
 	margin: 1em 0;
 	padding: 10px 3px;
 	font-size: 15px;
 	background-color: light-dark(#d9e1e8, #2a3540);
-	color: light-dark(#1a1a1a, #e8e8ec);
 }
 
 /* Neutralise le surlignage jaune posé par GlotDict sur les mêmes chaînes
@@ -90,7 +92,10 @@
 
 #sp-the-popup {
 	/* Mode sombre natif (color-scheme scopé à ce bloc uniquement, pas à toute la page
-	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress). */
+	   translate.wordpress.org, pour ne pas modifier le rendu des widgets natifs de GlotPress).
+	   Pas de `color` forcé ici : ce bloc affiche du HTML renvoyé tel quel par GlotPress (table
+	   de cohérence), avec ses propres couleurs de statut — même risque de régression constaté
+	   sur .sp-editor-highlighter (texte gris forcé en noir) en test réel le 2026-09-13. */
 	color-scheme: light dark;
 	display: block;
 	position: fixed;
@@ -107,7 +112,6 @@
 	overflow-y: scroll;
 	padding: .8em;
 	background: light-dark(white, #23232b);
-	color: light-dark(#1a1a1a, #e8e8ec);
 	box-shadow: 0 0 3px 3px rgba(0, 0, 0, .2);
 	transition: width .8s ease;
 }
