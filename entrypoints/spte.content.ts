@@ -229,7 +229,12 @@ export default defineContentScript({
 					}
 					if (newStatus !== 'rejected') {
 						const ariaName = (rule.id === 'badWords') ? `${string}. ` : `${rule.name}. `;
-						const ariaLabel = (rule.id === 'Space' || rule.id === 'nbkSpaces') ? `${rule.message}` : `${ariaName} ${rule.message}`;
+						// ariaName se termine déjà par une espace : ne pas en ajouter une seconde ici.
+						// Un double espace généré dans cet attribut peut être re-détecté par la règle
+						// "espace en double" lors d'un passage ultérieur de la boucle, qui insère alors
+						// son propre <span> à l'intérieur de cet attribut et casse le balisage HTML
+						// (bug confirmé en conditions réelles le 2026-09-14, voir TODO.md).
+						const ariaLabel = (rule.id === 'Space' || rule.id === 'nbkSpaces') ? `${rule.message}` : `${ariaName}${rule.message}`;
 						const tooltip = (rule.id === 'Space' || rule.id === 'nbkSpaces') ? `${rule.message}` : `&#171; ${string} &#187;&#10; ${rule.message}`;
 
 						textWithoutTags = textWithoutTags.replace(string, '');
