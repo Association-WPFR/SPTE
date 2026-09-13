@@ -95,7 +95,9 @@ export default defineContentScript({
 		}
 
 		// Éléments spécifiques à la locale française.
-		const frenchLocale = document.querySelector('#locales .english a[href="/locale/fr/"]');
+		// `#locales`/`div.locale` (ancienne structure ciblée ici) a disparu du DOM de GlotPress —
+		// régression silencieuse confirmée par audit le 2026-09-14, `#stats-table` est la structure
+		// actuelle pour la liste des locales d'un projet, déjà ciblée par frenchStatsGlobal ci-dessous.
 		const frenchStatsGlobal = document.querySelector('#stats-table tr a[href*="/locale/fr/"]');
 		const frenchStatsSpecific = document.querySelector('#translation-sets tr a[href*="/fr/"]');
 
@@ -377,24 +379,20 @@ export default defineContentScript({
 			});
 		}
 
-		// Spécifique à la page de translate.wordpress.org, fait remonter la locale FR en premier pour y accéder plus facilement.
+		// Spécifique à la page de présentation d’un projet (liste des locales disponibles), fait
+		// remonter la ligne FR en première position du tableau pour y accéder plus facilement.
 		function frenchiesGoFirst() {
-			const frenchLocaleDiv = frenchLocale.closest('div.locale');
-			const firstLocaleDiv = document.querySelector('div.locale:first-child');
-			if (firstLocaleDiv && frenchLocaleDiv && !GDmayBeOnBoard) {
-				firstLocaleDiv.before(frenchLocaleDiv);
+			const frenchRow = frenchStatsGlobal?.closest('tr');
+			const tableBody = frenchRow?.closest('tbody');
+			const firstRow = tableBody?.querySelector('tr:first-child');
+			if (firstRow && frenchRow && firstRow !== frenchRow && !GDmayBeOnBoard) {
+				firstRow.before(frenchRow);
 			}
 		}
 
 		// Ajoute un drapeau français sur la locale française dans les différents tableaux pour mieux l’identifier.
 		function frenchFlag(spteFrenchFlag) {
 			if (spteFrenchFlag && spteFrenchFlag === 'false') { return; }
-			const frenchLocaleClone = document.querySelector('#locales .gd-locale-moved .english a[href="/locale/fr/"]');
-			if (frenchLocaleClone) {
-				frenchLocaleClone.classList.add('sp-frenchies');
-			} else if (frenchLocale) {
-				frenchLocale.classList.add('sp-frenchies');
-			}
 
 			if (frenchStatsSpecific) {
 				frenchStatsSpecific.classList.add('sp-frenchies', 'sp-frenchies--long');
@@ -604,7 +602,7 @@ export default defineContentScript({
 				declareEvents();
 			}
 
-			if (onTranslateWordPressRoot && frenchLocale) {
+			if (onTranslateWordPressRoot && frenchStatsGlobal) {
 				frenchiesGoFirst();
 			}
 			frenchFlag(spteSettings.spteFrenchFlag);

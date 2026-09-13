@@ -512,11 +512,13 @@
 		color: white;
 	}
 
+	/* .global-footer (ex-#wporg-footer, id disparu avec le passage du footer à un thème Gutenberg
+	   moderne — régression silencieuse confirmée par audit le 2026-09-14, corrigée le même jour). */
 	.actionlist a,
 	.actionlist a:link,
 	.actionlist a:visited,
 	.gp-content a,
-	#wporg-footer ul li a,
+	.global-footer ul li a,
 	.gp-content .meta a {
 		color: #014BA0;
 	}
@@ -530,9 +532,9 @@
 	.gp-content a:hover,
 	.gp-content a:focus,
 	.gp-content a:active,
-	#wporg-footer ul li a:hover,
-	#wporg-footer ul li a:focus,
-	#wporg-footer ul li a:active,
+	.global-footer ul li a:hover,
+	.global-footer ul li a:focus,
+	.global-footer ul li a:active,
 	.gp-content .meta a:hover,
 	.gp-content .meta a:focus,
 	.gp-content .meta a:active {
