@@ -109,7 +109,13 @@ export default defineContentScript({
 		function addForeignToolTip(translation) {
 			const preview = translation.closest('tr');
 			const translated = preview && preview.querySelector('.translation-text');
+			// td.actions n'existe pas sur toutes les lignes (ex: utilisateur non connecté,
+			// sans les droits pour valider/modifier) : on ignore cette ligne plutôt que de
+			// planter tout le traitement des lignes suivantes.
 			const hook = preview && preview.querySelector('td.actions');
+			if (!hook || !translated) {
+				return;
+			}
 			hook.style.position = 'relative';
 			const toolTip = createElement('SPAN', { class: 'sp-foreign-tooltip' });
 			toolTip.innerHTML = translated.innerHTML;
