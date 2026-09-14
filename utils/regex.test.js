@@ -390,6 +390,11 @@ describe('rgxExclamationPoint', () => {
 	it('ignore un point d’exclamation en toute fin de chaîne (précédé d’une espace insécable)', () => {
 		expect(matches(rgxExclamationPoint, 'Bravo' + '\u00a0' + '!')).toEqual([]);
 	});
+	// Faux positif confirmé en conditions réelles le 2026-09-15 : "!)" est la typographie
+	// correcte (rien entre "!" et la parenthèse fermante), pas une espace manquante.
+	it('ignore un point d’exclamation suivi d’une parenthèse fermante', () => {
+		expect(matches(rgxExclamationPoint, 'Bravo' + '\u00a0' + '!)')).toEqual([]);
+	});
 });
 
 describe('rgxPlusSign', () => {
@@ -425,6 +430,11 @@ describe('rgxQuestionMark', () => {
 	});
 	it('ignore un point d’interrogation en toute fin de chaîne (précédé d’une espace insécable)', () => {
 		expect(matches(rgxQuestionMark, 'Pourquoi' + '\u00a0' + '?')).toEqual([]);
+	});
+	// Faux positif confirmé en conditions réelles le 2026-09-15 (younitedpay-payment-gateway,
+	// "les identifiants ont-ils été modifiés ?)") : "?)" est la typographie correcte.
+	it('ignore un point d’interrogation suivi d’une parenthèse fermante', () => {
+		expect(matches(rgxQuestionMark, 'Pourquoi' + '\u00a0' + '?)')).toEqual([]);
 	});
 });
 

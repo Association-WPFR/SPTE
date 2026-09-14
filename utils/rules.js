@@ -129,13 +129,13 @@ export const rgxCloseParenthesis = new RegExp(`(?<= |\u00a0|\\([a-d]|\\([f-r]|\\
 export const rgxCloseBrace = new RegExp(`(?<=[ |\u00a0])\\${data.closeBrace}|(?<!\\${data.closeBrace})\\${data.closeBrace}(?=[a-zÀ-ú0-9]|\u00a0| $|\u00a0$)`, 'gmi');
 
 // Détecte le point d’exclamation. https://github.com/Association-WPFR/SPTE/wiki/rgxExclamationPoint
-export const rgxExclamationPoint = new RegExp(`(?<!\u00a0|^)\\${data.exclamationPoint}(?!important)|\\${data.exclamationPoint}(?!important)(?! |$)`, 'gmi');
+export const rgxExclamationPoint = new RegExp(`(?<!\u00a0|^)\\${data.exclamationPoint}(?!important)|\\${data.exclamationPoint}(?!important)(?! |$|\\))`, 'gmi');
 
 // Détecte le signe plus. https://github.com/Association-WPFR/SPTE/wiki/rgxPlusSign
 export const rgxPlusSign = new RegExp(`(?<!\u00a0|google|^)\\${data.plusSign}|\\${data.plusSign}(?! |$)`, 'gmi');
 
 // Détecte le point d’interrogation. https://github.com/Association-WPFR/SPTE/wiki/rgxQuestionMark
-export const rgxQuestionMark = new RegExp(`(?<!\u00a0|\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}|(?<!\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}(?! |$)`, 'gmi');
+export const rgxQuestionMark = new RegExp(`(?<!\u00a0|\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}|(?<!\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}(?! |$|\\))`, 'gmi');
 
 // Détecte les deux points. https://github.com/Association-WPFR/SPTE/wiki/rgxColon
 export const rgxColon = new RegExp(`(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?= )|(?<=\u00a0)${data.colon}(?! |$)|(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?! )`, 'gmi');
