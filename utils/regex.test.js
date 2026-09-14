@@ -24,13 +24,16 @@ import {
 	rules,
 } from './rules';
 
-// Tests de caractérisation : figent le comportement ACTUEL du moteur de règles
-// (regex.ts) avant sa consolidation en Phase 3 (format TypographyRule[] unique).
-// Objectif : si la refonte change accidentellement une règle, un test casse ici.
-// Ne pas modifier ces attentes sans vérifier d'abord que le nouveau comportement
-// est intentionnel (et le documenter dans TODO.md).
+// Tests de caractérisation : figent le comportement ACTUEL des regex, écarts avec le wiki
+// compris. Ne pas modifier ces attentes sans vérifier que le nouveau comportement est
+// intentionnel (et le documenter dans TODO.md).
 
-function matches(regex: RegExp, text: string): string[] {
+/**
+ * @param {RegExp} regex
+ * @param {string} text
+ * @returns {string[]}
+ */
+function matches(regex, text) {
 	return [...text.matchAll(new RegExp(regex.source, regex.flags))].map((m) => m[0]);
 }
 
@@ -44,8 +47,7 @@ describe('rgxBadWords', () => {
 	it('ignore un mot précédé de « guillemet + espace » (citation)', () => {
 		expect(matches(rgxBadWords, 'On dit « responsif » par erreur.')).toEqual([]);
 	});
-	// Anglicismes ajoutés le 2026-09-12 (wp-fr-typo §3.2), sélection resserrée aux termes sans
-	// ambiguïté en français standard.
+	// Anglicismes sans ambiguïté en français standard (cf. utils/rules.js).
 	it.each([
 		'plugin', 'greffon', 'uploader', 'downloader', 'customiser', 'updater', 'mr',
 		'sidebar', 'shortcode', 'tooltip', 'breadcrumb', 'changelog', 'thumbnail',
@@ -254,7 +256,7 @@ describe('rgxEllipsis', () => {
 	it('détecte des points de suspension suivis d’une espace insécable finale', () => {
 		expect(matches(rgxEllipsis, 'et…' + '\u00a0')).toEqual(['…']);
 	});
-	// Même investigation que pour rgxComma (2026-09-12) : comportement figé, pas un bug.
+	// Même cas que pour rgxComma ci-dessus : comportement figé, pas un bug.
 	it('détecte aussi des points de suspension collés à × ou ÷ (comportement actuel, pas un bug)', () => {
 		expect(matches(rgxEllipsis, 'et…×trois')).toHaveLength(1);
 		expect(matches(rgxEllipsis, 'et…÷trois')).toHaveLength(1);
@@ -262,11 +264,9 @@ describe('rgxEllipsis', () => {
 });
 
 describe('rgxPeriod', () => {
-	// NOTE : la branche censée détecter "mot.mot" (point collé entre deux minuscules,
-	// sans espace) ne se déclenche jamais en pratique — son lookbehind négatif utilise
-	// un quantificateur paresseux (*?) qui matche toujours une chaîne vide, ce qui neutralise
-	// la condition. Comportement actuel figé tel quel ; piste de correction notée dans TODO.md
-	// pour la consolidation du moteur de règles (Phase 3).
+	// La branche censée détecter "mot.mot" (point collé entre deux minuscules) ne se déclenche
+	// jamais en pratique — son lookbehind négatif matche toujours une chaîne vide. Comportement
+	// figé tel quel ; ne pas "corriger" sans test dédié (cf. utils/rules.js).
 	it('ne détecte PAS un point collé entre deux mots minuscules (branche morte connue)', () => {
 		expect(matches(rgxPeriod, 'phrase.suite')).toEqual([]);
 	});
@@ -305,13 +305,8 @@ describe('rgxComma', () => {
 	it('ignore une virgule entre des chiffres (Ex: nombre décimal)', () => {
 		expect(matches(rgxComma, '3,5 grammes')).toEqual([]);
 	});
-	// Investigué le 2026-09-12 (question de Jason, vérifié contre le guide fr.wordpress.org qui ne
-	// traite pas × ni ÷) : la plage [a-zÀ-ú] utilisée pour détecter "collé à un mot" inclut par
-	// erreur les symboles × (U+00D7) et ÷ (U+00F7), qui tombent dans cet intervalle Unicode sans
-	// être des lettres. Comportement actuel figé ici : PAS un bug fonctionnel identifié, puisque
-	// dans ce contexte (détection d'un manque d'espace après une virgule), signaler une virgule
-	// collée à × ou ÷ reste un verdict typographiquement correct — le symbole se comporte comme
-	// n'importe quel caractère "collé" glisserait dans la même situation. Gardé tel quel.
+	// La plage [a-zÀ-ú] utilisée pour "collé à un mot" inclut par erreur × et ÷ (mêmes octets
+	// Unicode que des lettres) — mais le verdict reste correct dans ce contexte, donc pas un bug.
 	it('détecte aussi une virgule collée à × ou ÷ (comportement actuel, pas un bug)', () => {
 		expect(matches(rgxComma, 'un,×deux')).toHaveLength(1);
 		expect(matches(rgxComma, 'un,÷deux')).toHaveLength(1);
@@ -561,7 +556,7 @@ describe('rgxEpicenePunctuation', () => {
 describe('règle Space (double espace interne)', () => {
 	// Issue #26 : la règle `Space` ne ciblait que le début/fin de ligne, pas un double espace
 	// au milieu d'une phrase.
-	const spaceRegex = rules.find((rule) => rule.id === 'Space')!.regex;
+	const spaceRegex = rules.find((rule) => rule.id === 'Space').regex;
 
 	it('détecte un double espace au milieu d\'une phrase', () => {
 		expect(matches(spaceRegex, 'mot  mot')).toEqual(['  ']);

@@ -1,14 +1,23 @@
-const styleSheet = (document.head.appendChild(document.createElement('style')) as HTMLStyleElement).sheet!;
+const styleSheet = /** @type {CSSStyleSheet} */ (document.head.appendChild(document.createElement('style')).sheet);
 
-export function addStyle(selector: string, rules: string) {
+/**
+ * @param {string} selector
+ * @param {string} rules
+ */
+export function addStyle(selector, rules) {
 	styleSheet.insertRule(`${selector}{${rules}}`, styleSheet.cssRules.length);
 }
 
-export function createElement(tagName = 'DIV', attributes: Record<string, string> = {}, textContent = '') {
+/**
+ * @param {string} [tagName]
+ * @param {Record<string, string>} [attributes]
+ * @param {string} [textContent]
+ */
+export function createElement(tagName = 'DIV', attributes = {}, textContent = '') {
 	const element = document.createElement(tagName);
 	for (const attribute in attributes) {
 		if (Object.hasOwn(attributes, attribute)) {
-			element.setAttribute(attribute, attributes[attribute]!);
+			element.setAttribute(attribute, attributes[attribute]);
 		}
 	}
 	element.textContent = textContent;
@@ -17,9 +26,15 @@ export function createElement(tagName = 'DIV', attributes: Record<string, string
 
 // Analyseur CSV minimal (RFC 4180) : gère les champs entre guillemets, les guillemets
 // échappés ("") et les virgules à l'intérieur d'un champ entre guillemets.
-export function parseCsv(text: string): string[][] {
-	const rows: string[][] = [];
-	let row: string[] = [];
+/**
+ * @param {string} text
+ * @returns {string[][]}
+ */
+export function parseCsv(text) {
+	/** @type {string[][]} */
+	const rows = [];
+	/** @type {string[]} */
+	let row = [];
 	let field = '';
 	let inQuotes = false;
 	for (let i = 0; i < text.length; i++) {

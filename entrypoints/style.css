@@ -512,8 +512,7 @@
 		color: white;
 	}
 
-	/* .global-footer (ex-#wporg-footer, id disparu avec le passage du footer à un thème Gutenberg
-	   moderne — régression silencieuse confirmée par audit le 2026-09-14, corrigée le même jour). */
+	/* .global-footer : structure actuelle du footer WordPress.org (thème Gutenberg). */
 	.actionlist a,
 	.actionlist a:link,
 	.actionlist a:visited,

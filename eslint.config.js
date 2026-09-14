@@ -1,21 +1,21 @@
 import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import globals from 'globals';
 
-// Variables injectées automatiquement par WXT dans les entrypoints (background.ts, *.content.ts, popup).
+// Variables injectées automatiquement par WXT dans les entrypoints (background.js, *.content.js, popup).
 // Pas d'import nécessaire pour ces noms — sans cette déclaration, ESLint les signalerait comme non définis.
 const wxtGlobals = {
 	browser: 'readonly',
+	chrome: 'readonly',
 	defineBackground: 'readonly',
 	defineContentScript: 'readonly',
 	defineUnlistedScript: 'readonly',
 };
 
-export default tseslint.config(
+export default [
 	js.configs.recommended,
-	...tseslint.configs.recommended,
 	{
 		languageOptions: {
-			globals: wxtGlobals,
+			globals: { ...globals.browser, ...wxtGlobals },
 		},
 		rules: {
 			// Des espaces insécables (U+00A0) sont volontairement utilisées dans des template
@@ -24,17 +24,20 @@ export default tseslint.config(
 		},
 	},
 	{
-		// Ces fichiers sont des conversions mécaniques temporaires (@ts-nocheck en tête) —
-		// le vrai nettoyage/typage est prévu en Phase 3, pas la peine de les lint sévèrement pour l'instant.
-		files: ['entrypoints/spte.content.ts', 'entrypoints/popup/main.ts'],
-		rules: {
-			'@typescript-eslint/no-unused-vars': 'off',
-			'@typescript-eslint/no-explicit-any': 'off',
-			'@typescript-eslint/ban-ts-comment': 'off',
-			'no-useless-assignment': 'off',
+		// Tests : environnement jsdom (document/window) + Node (__dirname) + Vitest (describe/it/expect).
+		files: ['**/*.test.js'],
+		languageOptions: {
+			globals: { ...globals.browser, ...globals.node, ...globals.vitest },
+		},
+	},
+	{
+		// Fichiers de config, exécutés par Node, pas dans un navigateur.
+		files: ['vitest.config.js', 'wxt.config.js'],
+		languageOptions: {
+			globals: { ...globals.node },
 		},
 	},
 	{
 		ignores: ['.output/**', '.wxt/**', 'node_modules/**'],
 	},
-);
+];

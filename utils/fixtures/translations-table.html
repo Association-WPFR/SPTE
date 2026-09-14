@@ -1,9 +1,7 @@
 <!--
-	Fixture pour les tests DOM (Phase 8, TODO.md). Extraite/reconstituée à partir de vraies pages
-	translate.wordpress.org (curl anonyme sur le projet Mediapapa, 2026-09-14, + inspection live
-	via Claude-in-Chrome pour la ligne d'historique). Objectif : reproduire fidèlement les 2 formes
-	de ligne réellement rencontrées, dont celle qui a fait planter 3 fonctions différentes le
-	2026-09-14 (addForeignToolTip, rowsDisplay, la sélection en masse) faute de case à cocher.
+	Fixture reconstituée à partir de vraies pages translate.wordpress.org : reproduit les formes
+	de ligne réellement rencontrées, dont celle sans case à cocher (ligne d'historique) qui a fait
+	planter addForeignToolTip/rowsDisplay/la sélection en masse.
 -->
 <table id="translations" class="gp-table translations">
 	<thead>
@@ -79,11 +77,9 @@
 		</tr>
 
 		<!--
-			Ligne d'historique de révision : structure RÉELLEMENT rencontrée le 2026-09-14 sur une
-			page projet avec plusieurs révisions (inspection live confirmée via Claude-in-Chrome).
-			Un seul <td> (une date), PAS de case à cocher en première colonne, PAS de td.actions.
-			C'est exactement cette forme qui a fait planter addForeignToolTip / rowsDisplay /
-			la sélection en masse (tous supposaient `firstElementChild.firstElementChild` présent).
+			Ligne d'historique de révision : un seul <td> (une date), pas de case à cocher, pas de
+			td.actions. Cette forme a fait planter addForeignToolTip/rowsDisplay/la sélection en masse
+			(tous supposaient `firstElementChild.firstElementChild` présent).
 		-->
 		<tr class="preview status-current" id="preview-3-3" row="3-3">
 			<td title="2026-07-29 21:55:46">2026-07-29</td>

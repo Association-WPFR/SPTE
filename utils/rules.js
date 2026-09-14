@@ -1,8 +1,4 @@
-// Moteur de règles typographiques de SPTE.
-// Fusionne ce qui était auparavant 3 fichiers couplés à la main (data.js/regex.js/styles.js)
-// en un seul tableau typé `rules: TypographyRule[]` — chaque règle porte désormais son
-// identifiant, son texte et sa regex au même endroit, au lieu de clés de string recopiées
-// séparément dans 3 fichiers différents.
+// Moteur de règles typographiques de SPTE : chaque règle regroupe son id, son texte et sa regex.
 
 // Données brutes utilisées pour construire les regex ci-dessous.
 const data = {
@@ -21,11 +17,9 @@ const data = {
 		'roter l\'image',
 		'responsif',
 		's4est',
-		// Anglicismes ajoutés le 2026-09-12, sélection resserrée depuis la table "Termes critiques"
-		// de thierrypigot/wp-fr-typo (SKILL.md §3.2) : uniquement des mots qui n'ont jamais de sens
-		// correct en français standard, quel que soit le contexte (contrairement à des mots de la
-		// même table comme "paramètres" ou "motif", qui sont des mots français ordinaires ailleurs
-		// et créeraient de faux positifs s'ils étaient ajoutés ici).
+		// N'ajouter ici que des mots qui n'ont JAMAIS de sens correct en français (contrairement
+		// à "paramètres" ou "motif", qui sont des mots français ordinaires ailleurs et créeraient
+		// des faux positifs).
 		'plugin',
 		'greffon',
 		'uploader',
@@ -74,7 +68,11 @@ const data = {
 };
 
 // Échappe les données.
-function escapeRegExp(str: string) {
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeRegExp(str) {
 	return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/gm, '\\$&');
 }
 
@@ -113,12 +111,9 @@ export const rgxOpenBrace = new RegExp(`(?<! |\\${data.openBrace}|^)\\${data.ope
 export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)|\\.\\.\\.`, 'gmi');
 
 // Détecte le point. https://github.com/Association-WPFR/SPTE/wiki/rgxPeriod
-// NOTE (2026-09-12) : la 2e alternative ci-dessous est censée détecter un point collé entre
-// deux mots minuscules sans espace (ex: "mot.mot"), mais ne se déclenche jamais en pratique —
-// son lookbehind négatif `(?<![a-zÀ-ú0-9\.]*?)` matche toujours une chaîne vide (quantificateur
-// paresseux avec minimum 0), ce qui neutralise la condition. Comportement conservé tel quel
-// dans cette consolidation (pas de changement de logique non demandé) ; correction à faire
-// séparément, avec un test dédié qui verrouille le comportement voulu une fois fixé.
+// La 2e alternative (point collé entre 2 mots, ex: "mot.mot") ne se déclenche jamais en
+// pratique : son lookbehind négatif matche toujours une chaîne vide et neutralise la
+// condition. Comportement conservé tel quel — ne pas "corriger" sans test dédié.
 export const rgxPeriod = new RegExp(`(?<= |\u00a0)\\${data.period}(?!${fileExtensions})|(?<![a-zÀ-ú0-9\\${data.period}]*?)\\${data.period}(?=[a-zÀ-ú0-9])|\\${data.period}( $|\u00a0$)`, 'gmi');
 
 // Détecte la virgule. https://github.com/Association-WPFR/SPTE/wiki/rgxComma
@@ -155,10 +150,8 @@ export const rgxClosingFrQuote = new RegExp(`(?<!\u00a0)${data.closingFrQuote}|$
 export const rgxOpenFrQuote = new RegExp(`(?<! |^)${data.openFrQuote}|${data.openFrQuote}(?!\u00a0|$)`, 'gmi');
 
 // Détecte un point médian mal formé (écriture épicène) : caractère de substitution
-// (point, tiret, astérisque) utilisé à la place du vrai point médian U+00B7 (·).
-// Validation uniquement (le point médian correctement formé n'est jamais signalé) —
-// pas de détection de l'ABSENCE d'écriture inclusive, ni de suggestion de reformulation,
-// décision de Jason (2026-09-12) pour ce premier jet, cf. TODO.md.
+// (point, tiret, astérisque) à la place du vrai point médian U+00B7 (·). Validation
+// uniquement — ne détecte pas l'ABSENCE d'écriture inclusive (scope volontaire, cf. TODO.md).
 export const rgxEpicenePunctuation = /(?<=[a-zÀ-ú])[.\-*](?:e|rice|trice|ve|euse|esse|ale|ère|enne|ienne|elle)(?:[.\-*]s)?(?=[\s,.;:!?)»]|$)/gm;
 
 export const charTitle = 'Caractères à vérifier : ';
@@ -169,22 +162,24 @@ const nbkSpaceBeforeTitle = 'Non précédé par une espace insécable ou non sui
 const nbkSpaceAfterTitle = 'Non précédé par une espace ou non suivi par une espace insécable';
 
 // 'certain' (rouge) : erreur avérée. 'toVerify' (rose) : nécessite une relecture humaine,
-// jamais de correction automatique (cf. TODO.md, Phase 5). 'info' : simple indicateur visuel
-// (espaces rendues visibles), ni une erreur ni une hypothèse à vérifier.
-export type RuleSeverity = 'certain' | 'toVerify' | 'info';
+// jamais de correction automatique. 'info' : simple indicateur visuel (espaces rendues
+// visibles), ni une erreur ni une hypothèse à vérifier.
+/** @typedef {'certain' | 'toVerify' | 'info'} RuleSeverity */
 
-export interface TypographyRule {
-	id: string;
-	name: string;
-	title: string;
-	message: string;
-	severity: RuleSeverity;
-	cssClass: string;
-	counter: number;
-	regex: RegExp;
-}
+/**
+ * @typedef {Object} TypographyRule
+ * @property {string} id
+ * @property {string} name
+ * @property {string} title
+ * @property {string} message
+ * @property {RuleSeverity} severity
+ * @property {string} cssClass
+ * @property {number} counter
+ * @property {RegExp} regex
+ */
 
-export const rules: TypographyRule[] = [
+/** @type {TypographyRule[]} */
+export const rules = [
 	{
 		id: 'badWords',
 		name: '',

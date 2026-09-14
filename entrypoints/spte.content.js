@@ -1,6 +1,3 @@
-// @ts-nocheck
-// Conversion mécanique depuis spte.js (comportement inchangé). Le vrai typage de ce fichier
-// est prévu en Phase 3 (consolidation du moteur de règles), pas dans cette conversion WXT.
 import { rules, charTitle, charClass } from '../utils/rules';
 import { addStyle, createElement, parseCsv } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
@@ -17,16 +14,13 @@ import './style.css';
 export default defineContentScript({
 	matches: ['https://translate.wordpress.org/*'],
 	main() {
-		// Accès rapide à une règle par son id (remplace l'accès direct par clé d'objet
-		// de l'ancien format `cases[id]`, devenu un tableau `rules: TypographyRule[]`).
+		// Accès rapide à une règle par son id.
 		const rulesById = new Map(rules.map((rule) => [rule.id, rule]));
 		// Vérification de la localisation.
 		const onTranslateWordPressRoot = (/https:\/\/translate\.wordpress\.org\//).test(window.location.href);
 
-		// SLUG (identifiant de la locale) : dérivé du chemin de l'URL (/projects/.../<locale>/<set>/
-		// ou /locale/<locale>/...), en ne retenant le segment que s'il ressemble vraiment à un slug
-		// de locale GlotPress (ex: fr, fr-be, fr-ca) — sinon on retombe sur 'fr' comme avant, plutôt
-		// que de retenir un segment de chemin qui n'a rien à voir (ex: 'wp-plugins', 'default').
+		// Slug de locale dérivé du chemin de l'URL, validé par pattern (fr, fr-be...) pour éviter
+		// de prendre un segment sans rapport (ex: 'wp-plugins') — repli sur 'fr' sinon.
 		let currentProjectLocaleSlug = '';
 		const pathSegments = window.location.pathname.split('/').filter(Boolean);
 		const localeSlugPattern = /^[a-z]{2,3}(-[a-z0-9]{2,6})?$/;
@@ -41,8 +35,7 @@ export default defineContentScript({
 		// Liens externes utilisés par SPTE.
 		const typographyURL = 'https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/';
 		const glossaryURL = `https://translate.wordpress.org/locale/${currentProjectLocaleSlug}/default/glossary/`;
-		// Export CSV officiel du glossaire (colonnes en,fr,pos,description), plus robuste que le
-		// scraping HTML de la page ci-dessus qui servait auparavant à la fois d'affichage et de source de données.
+		// Export CSV officiel du glossaire (colonnes en,fr,pos,description).
 		const glossaryExportURL = `${glossaryURL}-export/`;
 
 		// Réglages (localStorage ne gère pas les booléens).
@@ -50,7 +43,7 @@ export default defineContentScript({
 		let lsShowOnlyWarning = localStorage.getItem('spteShowOnlyWarning') === 'true';
 
 		// Principaux éléments existants.
-		const gpContent = document.querySelector('.gp-content');
+		const gpContent = /** @type {HTMLElement | null} */ (document.querySelector('.gp-content'));
 		if (gpContent) { gpContent.style.maxWidth = '85% !important'; }
 		const translations = document.querySelectorAll('tr.preview:not(.sp-has-spte-error) .translation-text');
 		const bulkActions = document.querySelector('#bulk-actions-toolbar-top');
@@ -59,17 +52,15 @@ export default defineContentScript({
 		}
 		const tableTranslations = document.querySelector('#translations');
 		const filterToolbar = document.querySelector('.filter-toolbar');
-		const filterToolbarsDiv = document.querySelector('.filters-toolbar>div:first-child');
 		const isConnected = document.querySelector('body.logged-in') !== null;
 		const GDmayBeOnBoard = localStorage.getItem('gd_language') !== null;
 
 		// Principaux éléments créés.
-		const gpSeparator = createElement('SPAN', { class: 'separator' }, '•');
 		const spPopup = createElement('DIV', { id: 'sp-the-popup', class: 'sp-the-popup--hidden', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Résultats de cohérence', tabindex: '-1' });
 		const spGDNoticesContainer = createElement('DIV', { id: 'sp-gd-notices-container' });
 		const spConsistency = createElement('DIV', { id: 'sp-consist-container' });
 		const spConsistencyLabel = createElement('LABEL', { for: 'sp-consist__text' }, 'Cohérence d’une chaîne');
-		const spConsistencyInputText = createElement('INPUT', { type: 'text', id: 'sp-consist__text', name: 'spConsistencyInputText', value: '' });
+		const spConsistencyInputText = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'text', id: 'sp-consist__text', name: 'spConsistencyInputText', value: '' }));
 		const spConsistencyBtn = createElement('INPUT', { type: 'button', id: 'sp-consist__btn', name: 'spConsistencyBtn', value: 'Vérifier' });
 		spConsistency.append(spConsistencyLabel, spConsistencyInputText, spConsistencyBtn);
 		const spControls = createElement('DIV', { id: 'sp-controls' });
@@ -88,36 +79,32 @@ export default defineContentScript({
 		glossaryLink.innerHTML = `Consultez <a class="sp-caption-link sp-caption-link--glossary" target="_blank" href="${glossaryURL}">le glossaire officiel</a> à respecter pour les mots.`;
 		const hideCaption = createElement('A', { id: 'sp-results__toggle-caption', href: '#', title: 'Légende' });
 		const spFilters = createElement('DIV', { class: 'sp-controls__filters' }, 'Afficher  ');
-		const showEverything = createElement('INPUT', { type: 'radio', id: 'sp-show-all-translations', name: 'showEverything', value: 'showEverything', checked: 'checked' });
+		const showEverything = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'radio', id: 'sp-show-all-translations', name: 'showEverything', value: 'showEverything', checked: 'checked' }));
 		const showEverythingLabel = createElement('LABEL', { for: 'sp-show-all-translations' }, 'Tout');
-		const showOnlyWarning = createElement('INPUT', { type: 'radio', id: 'sp-show-only-warnings', name: 'showOnlyWarning', value: 'showOnlyWarning' });
+		const showOnlyWarning = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'radio', id: 'sp-show-only-warnings', name: 'showOnlyWarning', value: 'showOnlyWarning' }));
 		const showOnlyWarningLabel = createElement('LABEL', { for: 'sp-show-only-warnings' }, 'Les avertissements (de cette page)');
-		showEverything.checked = lsShowOnlyWarning ? '' : 'checked';
-		showOnlyWarning.checked = lsShowOnlyWarning ? 'checked' : '';
+		showEverything.checked = lsShowOnlyWarning ? false : true;
+		showOnlyWarning.checked = lsShowOnlyWarning ? true : false;
 		spFilters.append(showEverything, showEverythingLabel, showOnlyWarning, showOnlyWarningLabel);
 
 		const pteControls = createElement('DIV', { class: 'sp-controls__pte' });
-		const spSelectErrors = createElement('INPUT', { type: 'checkbox', id: 'sp-select-errors', name: 'spteSelectErrors', value: 'spteSelectErrors' });
+		const spSelectErrors = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'checkbox', id: 'sp-select-errors', name: 'spteSelectErrors', value: 'spteSelectErrors' }));
 		const spSelectErrorsLabel = createElement('LABEL', { for: 'sp-select-errors' }, 'Cocher les mots et apostrophes');
 		if (bulkActions) {
 			pteControls.append(spSelectErrors, spSelectErrorsLabel);
 		}
 
 		// Éléments spécifiques à la locale française.
-		// `#locales`/`div.locale` (ancienne structure ciblée ici) a disparu du DOM de GlotPress —
-		// régression silencieuse confirmée par audit le 2026-09-14, `#stats-table` est la structure
-		// actuelle pour la liste des locales d'un projet, déjà ciblée par frenchStatsGlobal ci-dessous.
 		const frenchStatsGlobal = document.querySelector('#stats-table tr a[href*="/locale/fr/"]');
 		const frenchStatsSpecific = document.querySelector('#translation-sets tr a[href*="/fr/"]');
 
-		// Empêche les balises de GlotDict dans l’aperçu en forçant ses réglages, car quand GlotDict s’exécute après SPTE, il ne s’attend pas à trouver des balises et peut planter.
+		// GlotDict plante s'il s'exécute après SPTE et trouve des balises qu'il n'attend pas : on force ses réglages pour les désactiver en amont.
 		function preventGlotDictTags() {
 			localStorage.setItem('gd_curly_apostrophe_highlight', 'true');
 			localStorage.setItem('gd_non_breaking_space_highlight', 'true');
 		}
 
-		// addForeignToolTip() et addEditorHighlighter() sont désormais dans utils/dom.ts
-		// (Phase 8, testées avec de vraies fixtures HTML — utils/dom.test.ts).
+		// addForeignToolTip() et addEditorHighlighter() sont dans utils/dom.js.
 
 		// Ajoute des classes CSS à la ligne d’aperçu selon les avertissements.
 		function tagTRTranslations(preview) {
@@ -132,7 +119,7 @@ export default defineContentScript({
 			}
 		}
 
-		// Affichage des lignes (logique testée dans utils/dom.test.ts).
+		// Affichage des lignes (logique testée dans utils/dom.test.js).
 		function rowsDisplay() {
 			const rows = document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)');
 			if (lsShowOnlyWarning) {
@@ -157,9 +144,9 @@ export default defineContentScript({
 			// Pour la compatibilité des regex, on remplace les entités HTML d’espace insécable par le vrai caractère.
 			text = text.replaceAll(/&nbsp;/gmi, ' ');
 
-			// on mémorise le texte sans les balises.
+			// On mémorise le texte sans les balises.
 			let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
-			// pour chaque règle typographique...
+			// Pour chaque règle typographique...
 			for (const rule of rules) {
 				text = text.replace(rule.regex, (string) => {
 					// Si le cas est présent dans le texte mais pas dans textWithoutTags, il ne doit pas être traité.
@@ -235,10 +222,10 @@ export default defineContentScript({
 					if (counter) {
 						// Deux règles peuvent partager le même cssClass (ex: quotes/doubleQuotes) :
 						// on cumule plutôt que d'écraser le compteur de la première.
-						counter.textContent = Number(counter.textContent) + rule.counter;
+						counter.textContent = String(Number(counter.textContent) + rule.counter);
 					} else {
 						const title = createElement('SPAN', {}, rule.title);
-						counter = createElement('SPAN', { class: `${rule.cssClass} sp-warning-title` }, rule.counter);
+						counter = createElement('SPAN', { class: `${rule.cssClass} sp-warning-title` }, String(rule.counter));
 						title.append(counter);
 						resultsData.append(title);
 					}
@@ -251,9 +238,9 @@ export default defineContentScript({
 
 			let counter = document.querySelector(`.${charClass}.sp-warning-title`);
 			if (counter) {
-				counter.textContent = nbCharacter;
+				counter.textContent = String(nbCharacter);
 			} else if (nbCharacter) {
-				counter = createElement('SPAN', { class: `${charClass} sp-warning-title` }, nbCharacter);
+				counter = createElement('SPAN', { class: `${charClass} sp-warning-title` }, String(nbCharacter));
 				title.append(counter);
 				resultsData.append(title);
 			}
@@ -273,12 +260,12 @@ export default defineContentScript({
 				filterToolbar.append(results);
 			}
 			const characters = document.querySelector('.sp-warning-title.sp-warning--char');
-			if (nbCharacter === 0 && characters) {
-				characters.parentNode.remove();
+			if (nbCharacter === 0 && characters?.parentElement) {
+				characters.parentElement.remove();
 			}
 			const quotes = document.querySelector('.sp-warning-title.sp-warning--quote');
-			if (rulesById.get('quotes').counter === 0 && rulesById.get('doubleQuotes').counter === 0 && quotes) {
-				quotes.parentNode.remove();
+			if (rulesById.get('quotes').counter === 0 && rulesById.get('doubleQuotes').counter === 0 && quotes?.parentElement) {
+				quotes.parentElement.remove();
 			}
 		}
 
@@ -287,15 +274,15 @@ export default defineContentScript({
 			if (!showOnlyWarning || !showEverything) { return; }
 
 			showOnlyWarning.addEventListener('click', () => {
-				showOnlyWarning.checked = 'checked';
-				showEverything.checked = '';
+				showOnlyWarning.checked = true;
+				showEverything.checked = false;
 				localStorage.setItem('spteShowOnlyWarning', 'true');
 				lsShowOnlyWarning = true;
 				rowsDisplay();
 			});
 			showEverything.addEventListener('click', () => {
-				showEverything.checked = 'checked';
-				showOnlyWarning.checked = '';
+				showEverything.checked = true;
+				showOnlyWarning.checked = false;
 				localStorage.setItem('spteShowOnlyWarning', 'false');
 				lsShowOnlyWarning = false;
 				rowsDisplay();
@@ -316,7 +303,7 @@ export default defineContentScript({
 		}
 
 		// Spécifique à la page de présentation d’un projet (liste des locales disponibles), fait
-		// remonter la ligne FR en première position du tableau (logique testée dans utils/dom.test.ts).
+		// remonter la ligne FR en première position du tableau (logique testée dans utils/dom.test.js).
 		function frenchiesGoFirst() {
 			moveFrenchRowToFirst(frenchStatsGlobal, GDmayBeOnBoard);
 		}
@@ -336,30 +323,37 @@ export default defineContentScript({
 		// Observe les mutations.
 		function observeMutations() {
 			const observerMutations = new MutationObserver((mutations) => {
+				/** @type {string | undefined} */
 				let removedRowID;
+				/** @type {string | undefined} */
 				let addedRowID;
+				/** @type {string | undefined} */
 				let oldStatus;
+				/** @type {string | undefined} */
 				let newStatus;
 				let translation;
 				mutations.forEach((mutation) => {
-					mutation.removedNodes.forEach((removedNode) => {
+					mutation.removedNodes.forEach((node) => {
+						if (node.nodeType !== 1) { return; }
+						const removedNode = /** @type {Element} */ (node);
 						if (!removedRowID && !oldStatus && removedNode.nodeName === 'TR' && removedNode.classList.contains('preview')) {
 							removedRowID = removedNode.id;
 							if (removedNode.classList.contains('untranslated')) {
 								oldStatus = 'untranslated';
 							} else {
-								oldStatus = removedNode.classList.value.match('(?<=status-)(\\w*)(?= )')[0];
+								oldStatus = removedNode.classList.value.match('(?<=status-)(\\w*)(?= )')?.[0];
 							}
 						}
 					});
 
-					mutation.addedNodes.forEach((addedNode) => {
-						if (addedNode.nodeType !== 1) {	return;	}
+					mutation.addedNodes.forEach((node) => {
+						if (node.nodeType !== 1) {	return;	}
+						const addedNode = /** @type {Element} */ (node);
 
 						// Lignes correspondant à des changements de statut.
 						if (!addedRowID && !newStatus && addedNode.nodeName === 'TR' && addedNode.classList.contains('preview')) {
 							addedRowID = addedNode.id;
-							newStatus = addedNode.classList.value.match('(?<=status-)(\\w*)(?= )')[0];
+							newStatus = addedNode.classList.value.match('(?<=status-)(\\w*)(?= )')?.[0];
 						}
 
 						// Notices de GlotDict. Attention, si le parent doit changer, on vérifie que addedNode n’a pas déjà été ajouté au parent.
@@ -499,7 +493,7 @@ export default defineContentScript({
 
 		function getGlossaryRegex(glossary) {
 			const badWordsRegexPattern = rulesById.get('badWords').regex.source;
-			// on duplique chaque mot avec un s final pour pouvoir traiter les pluriels.
+			// On duplique chaque mot avec un s final pour pouvoir traiter les pluriels.
 			const glossaryWithPlurals = glossary.reduce((a, i) => a.concat(i, `${i}s`), []);
 			const glossaryRegexPattern = `${glossaryWithPlurals.join('(?=[\\s,:;"\']|$)|(?<=[\\s,:;"\']|^)(?<!«\\s)')}(?=[\\s,.:;"']|$)`;
 			const newRgxBadWords = new RegExp(`${badWordsRegexPattern}|${glossaryRegexPattern}`, 'gm');
@@ -560,12 +554,9 @@ export default defineContentScript({
 						const entries = rows.slice(1)
 							.filter((row) => !row.some((field) => field.toLowerCase().includes('spte') || field.toLowerCase().includes('[np]')));
 
-						// On ne garde un terme anglais que si au moins une de ses traductions officielles
-						// diffère du mot anglais lui-même (sinon rien à signaler : un mot identique en
-						// français et en anglais, ex. « dimensions », « plugin », ne doit pas être surligné
-						// à chaque occurrence légitime). Ne résout pas le cas d'un terme ayant plusieurs sens
-						// dont un seul diffère (ex. « support » nom vs verbe) : ça reste signalé, faute de
-						// pouvoir distinguer le sens utilisé dans la traduction — limitation connue.
+						// Ne garde un terme anglais que si une traduction officielle diffère du mot lui-même
+						// (sinon un mot identique en FR/EN, ex. « plugin », serait surligné à tort). Limitation
+						// connue : un terme polysémique (ex. « support » nom/verbe) reste signalé dans tous les cas.
 						const termsWithDifferentTranslation = new Set();
 						entries.forEach((row) => {
 							const en = (row[enIndex] || '').trim().toLowerCase();
@@ -580,7 +571,7 @@ export default defineContentScript({
 
 						mainProcesses(spteSettings);
 
-						let settings = {};
+						let settings;
 						if (hasExistingSettings) {
 							settings = spteSettings;
 							settings.spteLastUpdateGlossary = todayDate.toISOString().substring(0, 10);
@@ -603,8 +594,8 @@ export default defineContentScript({
 							};
 						}
 
-						browser.storage.local.set({ spteSettings: settings }, () => {
-							if (browser.runtime.error) {	console.log('Impossible d’initialiser les paramètres'); }
+						browser.storage.local.set({ spteSettings: settings }).catch(() => {
+							console.log('Impossible d’initialiser les paramètres');
 						});
 					} else {
 						// Format CSV inattendu (colonne "en" introuvable) : on ne bloque pas tout,
@@ -622,8 +613,7 @@ export default defineContentScript({
 			}
 		}
 
-		browser.storage.local.get('spteSettings', (data) => {
-			if (browser.runtime.error) { return; }
+		browser.storage.local.get('spteSettings').then((data) => {
 			launchProcess(data.spteSettings);
 		});
 	},

@@ -2,17 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { buildWarningSpanHTML } from './warnings';
 import { rules } from './rules';
 
-const badWordsRule = rules.find((rule) => rule.id === 'badWords')!;
-const colonRule = rules.find((rule) => rule.id === 'colon')!;
-const spaceRule = rules.find((rule) => rule.id === 'Space')!;
+const badWordsRule = rules.find((rule) => rule.id === 'badWords');
+const colonRule = rules.find((rule) => rule.id === 'colon');
+const spaceRule = rules.find((rule) => rule.id === 'Space');
 
 describe('buildWarningSpanHTML', () => {
 	it('ne produit jamais de double espace dans aria-label (régression du 2026-09-14)', () => {
-		// Bug historique : `${ariaName} ${rule.message}` ajoutait une espace en trop, ariaName se
-		// terminant déjà par une espace ("support. "). Le double espace généré était ensuite
-		// re-détecté par la règle "espace en double" lors d'un passage ultérieur de la boucle de
-		// checkTranslation(), qui insérait alors son propre <span> à l'intérieur de cet attribut
-		// et cassait le balisage HTML (affiché en texte brut au lieu d'être interprété).
+		// ariaName se termine déjà par une espace ("support. ") : un double espace ici cassait
+		// le balisage HTML (re-détecté et surligné par la règle "espace en double" elle-même).
 		const html = buildWarningSpanHTML(badWordsRule, 'support');
 		expect(html).not.toMatch(/aria-label="[^"]* {2}/);
 	});
@@ -41,7 +38,7 @@ describe('buildWarningSpanHTML', () => {
 		const html = buildWarningSpanHTML(badWordsRule, 'support');
 		const fragment = document.createRange().createContextualFragment(html);
 		expect(fragment.childNodes).toHaveLength(1);
-		const span = fragment.firstChild as HTMLElement;
+		const span = /** @type {Element} */ (fragment.firstChild);
 		expect(span.tagName).toBe('SPAN');
 		expect(span.textContent).toBe('support');
 		// Si le HTML était cassé (balise ouverte en plein milieu d'un attribut), le texte visible

@@ -21,14 +21,14 @@ describe('addForeignToolTip', () => {
 	});
 
 	it('ajoute la tooltip sur une ligne normale (td.actions présent)', () => {
-		const translated = document.querySelector('#preview-1-1 .translation-text')!;
+		const translated = document.querySelector('#preview-1-1 .translation-text');
 		addForeignToolTip(translated);
-		const hook = document.querySelector('#preview-1-1 td.actions')!;
+		const hook = document.querySelector('#preview-1-1 td.actions');
 		expect(hook.querySelector('.sp-foreign-tooltip')).not.toBeNull();
 	});
 
 	it('ne plante pas sur la ligne d’historique (pas de td.actions) — bug confirmé le 2026-09-14', () => {
-		const historyRow = document.querySelector('#preview-3-3')!;
+		const historyRow = document.querySelector('#preview-3-3');
 		// La ligne d'historique n'a pas de .translation-text ; on simule l'appel tel qu'il
 		// arriverait réellement (translation = un élément quelconque de cette ligne).
 		expect(() => addForeignToolTip(historyRow)).not.toThrow();
@@ -41,9 +41,9 @@ describe('addEditorHighlighter', () => {
 	});
 
 	it('clone la traduction dans le panneau d’édition suivant', () => {
-		const translated = document.querySelector('#preview-1-1 .translation-text')!;
+		const translated = document.querySelector('#preview-1-1 .translation-text');
 		addEditorHighlighter(translated);
-		const sourceDetails = document.querySelector('#editor-1-1 .source-details')!;
+		const sourceDetails = document.querySelector('#editor-1-1 .source-details');
 		expect(sourceDetails.querySelector('.sp-editor-highlighter')).not.toBeNull();
 		expect(sourceDetails.querySelector('.sp-editor-highlighter')?.textContent).toBe('Fichier');
 	});
@@ -51,9 +51,9 @@ describe('addEditorHighlighter', () => {
 	it('ne plante pas sur la toute dernière ligne du tableau (pas de ligne suivante) — bug confirmé le 2026-09-14', () => {
 		// La ligne 4-4 (dernière du tbody) est immédiatement suivie de rien : on la place
 		// artificiellement en dernière position pour isoler le cas.
-		const lastRow = document.querySelector('#preview-4-4')!;
-		lastRow.parentElement!.appendChild(lastRow);
-		const translated = lastRow.querySelector('.original-text')!; // pas de .translation-text ici, peu importe pour ce test
+		const lastRow = document.querySelector('#preview-4-4');
+		lastRow.parentElement.appendChild(lastRow);
+		const translated = lastRow.querySelector('.original-text'); // pas de .translation-text ici, peu importe pour ce test
 		expect(() => addEditorHighlighter(translated)).not.toThrow();
 	});
 });
@@ -68,12 +68,12 @@ describe('hideNonWarningRows / showAllRows', () => {
 		expect(rows.length).toBeGreaterThan(1);
 		expect(() => hideNonWarningRows(rows, true)).not.toThrow();
 		rows.forEach((row) => {
-			expect((row as HTMLElement).style.display).toBe('none');
+			expect(/** @type {HTMLElement} */ (row).style.display).toBe('none');
 		});
 	});
 
 	it('décoche la case des lignes qui en ont une, ignore silencieusement celles qui n’en ont pas', () => {
-		const checkbox = document.querySelector('#preview-1-1 input[type=checkbox]') as HTMLInputElement;
+		const checkbox = /** @type {HTMLInputElement} */ (document.querySelector('#preview-1-1 input[type=checkbox]'));
 		checkbox.checked = true;
 		const rows = document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)');
 		hideNonWarningRows(rows, true);
@@ -85,7 +85,7 @@ describe('hideNonWarningRows / showAllRows', () => {
 		hideNonWarningRows(rows, false);
 		showAllRows(rows);
 		rows.forEach((row) => {
-			expect((row as HTMLElement).style.display).toBe('table-row');
+			expect(/** @type {HTMLElement} */ (row).style.display).toBe('table-row');
 		});
 	});
 });
@@ -96,15 +96,15 @@ describe('setRowCheckboxSafely', () => {
 	});
 
 	it('coche/décoche la case quand elle existe', () => {
-		const row = document.querySelector('#preview-1-1')!;
+		const row = document.querySelector('#preview-1-1');
 		expect(setRowCheckboxSafely(row, true)).toBe(true);
-		expect((row.querySelector('input[type=checkbox]') as HTMLInputElement).checked).toBe(true);
+		expect(/** @type {HTMLInputElement} */ (row.querySelector('input[type=checkbox]')).checked).toBe(true);
 		expect(setRowCheckboxSafely(row, false)).toBe(true);
-		expect((row.querySelector('input[type=checkbox]') as HTMLInputElement).checked).toBe(false);
+		expect(/** @type {HTMLInputElement} */ (row.querySelector('input[type=checkbox]')).checked).toBe(false);
 	});
 
 	it('ne plante pas sur la ligne d’historique sans case à cocher — bug confirmé le 2026-09-14', () => {
-		const historyRow = document.querySelector('#preview-3-3')!;
+		const historyRow = document.querySelector('#preview-3-3');
 		expect(() => setRowCheckboxSafely(historyRow, true)).not.toThrow();
 		expect(setRowCheckboxSafely(historyRow, true)).toBe(false);
 	});
@@ -121,7 +121,7 @@ describe('setErrorRowsSelection', () => {
 		const count = setErrorRowsSelection(errorRows, true);
 		expect(count).toBe(errorRows.length);
 		errorRows.forEach((row) => {
-			expect((row.querySelector('input[type=checkbox]') as HTMLInputElement).checked).toBe(true);
+			expect(/** @type {HTMLInputElement} */ (row.querySelector('input[type=checkbox]')).checked).toBe(true);
 		});
 	});
 
@@ -131,7 +131,7 @@ describe('setErrorRowsSelection', () => {
 		const count = setErrorRowsSelection(errorRows, false);
 		expect(count).toBe(0);
 		errorRows.forEach((row) => {
-			expect((row.querySelector('input[type=checkbox]') as HTMLInputElement).checked).toBe(false);
+			expect(/** @type {HTMLInputElement} */ (row.querySelector('input[type=checkbox]')).checked).toBe(false);
 		});
 	});
 });
@@ -143,7 +143,7 @@ describe('moveFrenchRowToFirst', () => {
 
 	it('remonte la ligne française en première position (structure #stats-table actuelle)', () => {
 		const frenchLink = document.querySelector('a[href*="/locale/fr/"]');
-		const tbody = document.querySelector('#stats-table tbody')!;
+		const tbody = document.querySelector('#stats-table tbody');
 		expect(tbody.querySelector('tr:first-child th')?.getAttribute('title')).toBe('af');
 
 		const moved = moveFrenchRowToFirst(frenchLink, false);
@@ -154,7 +154,7 @@ describe('moveFrenchRowToFirst', () => {
 
 	it('ne fait rien si GlotDict est présent (évite le conflit avec son propre réordonnancement)', () => {
 		const frenchLink = document.querySelector('a[href*="/locale/fr/"]');
-		const tbody = document.querySelector('#stats-table tbody')!;
+		const tbody = document.querySelector('#stats-table tbody');
 
 		const moved = moveFrenchRowToFirst(frenchLink, true);
 
