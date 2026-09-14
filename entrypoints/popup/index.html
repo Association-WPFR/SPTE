@@ -54,11 +54,6 @@
 							</div>
 							<span class="hint short">Surligne les mots déconseillés par le glossaire officiel en plus des fautes de frappe</span>
 						</fieldset>
-						<fieldset class="input-fields">
-							<label for="settings-locales" class="toggle-text"><span class="whatisthat" title="Inscrire chaque slug de locale séparé par un point virgule. &#013;Le slug étant la partie unique de l’URL désignant la locale. &#013;Exemples : fr-be;fr-ca">🛈 </span>Locales supplémentaires</label>
-							<input id="settings-locales" class="settings entry" type="text" placeholder="" />
-							<span class="hint">Locales sur lesquelles utiliser SPTE</span>
-						</fieldset>
 					</div>
 					<div class="panel" id="two-panel">
 						<fieldset class="toggle-fields">
@@ -71,20 +66,22 @@
 						</fieldset>
 						<fieldset class="toggle-fields">
 							<div class="toggle-container">
-								<label for="settings-gpcontent-big" class="toggle-text"><span href="#" class="whatisthat" title="Appliquer l’agrandissement &#013;du contenu de la page à tout le site">🛈 </span>Agrandir la page</label>
+								<label for="settings-enlarge-table" class="toggle-text"><span href="#" class="whatisthat" title="Élargit la table de traduction à 85% de la page. Actif par défaut.">🛈 </span>Agrandir les pages de traduction</label>
+								<input id="settings-enlarge-table" type="checkbox" class="toggle toggle-light" checked>
+								<label for="settings-enlarge-table" class="toggle-btn"></label>
+							</div>
+							<span class="hint short">Actif par défaut, <strong>sur les pages de traduction</strong></span>
+						</fieldset>
+						<fieldset class="toggle-fields">
+							<div class="toggle-container">
+								<label for="settings-gpcontent-big" class="toggle-text"><span href="#" class="whatisthat" title="Élargit le reste de GlotPress (hors pages de traduction) à 85% de la page, &#013;pour profiter d’un grand écran au lieu du plafond natif d’environ 1600px.">🛈 </span>Agrandir le reste de GlotPress</label>
 								<input id="settings-gpcontent-big" type="checkbox" class="toggle toggle-light">
 								<label for="settings-gpcontent-big" class="toggle-btn"></label>
 							</div>
-							<span class="hint short">Agrandir la page <strong>sur tout le site</strong></span>
-						</fieldset>
-						<fieldset class="input-fields">
-							<label for="settings-gpcontent-maxwidth" class="toggle-text"><span class="whatisthat" title="Largeur maximale à appliquer sur le reste du site &#013;(par défaut = 85%). &#013;Les tables de traduction resteront à 85%.">🛈 </span>Largeur maximale</label>
-							<input id="settings-gpcontent-maxwidth" class="settings entry onsameline" type="number" min="10" max="100" step="1" placeholder="" /><span class="percent"> %</span>
-							<span class="hint newline">Largeur max du contenu <strong>sur le reste</strong> du site</span>
+							<span class="hint short">Sur le reste de GlotPress, <strong>hors pages de traduction</strong></span>
 						</fieldset>
 					</div>
 				</div>
-				<button type="submit" id="settings-save-btn">Enregistrer</button>
 			</div>
 		</form>
 	</div>

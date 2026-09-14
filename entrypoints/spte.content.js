@@ -1,6 +1,7 @@
 import { rules, charTitle, charClass } from '../utils/rules';
 import { addStyle, createElement, parseCsv } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
+import { createDefaultSettings } from '../utils/settings';
 import {
 	addForeignToolTip,
 	addEditorHighlighter,
@@ -467,28 +468,13 @@ export default defineContentScript({
 			}
 		}
 
-		function gpContentMaxWidth(spteGpcontentBig, spteGpcontentMaxWitdh) {
-			spteGpcontentMaxWitdh = spteGpcontentMaxWitdh === '' ? 0 : spteGpcontentMaxWitdh;
+		function gpContentMaxWidth(spteEnlargeTable, spteGpcontentBig) {
+			const enlargeTable = spteEnlargeTable !== 'false';
+			const enlargeRest = spteGpcontentBig === 'true';
 
-			if (tableTranslations || (spteGpcontentBig && spteGpcontentBig === 'true' && parseInt(spteGpcontentMaxWitdh, 10) === 0)) {
+			if ((tableTranslations && enlargeTable) || (!tableTranslations && enlargeRest)) {
 				addStyle('.gp-content', 'max-width: 85% !important');
-			} else if (!tableTranslations && spteGpcontentBig && spteGpcontentBig === 'true' && parseInt(spteGpcontentMaxWitdh, 10) !== 0) {
-				addStyle('.gp-content', `max-width: ${parseInt(spteGpcontentMaxWitdh, 10)}% !important`);
 			}
-		}
-
-		function isOnAcceptableLocale(slugs) {
-			let onAcceptableLocale = false;
-			slugs = slugs.replace(/;\s*$/, '');
-			if (slugs.includes(';')) {
-				slugs.split(';').forEach((otherLocale) => {
-					if (onAcceptableLocale) { return; }
-					onAcceptableLocale = (new RegExp(`/${otherLocale}/`, 'gi')).test(window.location.href);
-				});
-			} else {
-				onAcceptableLocale = (new RegExp(`/${slugs}/`, 'gi')).test(window.location.href);
-			}
-			return onAcceptableLocale;
 		}
 
 		function getGlossaryRegex(glossary) {
@@ -502,16 +488,12 @@ export default defineContentScript({
 
 		function mainProcesses(spteSettings) {
 			document.body.appendChild(spPopup);
-			gpContentMaxWidth(spteSettings.spteGpcontentBig, spteSettings.spteGpcontentMaxWitdh);
+			gpContentMaxWidth(spteSettings.spteEnlargeTable, spteSettings.spteGpcontentBig);
 			if (spteSettings.spteBetterReadability && spteSettings.spteBetterReadability === 'true') { document.body.classList.add('sp-better-readability'); }
 
 			const onFrenchLocale = (/\/fr\//).test(window.location.href);
-			let onOtherLocale = false;
-			if (!onFrenchLocale && spteSettings.spteOtherSlugs) {
-				onOtherLocale = isOnAcceptableLocale(spteSettings.spteOtherSlugs);
-			}
 
-			if ((onFrenchLocale || onOtherLocale) && gpContent && tableTranslations) {
+			if (onFrenchLocale && gpContent && tableTranslations) {
 				setColors(spteSettings.spteColorWord, spteSettings.spteColorQuote, spteSettings.spteColorChar);
 				preventGlotDictTags();
 				translations.forEach(checkTranslation);
@@ -578,20 +560,10 @@ export default defineContentScript({
 							settings.spteGlossary = difference;
 							settings.spteActiveGlossary = 'true';
 						} else {
-							settings = {
-								spteColorWord: '',
-								spteColorQuote: '',
-								spteColorChar: '',
-								spteBlackToolTip: 'checked',
-								spteBetterReadability: '',
-								spteOtherSlugs: '',
-								spteFrenchFlag: 'checked',
-								spteGpcontentBig: '',
-								spteGpcontentMaxWitdh: '',
-								spteActiveGlossary: 'checked',
+							settings = createDefaultSettings({
 								spteLastUpdateGlossary: todayDate.toISOString().substring(0, 10),
 								spteGlossary: difference,
-							};
+							});
 						}
 
 						browser.storage.local.set({ spteSettings: settings }).catch(() => {

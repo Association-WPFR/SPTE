@@ -256,6 +256,7 @@ button.fieldset-btn-lnk {
     text-decoration: underline;
     width: auto;
     margin-top: 0;
+    border: 2px solid transparent;
 }
 
 button:hover,
@@ -267,7 +268,7 @@ button.fieldset-btn-lnk:hover,
 button.fieldset-btn-lnk:focus,
 button.fieldset-btn-lnk:active {
     color: var(--text-link-hover);
-    border: 2px solid;
+    border-color: currentColor;
     background: transparent;
 }
 
@@ -380,20 +381,3 @@ input[type=text]:focus {
     width: 100%;
 }
 
-#settings-gpcontent-maxwidth,
-.percent {
-    display: inline-block;
-}
-
-#settings-gpcontent-maxwidth {
-    max-width: 70px;
-}
-
-.newline {
-    display: block;
-    margin-top: 7px;
-}
-
-.onsameline {
-    margin: 1px 0 0 10px;
-}

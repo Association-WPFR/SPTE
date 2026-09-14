@@ -1,21 +1,29 @@
-/**
- * @typedef {Object} SpteSettings
- * @property {string} spteColorWord
- * @property {string} spteColorQuote
- * @property {string} spteColorChar
- * @property {string} spteBlackToolTip
- * @property {string} spteBetterReadability
- * @property {string} spteOtherSlugs
- * @property {string} spteFrenchFlag
- * @property {string} spteGpcontentBig
- * @property {string} spteGpcontentMaxWitdh
- * @property {string} spteActiveGlossary
- * @property {string} [spteLastUpdateGlossary]
- * @property {string[] | string} [spteGlossary]
- */
+import { createDefaultSettings } from '../../utils/settings';
+
+/** @typedef {import('../../utils/settings').SpteSettings} SpteSettings */
 
 const settingsForm = document.querySelector('#settings-form');
 const isFirefox = import.meta.env.FIREFOX;
+
+/** @returns {Record<string, HTMLInputElement | null>} */
+function getFormFields() {
+	return {
+		colorWord: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__word')),
+		colorQuote: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__quote')),
+		colorChar: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__char')),
+		blackToolTip: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-blacktooltip')),
+		betterReadability: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-betterreadability')),
+		frenchFlag: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-frenchflag')),
+		enlargeTable: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-enlarge-table')),
+		gpcontentBig: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-gpcontent-big')),
+		gpActiveGlossary: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-importglossary')),
+	};
+}
+
+/** @param {Record<string, HTMLInputElement | null>} fields */
+function hasAllFields(fields) {
+	return Object.values(fields).every(Boolean);
+}
 
 if (isFirefox) {
 	document.querySelectorAll('#settings-color__word, #settings-color__quote, #settings-color__char').forEach((element) => {
@@ -29,17 +37,9 @@ if (isFirefox) {
 }
 
 async function saveSettings() {
-	const colorWord = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__word'));
-	const colorQuote = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__quote'));
-	const colorChar = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__char'));
-	const blackToolTip = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-blacktooltip'));
-	const betterReadability = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-betterreadability'));
-	const locales = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-locales'));
-	const frenchFlag = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-frenchflag'));
-	const gpcontentBig = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-gpcontent-big'));
-	const gpcontentMaxWitdh = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-gpcontent-maxwidth'));
-	const gpActiveGlossary = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-importglossary'));
-	if (!locales) { return; }
+	const fields = getFormFields();
+	if (!hasAllFields(fields)) { return; }
+	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary } = fields;
 
 	const data = await browser.storage.local.get('spteSettings');
 	const existingSettings = /** @type {SpteSettings | undefined} */ (data.spteSettings);
@@ -48,30 +48,16 @@ async function saveSettings() {
 	if (existingSettings) {
 		settings = existingSettings;
 	} else {
-		settings = {
-			spteColorWord: '',
-			spteColorQuote: '',
-			spteColorChar: '',
-			spteBlackToolTip: 'checked',
-			spteBetterReadability: '',
-			spteOtherSlugs: '',
-			spteFrenchFlag: 'checked',
-			spteGpcontentBig: '',
-			spteGpcontentMaxWitdh: '',
-			spteActiveGlossary: 'checked',
-			spteLastUpdateGlossary: '',
-			spteGlossary: '',
-		};
+		settings = createDefaultSettings();
 	}
 	settings.spteColorWord = colorWord.value;
 	settings.spteColorQuote = colorQuote.value;
 	settings.spteColorChar = colorChar.value;
 	settings.spteBlackToolTip = blackToolTip.checked ? 'true' : 'false';
 	settings.spteBetterReadability = betterReadability.checked ? 'true' : 'false';
-	settings.spteOtherSlugs = locales.value;
 	settings.spteFrenchFlag = frenchFlag.checked ? 'true' : 'false';
+	settings.spteEnlargeTable = enlargeTable.checked ? 'true' : 'false';
 	settings.spteGpcontentBig = gpcontentBig.checked ? 'true' : 'false';
-	settings.spteGpcontentMaxWitdh = gpcontentMaxWitdh.value;
 	settings.spteActiveGlossary = gpActiveGlossary.checked ? 'true' : 'false';
 
 	try {
@@ -85,20 +71,13 @@ async function saveSettings() {
 async function restoreSettings() {
 	const data = await browser.storage.local.get('spteSettings');
 	const settings = /** @type {SpteSettings | undefined} */ (data.spteSettings);
-	const colorWord = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__word'));
-	const colorQuote = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__quote'));
-	const colorChar = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-color__char'));
-	const blackToolTip = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-blacktooltip'));
-	const betterReadability = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-betterreadability'));
-	const locales = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-locales'));
-	const frenchFlag = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-frenchflag'));
-	const gpcontentBig = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-gpcontent-big'));
-	const gpcontentMaxWitdh = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-gpcontent-maxwidth'));
-	const gpActiveGlossary = /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-importglossary'));
-	const initSettings = { spteBlackToolTip: 'true', spteFrenchFlag: 'true' };
+	const fields = getFormFields();
+	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary } = fields;
+	const initSettings = createDefaultSettings();
 	if (settings === undefined) {
 		if (blackToolTip) { blackToolTip.checked = true; }
 		if (frenchFlag) { frenchFlag.checked = true; }
+		if (enlargeTable) { enlargeTable.checked = true; }
 		if (gpActiveGlossary) { gpActiveGlossary.checked = true; }
 		try {
 			await browser.storage.local.set({ spteSettings: initSettings });
@@ -106,7 +85,7 @@ async function restoreSettings() {
 			console.log('Impossible d’initialiser les paramètres');
 		}
 	}
-	if (!settings || !colorWord || !colorQuote || !colorChar || !blackToolTip || !betterReadability || !locales || !frenchFlag || !gpcontentBig || !gpcontentMaxWitdh || !gpActiveGlossary) { return; }
+	if (!settings || !hasAllFields(fields)) { return; }
 
 	if (settings.spteColorWord) {
 		colorWord.value = settings.spteColorWord;
@@ -128,10 +107,6 @@ async function restoreSettings() {
 		betterReadability.checked = (settings.spteBetterReadability === 'false') ? false : true;
 	}
 
-	if (settings.spteOtherSlugs) {
-		locales.value = settings.spteOtherSlugs;
-	}
-
 	if (settings.spteFrenchFlag) {
 		frenchFlag.checked = (settings.spteFrenchFlag === 'false') ? false : true;
 	} else {
@@ -143,14 +118,16 @@ async function restoreSettings() {
 		}
 	}
 
+	if (settings.spteEnlargeTable) {
+		enlargeTable.checked = (settings.spteEnlargeTable === 'false') ? false : true;
+	} else {
+		enlargeTable.checked = true;
+	}
+
 	if (settings.spteGpcontentBig) {
 		gpcontentBig.checked = (settings.spteGpcontentBig === 'false') ? false : true;
 	} else {
 		gpcontentBig.checked = false;
-	}
-
-	if (settings.spteGpcontentMaxWitdh) {
-		gpcontentMaxWitdh.value = settings.spteGpcontentMaxWitdh;
 	}
 
 	if (settings.spteActiveGlossary) {
@@ -160,14 +137,18 @@ async function restoreSettings() {
 
 document.addEventListener('DOMContentLoaded', restoreSettings);
 
+Object.values(getFormFields()).forEach((field) => {
+	field?.addEventListener('change', saveSettings);
+});
+
 document.getElementById('reset-color').addEventListener('click', () => {
 	document.querySelectorAll('#settings-color__word, #settings-color__quote').forEach((element) => {
 		/** @type {HTMLInputElement} */ (element).value = '#ff0000';
 	});
 	/** @type {HTMLInputElement} */ (document.querySelector('#settings-color__char')).value = '#ff00ff';
+	saveSettings();
 });
 
 settingsForm.addEventListener('submit', (e) => {
 	e.preventDefault();
-	saveSettings();
 });
