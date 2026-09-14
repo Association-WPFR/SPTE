@@ -11,11 +11,16 @@
 ### Changed
 - Réécriture du README (mise à jour des contenus, des liens, de l’information au sujet de la reprise du projet par WPFR.net, remerciements à Loïc évidemment)
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
+- Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut) et « Agrandir le reste de GlotPress » (inchangé, juste renommé pour plus de clarté)
+- Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement — le bouton « Enregistrer » a été retiré, devenu inutile
+- Simplification de « Agrandir le reste de GlotPress » en case à cocher simple (85% fixe, comme les pages de traduction) — le champ « Largeur maximale » est retiré
+
+### Removed
+- Réglage « Locales supplémentaires » (fr-be, fr-ca) : les règles typographiques de SPTE sont calées sur le guide fr.wordpress.org (France), qui ne s'applique pas tel quel au français du Québec ni de Belgique (ex : le Québec n'utilise pas d'espace avant « ; ! ? »). Aucun usage connu de ce réglage à ce jour.
 
 ### Fixed
 - Réglages jamais correctement initialisés au premier lancement, provoquant un retéléchargement en boucle du glossaire officiel
 - Réglages jamais sauvegardés ni rechargés sur Firefox
-- Option d'ajout de locales supplémentaires (fr-be, fr-ca…) qui ne fonctionnaient plus
 - Compatibilité avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
 - Tri de la locale française et couleur des liens du pied de page (structure de GlotPress ayant changé, sans rapport avec GlotDict)
 - Accessibilité : mots signalés non focusables au clavier, cases à cocher des réglages sans nom accessible, popup de recherche de cohérence sans gestion du focus
@@ -25,6 +30,8 @@
 - Faux positifs du glossaire sur des mots identiques en français et en anglais (ex : « plugin »)
 - Bouton « Réinitialiser » des couleurs qui soumettait tout le formulaire dans la popups des réglages
 - Faux positif sur « ?) »/« !) » (point d'interrogation ou d'exclamation suivi d'une parenthèse fermante)
+- Réglage « Agrandir la page » qui semblait actif par défaut sans effet visible (il contrôlait en réalité le reste de GlotPress, pas la table de traduction déjà agrandie inconditionnellement)
+- Bouton « Réinitialiser » des couleurs qui décalait les éléments au clic (bordure ajoutée uniquement à l'état actif) et n'enregistrait jamais la réinitialisation
 
 ## [2.0.0] - 01 mai 2023
 
