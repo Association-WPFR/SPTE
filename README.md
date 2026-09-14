@@ -96,3 +96,6 @@ Elle n’apporte pas d’aide lors de la saisie d’une traduction puisque GlotD
 Merci à Loïc Antignac ([webaxones](https://github.com/webaxones)), auteur initial de SPTE et à l’origine du projet.
 
 Fin 2025, le projet SPTE a été repris par l’Association WordPress Francophone ([WPFR.net](https://wpfr.net)) afin d’en assurer la maintenance suite à l’envie de Loïc de passer la main. Si vous souhaitez contribuer à SPTE, [lisez le wiki](https://github.com/Association-WPFR/SPTE/wiki).
+
+## Contact
+Privilégier les issues Github ou le slack communautaire WordPressFR (en dernier recours contact@wpfr.net).
