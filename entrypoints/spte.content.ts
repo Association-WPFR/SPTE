@@ -10,6 +10,7 @@ import {
 	hideNonWarningRows,
 	showAllRows,
 	moveFrenchRowToFirst,
+	setErrorRowsSelection,
 } from '../utils/dom';
 import './style.css';
 
@@ -303,23 +304,8 @@ export default defineContentScript({
 			if (!spSelectErrors) { return; }
 
 			spSelectErrors.addEventListener('change', () => {
-				let nbSelectedRows = 0;
-				// Même prudence que dans rowsDisplay() : certaines lignes n'ont pas de case à
-				// cocher en première colonne, sans quoi l'exception arrête la boucle en plein milieu.
-				if (spSelectErrors.checked) {
-					document.querySelectorAll('tr.preview.sp-has-spte-error').forEach((el) => {
-						const checkbox = el.firstElementChild?.firstElementChild;
-						if (!checkbox) { return; }
-						checkbox.checked = 'checked';
-						nbSelectedRows++;
-					});
-				} else {
-					document.querySelectorAll('tr.preview.sp-has-spte-error').forEach((el) => {
-						const checkbox = el.firstElementChild?.firstElementChild;
-						if (checkbox) { checkbox.checked = ''; }
-					});
-					nbSelectedRows = 0;
-				}
+				const errorRows = document.querySelectorAll('tr.preview.sp-has-spte-error');
+				const nbSelectedRows = setErrorRowsSelection(errorRows, spSelectErrors.checked);
 				if (document.querySelector('#gd-checked-count')) {
 					document.querySelector('#gd-checked-count').remove();
 				}

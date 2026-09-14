@@ -7,6 +7,8 @@ import {
 	hideNonWarningRows,
 	showAllRows,
 	moveFrenchRowToFirst,
+	setRowCheckboxSafely,
+	setErrorRowsSelection,
 } from './dom';
 
 // Fixtures réelles, cf. utils/fixtures/*.html pour leur provenance.
@@ -84,6 +86,52 @@ describe('hideNonWarningRows / showAllRows', () => {
 		showAllRows(rows);
 		rows.forEach((row) => {
 			expect((row as HTMLElement).style.display).toBe('table-row');
+		});
+	});
+});
+
+describe('setRowCheckboxSafely', () => {
+	beforeEach(() => {
+		document.body.innerHTML = translationsTableHTML;
+	});
+
+	it('coche/décoche la case quand elle existe', () => {
+		const row = document.querySelector('#preview-1-1')!;
+		expect(setRowCheckboxSafely(row, true)).toBe(true);
+		expect((row.querySelector('input[type=checkbox]') as HTMLInputElement).checked).toBe(true);
+		expect(setRowCheckboxSafely(row, false)).toBe(true);
+		expect((row.querySelector('input[type=checkbox]') as HTMLInputElement).checked).toBe(false);
+	});
+
+	it('ne plante pas sur la ligne d’historique sans case à cocher — bug confirmé le 2026-09-14', () => {
+		const historyRow = document.querySelector('#preview-3-3')!;
+		expect(() => setRowCheckboxSafely(historyRow, true)).not.toThrow();
+		expect(setRowCheckboxSafely(historyRow, true)).toBe(false);
+	});
+});
+
+describe('setErrorRowsSelection', () => {
+	beforeEach(() => {
+		document.body.innerHTML = translationsTableHTML;
+	});
+
+	it('coche toutes les lignes en erreur "certain" et retourne le compte', () => {
+		const errorRows = document.querySelectorAll('tr.preview.sp-has-spte-error');
+		expect(errorRows.length).toBeGreaterThan(0);
+		const count = setErrorRowsSelection(errorRows, true);
+		expect(count).toBe(errorRows.length);
+		errorRows.forEach((row) => {
+			expect((row.querySelector('input[type=checkbox]') as HTMLInputElement).checked).toBe(true);
+		});
+	});
+
+	it('décoche toutes les lignes en erreur et retourne 0', () => {
+		const errorRows = document.querySelectorAll('tr.preview.sp-has-spte-error');
+		setErrorRowsSelection(errorRows, true);
+		const count = setErrorRowsSelection(errorRows, false);
+		expect(count).toBe(0);
+		errorRows.forEach((row) => {
+			expect((row.querySelector('input[type=checkbox]') as HTMLInputElement).checked).toBe(false);
 		});
 	});
 });

@@ -49,8 +49,12 @@
 			</td>
 		</tr>
 
-		<!-- Ligne avec un mot signalé par badWords/glossaire, pour tester la génération de <span>. -->
-		<tr class="preview status-current priority-normal no-warnings has-translations" id="preview-2-2" row="2-2">
+		<!--
+			Ligne avec un mot signalé par badWords/glossaire, pour tester la génération de <span>.
+			sp-has-spte-error simule le marquage réel posé par tagTRTranslations() une fois qu'une
+			erreur "certain" est détectée — nécessaire pour tester la sélection en masse.
+		-->
+		<tr class="preview status-current priority-normal no-warnings has-translations sp-has-spte-error" id="preview-2-2" row="2-2">
 			<th scope="row" class="checkbox"><input type="checkbox" name="selected-row[]"></th>
 			<td class="original">
 				<span class="original-text">Access the latest features and a premium support team.</span>

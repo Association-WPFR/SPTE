@@ -71,6 +71,19 @@ export function showAllRows(rows: Iterable<Element>): void {
 	}
 }
 
+// Coche/décoche la case de toutes les lignes en erreur "certain" (bouton "Cocher les mots et
+// apostrophes"). Retourne le nombre de lignes réellement cochées, pour l'affichage du compteur.
+// Même prudence que setRowCheckboxSafely : ignore silencieusement les lignes sans case à cocher
+// (bug confirmé le 2026-09-14).
+export function setErrorRowsSelection(rows: Iterable<Element>, checked: boolean): number {
+	let count = 0;
+	for (const row of rows) {
+		const wasSet = setRowCheckboxSafely(row, checked);
+		if (wasSet && checked) { count++; }
+	}
+	return count;
+}
+
 // Remonte la ligne de la locale française en première position du tableau des locales d'un
 // projet, pour y accéder plus facilement. Cible `#stats-table` (structure GlotPress actuelle) —
 // l'ancienne structure `#locales`/`div.locale` a disparu du DOM (régression silencieuse
