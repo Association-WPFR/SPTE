@@ -1,0 +1,39 @@
+<!--
+	Fixture pour les tests DOM (Phase 8, TODO.md). Structure réelle extraite d'une page de
+	présentation de projet (curl sur https://translate.wordpress.org/projects/wp-plugins/mediapapa/,
+	2026-09-14) — remplace l'ancienne structure #locales/div.locale, disparue de GlotPress
+	(régression silencieuse trouvée et corrigée le 2026-09-14, cf. TODO.md).
+	Le français est placé volontairement en 2e position pour tester frenchiesGoFirst().
+-->
+<table id="stats-table" class="table">
+	<thead>
+		<tr>
+			<th class="col-locale">Locale</th>
+			<th class="col-dev">Development</th>
+			<th class="col-stable">Stable</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th title="af">
+				<a href="/locale/af/default/wp-plugins/mediapapa/">Afrikaans</a>
+			</th>
+			<td data-column-title="Development" data-sort-value="0" class="percent0"><a href="/projects/wp-plugins/mediapapa/dev/af/default/">0%</a></td>
+			<td data-column-title="Stable" data-sort-value="0" class="percent0"><a href="/projects/wp-plugins/mediapapa/stable/af/default/">0%</a></td>
+		</tr>
+		<tr>
+			<th title="fr_FR">
+				<a href="/locale/fr/default/wp-plugins/mediapapa/">French (France)</a>
+			</th>
+			<td data-column-title="Development" data-sort-value="84" class="percent80"><a href="/projects/wp-plugins/mediapapa/dev/fr/default/">84%</a></td>
+			<td data-column-title="Stable" data-sort-value="19" class="percent10"><a href="/projects/wp-plugins/mediapapa/stable/fr/default/">19%</a></td>
+		</tr>
+		<tr>
+			<th title="pt_BR">
+				<a href="/locale/pt-br/default/wp-plugins/mediapapa/">Portuguese (Brazil)</a>
+			</th>
+			<td data-column-title="Development" data-sort-value="19" class="percent10"><a href="/projects/wp-plugins/mediapapa/dev/pt-br/default/">19%</a></td>
+			<td data-column-title="Stable" data-sort-value="19" class="percent10"><a href="/projects/wp-plugins/mediapapa/stable/pt-br/default/">19%</a></td>
+		</tr>
+	</tbody>
+</table>

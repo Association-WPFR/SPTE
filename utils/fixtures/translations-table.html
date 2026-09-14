@@ -1,0 +1,100 @@
+<!--
+	Fixture pour les tests DOM (Phase 8, TODO.md). Extraite/reconstituée à partir de vraies pages
+	translate.wordpress.org (curl anonyme sur le projet Mediapapa, 2026-09-14, + inspection live
+	via Claude-in-Chrome pour la ligne d'historique). Objectif : reproduire fidèlement les 2 formes
+	de ligne réellement rencontrées, dont celle qui a fait planter 3 fonctions différentes le
+	2026-09-14 (addForeignToolTip, rowsDisplay, la sélection en masse) faute de case à cocher.
+-->
+<table id="translations" class="gp-table translations">
+	<thead>
+		<tr>
+			<th class="gp-column-priority">Prio</th>
+			<th class="gp-column-original">Original string</th>
+			<th class="gp-column-translation">Translation</th>
+			<th class="gp-column-actions">&mdash;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!--
+			Ligne normale : traduite, avec case à cocher en première colonne (visible pour un
+			utilisateur connecté avec droits, cf. `bulk-actions-toolbar-top`) + colonne actions.
+			C'est le cas standard que rowsDisplay()/la sélection en masse traitent sans problème.
+		-->
+		<tr class="preview status-current priority-normal no-warnings has-translations" id="preview-1-1" row="1-1">
+			<th scope="row" class="checkbox"><input type="checkbox" name="selected-row[]"></th>
+			<td class="original">
+				<span class="original-text">File</span>
+			</td>
+			<td class="translation foreign-text">
+				<span class="translation-text">Fichier</span>
+			</td>
+			<td class="actions">
+				<a href="#" class="action edit">Details</a>
+			</td>
+		</tr>
+		<tr class="editor status-current priority-normal no-warnings has-translations" id="editor-1-1" row="1-1">
+			<td colspan="4">
+				<div class="editor-panel">
+					<div class="editor-panel__left">
+						<div class="panel-content">
+							<div class="source-details">
+								<details class="source-details__references">
+									<summary>References</summary>
+									<ul><li>build/index.js:1</li></ul>
+								</details>
+							</div>
+						</div>
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<!-- Ligne avec un mot signalé par badWords/glossaire, pour tester la génération de <span>. -->
+		<tr class="preview status-current priority-normal no-warnings has-translations" id="preview-2-2" row="2-2">
+			<th scope="row" class="checkbox"><input type="checkbox" name="selected-row[]"></th>
+			<td class="original">
+				<span class="original-text">Access the latest features and a premium support team.</span>
+			</td>
+			<td class="translation foreign-text">
+				<span class="translation-text">Accédez aux dernières fonctionnalités et à une équipe de support premium.</span>
+			</td>
+			<td class="actions">
+				<a href="#" class="action edit">Details</a>
+			</td>
+		</tr>
+		<tr class="editor status-current priority-normal no-warnings has-translations" id="editor-2-2" row="2-2">
+			<td colspan="4">
+				<div class="editor-panel">
+					<div class="editor-panel__left">
+						<div class="panel-content">
+							<div class="source-details"></div>
+						</div>
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<!--
+			Ligne d'historique de révision : structure RÉELLEMENT rencontrée le 2026-09-14 sur une
+			page projet avec plusieurs révisions (inspection live confirmée via Claude-in-Chrome).
+			Un seul <td> (une date), PAS de case à cocher en première colonne, PAS de td.actions.
+			C'est exactement cette forme qui a fait planter addForeignToolTip / rowsDisplay /
+			la sélection en masse (tous supposaient `firstElementChild.firstElementChild` présent).
+		-->
+		<tr class="preview status-current" id="preview-3-3" row="3-3">
+			<td title="2026-07-29 21:55:46">2026-07-29</td>
+		</tr>
+
+		<!-- Ligne non traduite : pas de .translation-text, mais case à cocher présente (cas normal). -->
+		<tr class="preview untranslated priority-normal no-warnings no-translations" id="preview-4-4" row="4-4">
+			<th scope="row" class="checkbox"><input type="checkbox" name="selected-row[]"></th>
+			<td class="original">
+				<span class="original-text">Unlock your Media Library</span>
+			</td>
+			<td class="translation foreign-text"></td>
+			<td class="actions">
+				<a href="#" class="action edit">Details</a>
+			</td>
+		</tr>
+	</tbody>
+</table>

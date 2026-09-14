@@ -4,6 +4,13 @@
 import { rules, charTitle, charClass } from '../utils/rules';
 import { addStyle, createElement, parseCsv } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
+import {
+	addForeignToolTip,
+	addEditorHighlighter,
+	hideNonWarningRows,
+	showAllRows,
+	moveFrenchRowToFirst,
+} from '../utils/dom';
 import './style.css';
 
 export default defineContentScript({
@@ -108,45 +115,8 @@ export default defineContentScript({
 			localStorage.setItem('gd_non_breaking_space_highlight', 'true');
 		}
 
-		// Affiche la chaîne traduite sans aucune balise.
-		function addForeignToolTip(translation) {
-			const preview = translation.closest('tr');
-			const translated = preview && preview.querySelector('.translation-text');
-			// td.actions n'existe pas sur toutes les lignes (ex: utilisateur non connecté,
-			// sans les droits pour valider/modifier) : on ignore cette ligne plutôt que de
-			// planter tout le traitement des lignes suivantes.
-			const hook = preview && preview.querySelector('td.actions');
-			if (!hook || !translated) {
-				return;
-			}
-			hook.style.position = 'relative';
-			const toolTip = createElement('SPAN', { class: 'sp-foreign-tooltip' });
-			toolTip.innerHTML = translated.innerHTML;
-			hook.append(toolTip);
-		}
-
-		// Clone l’aperçu surligné dans le panneau d’édition.
-		function addEditorHighlighter(translation) {
-			const preview = translation.closest('tr');
-			const brother = preview.nextElementSibling;
-			// La toute dernière ligne du tableau n'a pas de ligne suivante (même prudence que
-			// pour td.actions et le filtre Tout/Avertissements, cf. TODO.md).
-			if (!brother) { return; }
-			const brotherHighlighter = brother.querySelector('.sp-editor-highlighter') || null;
-			if (brotherHighlighter) {
-				brother.querySelector('.sp-editor-highlighter').parentNode.removeChild(brother.querySelector('.sp-editor-highlighter'));
-			}
-			if (preview.classList.contains('has-translations')) {
-				const help = createElement('DIV', { class: 'sp-editor-highlighter' });
-				const trad = preview.querySelector('.translation-text');
-				const hook = brother.querySelector('.source-details');
-				const copycat = trad.cloneNode(true);
-				help.append(copycat);
-				if (hook) {
-					hook.append(help);
-				}
-			}
-		}
+		// addForeignToolTip() et addEditorHighlighter() sont désormais dans utils/dom.ts
+		// (Phase 8, testées avec de vraies fixtures HTML — utils/dom.test.ts).
 
 		// Ajoute des classes CSS à la ligne d’aperçu selon les avertissements.
 		function tagTRTranslations(preview) {
@@ -161,25 +131,13 @@ export default defineContentScript({
 			}
 		}
 
-		// Affichage des lignes.
+		// Affichage des lignes (logique testée dans utils/dom.test.ts).
 		function rowsDisplay() {
+			const rows = document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)');
 			if (lsShowOnlyWarning) {
-				document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)').forEach((el) => {
-					el.style.display = 'none';
-					// Certaines lignes (ex: historique de révision) n'ont pas de case à cocher en
-					// première colonne — sans ce contrôle, l'exception arrête net le traitement de
-					// toutes les lignes suivantes de la boucle (bug confirmé en test réel le 2026-09-14).
-					const checkbox = el.firstElementChild?.firstElementChild;
-					if (bulkActions && checkbox) {
-						// On décoche les éléments masqués pour éviter un traitement en masse des lignes non visibles.
-						checkbox.checked = '';
-					}
-				});
-			}
-			if (!lsShowOnlyWarning) {
-				document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)').forEach((el) => {
-					el.style.display = 'table-row';
-				});
+				hideNonWarningRows(rows, Boolean(bulkActions));
+			} else {
+				showAllRows(rows);
 			}
 		}
 
@@ -372,14 +330,9 @@ export default defineContentScript({
 		}
 
 		// Spécifique à la page de présentation d’un projet (liste des locales disponibles), fait
-		// remonter la ligne FR en première position du tableau pour y accéder plus facilement.
+		// remonter la ligne FR en première position du tableau (logique testée dans utils/dom.test.ts).
 		function frenchiesGoFirst() {
-			const frenchRow = frenchStatsGlobal?.closest('tr');
-			const tableBody = frenchRow?.closest('tbody');
-			const firstRow = tableBody?.querySelector('tr:first-child');
-			if (firstRow && frenchRow && firstRow !== frenchRow && !GDmayBeOnBoard) {
-				firstRow.before(frenchRow);
-			}
+			moveFrenchRowToFirst(frenchStatsGlobal, GDmayBeOnBoard);
 		}
 
 		// Ajoute un drapeau français sur la locale française dans les différents tableaux pour mieux l’identifier.
