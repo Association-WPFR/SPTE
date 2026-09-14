@@ -11,9 +11,8 @@
 ### Changed
 - Réécriture du README (mise à jour des contenus, des liens, de l’information au sujet de la reprise du projet par WPFR.net, remerciements à Loïc évidemment)
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
-- Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut) et « Agrandir le reste de GlotPress » (inchangé, juste renommé pour plus de clarté)
+- Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut, 85% fixe) et « Agrandir le reste de GlotPress » (85% fixe aussi désormais, le champ « Largeur maximale » est retiré)
 - Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement — le bouton « Enregistrer » a été retiré, devenu inutile
-- Simplification de « Agrandir le reste de GlotPress » en case à cocher simple (85% fixe, comme les pages de traduction) — le champ « Largeur maximale » est retiré
 
 ### Removed
 - Réglage « Locales supplémentaires » (fr-be, fr-ca) : les règles typographiques de SPTE sont calées sur le guide fr.wordpress.org (France), qui ne s'applique pas tel quel au français du Québec ni de Belgique (ex : le Québec n'utilise pas d'espace avant « ; ! ? »). Aucun usage connu de ce réglage à ce jour.
