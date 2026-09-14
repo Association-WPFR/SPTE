@@ -3,6 +3,7 @@
 // est prévu en Phase 3 (consolidation du moteur de règles), pas dans cette conversion WXT.
 import { rules, charTitle, charClass } from '../utils/rules';
 import { addStyle, createElement, parseCsv } from '../utils/helpers';
+import { buildWarningSpanHTML } from '../utils/warnings';
 import './style.css';
 
 export default defineContentScript({
@@ -237,17 +238,8 @@ export default defineContentScript({
 						break;
 					}
 					if (newStatus !== 'rejected') {
-						const ariaName = (rule.id === 'badWords') ? `${string}. ` : `${rule.name}. `;
-						// ariaName se termine déjà par une espace : ne pas en ajouter une seconde ici.
-						// Un double espace généré dans cet attribut peut être re-détecté par la règle
-						// "espace en double" lors d'un passage ultérieur de la boucle, qui insère alors
-						// son propre <span> à l'intérieur de cet attribut et casse le balisage HTML
-						// (bug confirmé en conditions réelles le 2026-09-14, voir TODO.md).
-						const ariaLabel = (rule.id === 'Space' || rule.id === 'nbkSpaces') ? `${rule.message}` : `${ariaName}${rule.message}`;
-						const tooltip = (rule.id === 'Space' || rule.id === 'nbkSpaces') ? `${rule.message}` : `&#171; ${string} &#187;&#10; ${rule.message}`;
-
 						textWithoutTags = textWithoutTags.replace(string, '');
-						return `<span tabindex="0" aria-label="${ariaLabel}" data-message="${tooltip}" class="${rule.cssClass}">${string}</span>`;
+						return buildWarningSpanHTML(rule, string);
 					}
 					return string;
 				});
