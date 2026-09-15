@@ -11,7 +11,7 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "wxt prepare && tsc --noEmit",
     "test": "vitest run"
   },
   "devDependencies": {
