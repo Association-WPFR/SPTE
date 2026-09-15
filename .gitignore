@@ -8,6 +8,9 @@ node_modules/
 # Paquets d'extension prêts à l'upload (générés par `npm run zip`)
 *.zip
 
+# Rapport de couverture de tests (généré par `vitest run --coverage`)
+coverage/
+
 # Secrets / config locale
 .env
 .env.local
