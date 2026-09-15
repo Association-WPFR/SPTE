@@ -25,7 +25,6 @@
 - Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
 - Le filtre « Tout »/« Les avertissements » devient un toggle unique « Afficher uniquement les avertissements de cette page (x) », x étant le nombre de lignes concernées sur la page ; grisé et désactivé automatiquement quand il n'y a rien à filtrer
 - Le réglage « Contraste des textes » ne recolore plus que le contenu de traduction, plus la navigation ni le pied de page du site (hors du rôle de SPTE)
-- Le highlighter (aperçu surligné) est collé directement au textarea de traduction (zéro espace, bordure commune) plutôt qu'espacé, pour réduire le mouvement d'œil lors de la comparaison
 
 ### Removed
 - Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
