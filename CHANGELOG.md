@@ -23,7 +23,6 @@
 - Les réglages s'enregistrent et se rechargent maintenant correctement sur Firefox
 - Compatibilité rétablie avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
 - Le tri de la locale française fonctionne de nouveau dans le tableau des locales d'un projet (la structure HTML visée de GlotPress avait changé)
-- La couleur des liens du pied de page s'applique de nouveau avec le réglage « Contraste des textes » (la structure du pied de page a changé côté GlotPress, sans rapport avec GlotDict)
 - Les mots signalés sont de nouveau focusables au clavier
 - Les cases à cocher des réglages ont maintenant un nom accessible pour les lecteurs d'écran
 - La popup de recherche de cohérence gère maintenant le focus au clavier
