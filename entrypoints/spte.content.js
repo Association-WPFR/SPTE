@@ -453,6 +453,7 @@ export default defineContentScript({
 			if (inputValue === '') { return; }
 			popupTriggerElement = document.activeElement;
 			spPopup.classList.remove('sp-the-popup--hidden');
+			spPopup.innerHTML = '<span class="suggestions__loading-indicator__icon"><span></span><span></span><span></span></span>';
 			const URL = `https://translate.wordpress.org/consistency/?search=${inputValue}&set=${currentProjectLocaleSlug}%2Fdefault&`;
 			fetch(URL).then((response) => response.text()).then((data) => {
 				const table = data.replace(/(\r\n|\n|\r)/gm, '').match(/(?<=consistency-table">)(.*?)(?=<\/table>)/gmi);

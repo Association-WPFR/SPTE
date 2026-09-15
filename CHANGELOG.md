@@ -72,6 +72,7 @@
 - Le sélecteur de couleur natif n'est plus forcé en champ texte hexadécimal sous Firefox (Firefox supporte `input[type=color]` nativement depuis 2014, ce contournement était obsolète)
 - Le bandeau de résultats s'affiche maintenant même quand la page ne comporte aucun avertissement (« aucun élément à vérifier »), pour distinguer une vérification effectuée d'une extension qui n'aurait pas tourné
 - Le lien « Masquer la légende » redevient visible (« Afficher la légende ») une fois la légende masquée, au lieu de disparaître entièrement
+- La recherche « Cohérence d'une chaîne » affiche un indicateur de chargement pendant la requête, au lieu de laisser la popup vide/figée
 
 ## [2.0.0] - 01 mai 2023
 

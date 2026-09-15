@@ -105,6 +105,12 @@
 	display: none;
 }
 
+#sp-the-popup .suggestions__loading-indicator__icon {
+	display: flex;
+	justify-content: center;
+	margin-top: 2em;
+}
+
 #sp-main-header.sp-sticky {
 	position: fixed;
 	top: 0;
