@@ -415,15 +415,18 @@
 	justify-content: space-between;
 }
 
-#sp-show-all-translations,
 #sp-show-only-warnings {
 	margin: 0 0 0 .6em;
 	vertical-align: -1px;
 }
 
-#sp-show-all-translations+label,
 #sp-show-only-warnings+label {
 	margin: 0 .8em 0 .5em;
+}
+
+#sp-show-only-warnings:disabled+label {
+	opacity: .5;
+	cursor: default;
 }
 
 #sp-select-errors {

@@ -80,14 +80,11 @@ export default defineContentScript({
 		const glossaryLink = createElement('P', { class: 'sp-results__caption sp-results__caption--link' });
 		glossaryLink.innerHTML = `Consultez <a class="sp-caption-link sp-caption-link--glossary" target="_blank" href="${glossaryURL}">le glossaire officiel</a> à respecter pour les mots.`;
 		const hideCaption = createElement('A', { id: 'sp-results__toggle-caption', href: '#', title: 'Légende' });
-		const spFilters = createElement('DIV', { class: 'sp-controls__filters' }, 'Afficher  ');
-		const showEverything = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'radio', id: 'sp-show-all-translations', name: 'showEverything', value: 'showEverything', checked: 'checked' }));
-		const showEverythingLabel = createElement('LABEL', { for: 'sp-show-all-translations' }, 'Tout');
-		const showOnlyWarning = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'radio', id: 'sp-show-only-warnings', name: 'showOnlyWarning', value: 'showOnlyWarning' }));
-		const showOnlyWarningLabel = createElement('LABEL', { for: 'sp-show-only-warnings' }, 'Les avertissements (de cette page)');
-		showEverything.checked = lsShowOnlyWarning ? false : true;
-		showOnlyWarning.checked = lsShowOnlyWarning ? true : false;
-		spFilters.append(showEverything, showEverythingLabel, showOnlyWarning, showOnlyWarningLabel);
+		const spFilters = createElement('DIV', { class: 'sp-controls__filters' });
+		const showOnlyWarning = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'checkbox', id: 'sp-show-only-warnings', name: 'showOnlyWarning', value: 'showOnlyWarning' }));
+		const showOnlyWarningLabel = createElement('LABEL', { for: 'sp-show-only-warnings' }, 'Afficher uniquement les avertissements de cette page (0)');
+		showOnlyWarning.checked = lsShowOnlyWarning;
+		spFilters.append(showOnlyWarning, showOnlyWarningLabel);
 
 		const pteControls = createElement('DIV', { class: 'sp-controls__pte' });
 		const spSelectErrors = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'checkbox', id: 'sp-select-errors', name: 'spteSelectErrors', value: 'spteSelectErrors' }));
@@ -129,6 +126,18 @@ export default defineContentScript({
 				hideNonWarningRows(rows, Boolean(bulkActions));
 			} else {
 				showAllRows(rows);
+			}
+			updateWarningFilterState();
+		}
+
+		// Met à jour le compteur et l'état (grisé si zéro) du toggle "avertissements de cette page".
+		function updateWarningFilterState() {
+			if (!showOnlyWarning || !showOnlyWarningLabel) { return; }
+			const warningCount = document.querySelectorAll('tr.preview.sp-has-spte-warning').length;
+			showOnlyWarningLabel.textContent = `Afficher uniquement les avertissements de cette page (${warningCount})`;
+			showOnlyWarning.disabled = warningCount === 0;
+			if (warningCount === 0) {
+				showOnlyWarning.checked = false;
 			}
 		}
 
@@ -274,20 +283,11 @@ export default defineContentScript({
 
 		// Gère les contrôles.
 		function manageControls() {
-			if (!showOnlyWarning || !showEverything) { return; }
+			if (!showOnlyWarning) { return; }
 
-			showOnlyWarning.addEventListener('click', () => {
-				showOnlyWarning.checked = true;
-				showEverything.checked = false;
-				localStorage.setItem('spteShowOnlyWarning', 'true');
-				lsShowOnlyWarning = true;
-				rowsDisplay();
-			});
-			showEverything.addEventListener('click', () => {
-				showEverything.checked = true;
-				showOnlyWarning.checked = false;
-				localStorage.setItem('spteShowOnlyWarning', 'false');
-				lsShowOnlyWarning = false;
+			showOnlyWarning.addEventListener('change', () => {
+				localStorage.setItem('spteShowOnlyWarning', showOnlyWarning.checked ? 'true' : 'false');
+				lsShowOnlyWarning = showOnlyWarning.checked;
 				rowsDisplay();
 			});
 
@@ -381,6 +381,7 @@ export default defineContentScript({
 					checkTranslation(translation, oldStatus, newStatus);
 					displayResults();
 					manageControls();
+					updateWarningFilterState();
 				}
 			});
 
