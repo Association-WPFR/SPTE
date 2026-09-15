@@ -454,6 +454,13 @@
 	margin: 3px 0 0 40px;
 }
 
+.sp-frenchies.sp-frenchies--locale-card:after {
+	position: static;
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 0 0 6px;
+}
+
 .sp-controls__pte {
 	float: left;
 }

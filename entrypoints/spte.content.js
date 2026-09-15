@@ -309,7 +309,10 @@ export default defineContentScript({
 		// remonter la ligne FR en première position du tableau (logique testée dans utils/dom.test.js).
 		function frenchiesGoFirst() {
 			moveFrenchRowToFirst(frenchStatsGlobal, GDmayBeOnBoard);
-			moveFrenchLocaleCardToFirst(frenchLocaleCard, GDmayBeOnBoard);
+			// Pas de garde GlotDict ici : GlotDict n'a aucune emprise sur cette page (vérifié en
+			// live, aucun élément/script gd- présent), contrairement au tableau des locales d'un
+			// projet où son propre réordonnancement peut entrer en conflit avec le nôtre.
+			moveFrenchLocaleCardToFirst(frenchLocaleCard, false);
 		}
 
 		// Ajoute un drapeau français sur la locale française dans les différents tableaux pour mieux l’identifier.
@@ -321,6 +324,9 @@ export default defineContentScript({
 			}
 			if (frenchStatsGlobal) {
 				frenchStatsGlobal.classList.add('sp-frenchies');
+			}
+			if (frenchLocaleCard) {
+				frenchLocaleCard.classList.add('sp-frenchies', 'sp-frenchies--locale-card');
 			}
 		}
 
