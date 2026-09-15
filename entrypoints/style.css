@@ -491,10 +491,6 @@
    ========================================================================== */
 
 .sp-better-readability {
-	.navigation-main a {
-		color: rgba(255, 255, 255, .9);
-	}
-
 	.gp-content,
 	.gp-content textarea,
 	.gp-content input,
@@ -512,59 +508,54 @@
 		color: white;
 	}
 
-	/* .global-footer : structure actuelle du footer WordPress.org (thème Gutenberg). */
-	.actionlist a,
-	.actionlist a:link,
-	.actionlist a:visited,
+	.gp-content .actionlist a,
+	.gp-content .actionlist a:link,
+	.gp-content .actionlist a:visited,
 	.gp-content a,
-	.global-footer ul li a,
 	.gp-content .meta a {
 		color: #014BA0;
 	}
 
-	.actionlist a:hover,
-	.actionlist a:focus,
-	.actionlist a:active,
-	.actionlist a:link:hover,
-	.actionlist a:link:focus,
-	.actionlist a:link:active,
+	.gp-content .actionlist a:hover,
+	.gp-content .actionlist a:focus,
+	.gp-content .actionlist a:active,
+	.gp-content .actionlist a:link:hover,
+	.gp-content .actionlist a:link:focus,
+	.gp-content .actionlist a:link:active,
 	.gp-content a:hover,
 	.gp-content a:focus,
 	.gp-content a:active,
-	.global-footer ul li a:hover,
-	.global-footer ul li a:focus,
-	.global-footer ul li a:active,
 	.gp-content .meta a:hover,
 	.gp-content .meta a:focus,
 	.gp-content .meta a:active {
 		color: #066fe7;
 	}
 
-	.sp-results__title {
+	.gp-content .sp-results__title {
 		color: #df0d0c;
 	}
 
-	.sp-warning--word {
+	.gp-content .sp-warning--word {
 		background-color: #ec130e;
 	}
 
-	.sp-warning--quote {
+	.gp-content .sp-warning--quote {
 		box-shadow: #ec130e 0px 0px 0px 2px inset;
 	}
 
 	.gp-content input,
 	.gp-content textarea,
 	.gp-content select,
-	.paging a,
-	.paging span {
+	.gp-content .paging a,
+	.gp-content .paging span {
 		border-color: #afafaf !important;
 	}
 
-	.paging .current {
+	.gp-content .paging .current {
 		border-color: coral !important;
 	}
 
-	.panel-header__bubble {
+	.gp-content .panel-header__bubble {
 		text-transform: uppercase;
 		background: white;
 	}
