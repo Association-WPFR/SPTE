@@ -10,7 +10,7 @@ Plus de détails sur le wiki : [Comment contribuer](https://github.com/Associati
 
 ## Si vous êtes développeur·euse
 
-Prérequis : Node.js (voir `package.json`), npm.
+Prérequis : Node.js (version exacte dans `.nvmrc`), npm.
 
 Les commandes utiles :
 ```bash
