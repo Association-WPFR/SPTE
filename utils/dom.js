@@ -1,0 +1,171 @@
+import { createElement } from './helpers';
+
+// Fonctions DOM à risque (lignes de tableau parfois incomplètes), testées sur de vraies fixtures HTML (utils/fixtures/*.html) sans navigateur.
+
+// Affiche la chaîne traduite sans aucune balise, au survol de la colonne actions.
+/** @param {Element} translation */
+export function addForeignToolTip(translation) {
+	const preview = translation.closest('tr');
+	const translated = preview && preview.querySelector('.translation-text');
+	// td.actions n'existe pas sur toutes les lignes (ex: utilisateur non connecté) : on
+	// ignore cette ligne plutôt que de planter le traitement des suivantes.
+	const hook = preview && preview.querySelector('td.actions');
+	if (!hook || !translated) {
+		return;
+	}
+	/** @type {HTMLElement} */ (hook).style.position = 'relative';
+	const toolTip = createElement('SPAN', { class: 'sp-foreign-tooltip' });
+	toolTip.innerHTML = translated.innerHTML;
+	hook.append(toolTip);
+}
+
+// Aligne le retour à la ligne du highlighter sur celui du textarea (comparaison visuelle plus facile).
+// Copie le style calculé plutôt que des valeurs fixes, pour rester correct si GlotPress change son CSS.
+/**
+ * @param {HTMLElement} el
+ * @param {Element} textarea
+ */
+export function matchTextWrapping(el, textarea) {
+	const style = getComputedStyle(textarea);
+	el.style.boxSizing = style.boxSizing;
+	el.style.width = style.width;
+	el.style.paddingLeft = style.paddingLeft;
+	el.style.paddingRight = style.paddingRight;
+	el.style.borderLeftWidth = style.borderLeftWidth;
+	el.style.borderRightWidth = style.borderRightWidth;
+	el.style.fontFamily = style.fontFamily;
+	el.style.fontSize = style.fontSize;
+	el.style.letterSpacing = style.letterSpacing;
+	el.style.wordSpacing = style.wordSpacing;
+}
+
+// Ajoute un bouton pour copier le permalien de la traduction, sans passer par le menu contextuel (clic > nouvel onglet > copie manuelle).
+/** @param {Element} brother */
+export function addPermalinkButton(brother) {
+	if (brother.querySelector('.sp-copy-permalink')) { return; } // déjà ajouté
+	const nextButton = brother.querySelector('.panel-header-actions__next');
+	if (!nextButton) { return; }
+	const permalink = /** @type {HTMLAnchorElement | undefined} */ ([...brother.querySelectorAll('.button-menu__dropdown a')]
+		.find((a) => a.textContent?.trim() === 'Permalink to translation'));
+	if (!permalink) { return; }
+	const button = createElement('BUTTON', { type: 'button', class: 'sp-copy-permalink with-tooltip', 'aria-label': 'Copier le permalien de cette traduction' });
+	// SVG inline plutôt qu'un dashicon : même rendu visuel (currentColor, taille similaire) sans dépendre
+	// d'une police que WordPress gèle et remplace progressivement par des icônes SVG (@wordpress/icons) depuis la 7.1.
+	// 16px et non 20px : Feather dessine ses icônes bord à bord, alors que les dashicons voisins ont une marge
+	// intégrée dans la police — à taille égale le SVG paraît plus gros. 16px recrée cette marge (testé en réel, 2026-09-15).
+	button.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
+	button.addEventListener('click', () => {
+		navigator.clipboard.writeText(permalink.href);
+	});
+	nextButton.insertAdjacentElement('afterend', button);
+}
+
+/** @param {Element} translation */
+export function addEditorHighlighter(translation) {
+	const preview = translation.closest('tr');
+	if (!preview) { return; }
+	const brother = preview.nextElementSibling;
+	// La toute dernière ligne du tableau n'a pas de ligne suivante.
+	if (!brother) { return; }
+	addPermalinkButton(brother);
+	const brotherHighlighter = brother.querySelector('.sp-editor-highlighter');
+	if (brotherHighlighter) {
+		brotherHighlighter.parentNode?.removeChild(brotherHighlighter);
+	}
+	if (preview.classList.contains('has-translations')) {
+		const help = createElement('DIV', { class: 'sp-editor-highlighter' });
+		const trad = preview.querySelector('.translation-text');
+		const hook = brother.querySelector('.source-details');
+		const textarea = brother.querySelector('textarea.foreign-text');
+		if (textarea) { matchTextWrapping(help, textarea); }
+		if (trad && hook) {
+			const copycat = trad.cloneNode(true);
+			help.append(copycat);
+			hook.append(help);
+		}
+	}
+}
+
+// Coche/décoche la case d'une ligne en toute sécurité : certaines (ex: historique de révision) n'en ont pas.
+/**
+ * @param {Element} row
+ * @param {boolean} checked
+ * @returns {boolean}
+ */
+export function setRowCheckboxSafely(row, checked) {
+	const checkbox = /** @type {HTMLInputElement | undefined} */ (row.firstElementChild?.firstElementChild);
+	if (!checkbox) { return false; }
+	checkbox.checked = checked;
+	return true;
+}
+
+// Masque les lignes sans avertissement (filtre "Les avertissements"), décoche leur case au passage si la sélection en masse est active.
+/**
+ * @param {Iterable<Element>} rows
+ * @param {boolean} resetCheckbox
+ */
+export function hideNonWarningRows(rows, resetCheckbox) {
+	for (const row of rows) {
+		/** @type {HTMLElement} */ (row).style.display = 'none';
+		if (resetCheckbox) { setRowCheckboxSafely(row, false); }
+	}
+}
+
+// Filtre "Tout".
+/** @param {Iterable<Element>} rows */
+export function showAllRows(rows) {
+	for (const row of rows) {
+		/** @type {HTMLElement} */ (row).style.display = 'table-row';
+	}
+}
+
+// Coche/décoche les lignes en erreur "certain" (bouton "Cocher les mots et apostrophes"). Retourne le nombre coché, pour le compteur.
+/**
+ * @param {Iterable<Element>} rows
+ * @param {boolean} checked
+ * @returns {number}
+ */
+export function setErrorRowsSelection(rows, checked) {
+	let count = 0;
+	for (const row of rows) {
+		const wasSet = setRowCheckboxSafely(row, checked);
+		if (wasSet && checked) { count++; }
+	}
+	return count;
+}
+
+// Remonte la ligne de la locale française en première position du tableau des locales d'un projet.
+// Ne fait rien si GlotDict est présent (évite un conflit avec son propre réordonnancement).
+/**
+ * @param {Element | null} frenchLink
+ * @param {boolean} glotDictPresent
+ * @returns {boolean}
+ */
+export function moveFrenchRowToFirst(frenchLink, glotDictPresent) {
+	const frenchRow = frenchLink?.closest('tr');
+	const tableBody = frenchRow?.closest('tbody');
+	const firstRow = tableBody?.querySelector('tr:first-child');
+	if (firstRow && frenchRow && firstRow !== frenchRow && !glotDictPresent) {
+		firstRow.before(frenchRow);
+		return true;
+	}
+	return false;
+}
+
+// Remonte la carte de la locale française en première position de l'annuaire des locales (page d'accueil,
+// structure #locales différente d'un tableau). Ne fait rien si GlotDict est présent (évite un conflit).
+/**
+ * @param {Element | null} frenchLink
+ * @param {boolean} glotDictPresent
+ * @returns {boolean}
+ */
+export function moveFrenchLocaleCardToFirst(frenchLink, glotDictPresent) {
+	const frenchCard = frenchLink?.closest('.locale');
+	const localesList = frenchCard?.closest('#locales');
+	const firstCard = localesList?.firstElementChild;
+	if (firstCard && frenchCard && firstCard !== frenchCard && !glotDictPresent) {
+		firstCard.before(frenchCard);
+		return true;
+	}
+	return false;
+}

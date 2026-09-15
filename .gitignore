@@ -1,0 +1,27 @@
+# Dépendances npm (installées via `npm install`, jamais commitées)
+node_modules/
+
+# Dossiers générés par WXT (build/cache, régénérés à chaque `npm run build`/`dev`)
+.wxt/
+.output/
+
+# Paquets d'extension prêts à l'upload (générés par `npm run zip`)
+*.zip
+
+# Rapport de couverture de tests (généré par `vitest run --coverage`)
+coverage/
+
+# Secrets / config locale
+.env
+.env.local
+.env.*.local
+
+# Fichiers et logs divers
+.DS_Store
+TODO.md
+CLAUDE.md
+
+# Fichiers de travail temporaires (notes, brouillons, punch-lists) — jamais commités
+tmp/
+npm-debug.log*
+*.log

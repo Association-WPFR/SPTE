@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="icons/spte.png" alt="SPTE" width="160" />
+  <img src="public/icons/spte.png" alt="SPTE" width="160" />
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0-blue?style=flat-square" alt="Version 2.0.0" />
+  <img src="https://img.shields.io/badge/version-3.0.0-blue?style=flat-square" alt="Version 3.0.0" />
   <img src="https://img.shields.io/badge/licence-GPL%20v2%2B-276749?style=flat-square" alt="Licence GPL v2+" />
 </p>
 
@@ -89,7 +89,7 @@ Cette extension n’est pas destinée à remplacer GlotDict, mais à afficher de
 Elle n’apporte pas d’aide lors de la saisie d’une traduction puisque GlotDict le fait très bien mais elle permet de contrôler ultérieurement si une traduction a respecté les règles mises en place par l’équipe française en charge de la traduction.
 
 > [!NOTE]
-> SPTE travaille en profondeur sur la colonne des traductions et force par compatibilité certains paramètres internes de GlotDict. GlotDict évoluant de son côté, cette compatibilité peut nécessiter une mise à jour ponctuelle de SPTE, se référer au [wiki](https://github.com/Association-WPFR/SPTE/wiki) pour le détail technique à jour.
+> SPTE travaille en profondeur sur la colonne des traductions et force par compatibilité certains paramètres internes de GlotDict. GlotDict évoluant de son côté, cette compatibilité peut nécessiter une mise à jour ponctuelle de SPTE — se référer au [wiki](https://github.com/Association-WPFR/SPTE/wiki) pour le détail technique à jour.
 
 ## Remerciements
 
