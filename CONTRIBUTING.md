@@ -26,3 +26,11 @@ npm run build:firefox  # build de production (Firefox)
 Le moteur des règles typographiques vit dans `utils/rules.js` (c'est le tableau `TypographyRule[]`). Chaque règle a sa propre regex, testée dans `utils/regex.test.js`.
 
 Avant de modifier une règle existante, lancez `npm test` pour vérifier l'état actuel. Les tests sont obligatoires.
+
+## Tags de version
+
+Format `X.X.X`, sans `v` devant (ex: `3.0.0`, pas `v3.0.0`) — convention en place depuis la 2.0.0.
+
+## Workflow git
+
+`main` est protégée : toute modification passe par une Pull Request, jamais de push direct.
