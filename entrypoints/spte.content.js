@@ -16,6 +16,11 @@ import './style.css';
 export default defineContentScript({
 	matches: ['https://translate.wordpress.org/*'],
 	main() {
+		// Si le script est réinjecté sans navigation complète (ex: rechargement de l'extension
+		// depuis about:debugging pendant le développement), on évite de recréer et réinsérer
+		// tous les éléments SPTE par-dessus ceux déjà présents.
+		if (document.getElementById('sp-controls')) { return; }
+
 		// Accès rapide à une règle par son id.
 		const rulesById = new Map(rules.map((rule) => [rule.id, rule]));
 		// Vérification de la localisation.
