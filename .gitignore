@@ -16,5 +16,6 @@ node_modules/
 # Fichiers et logs divers
 .DS_Store
 TODO.md
+CLAUDE.md
 npm-debug.log*
 *.log
