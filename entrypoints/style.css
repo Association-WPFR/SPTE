@@ -60,11 +60,23 @@
    2. Compatibilité GlotDict
    ========================================================================== */
 
+/* Collé directement au textarea qui suit (zéro espace, bordure commune) pour réduire le
+   mouvement d'œil entre les 2 lors de la comparaison. Voir idée remontée par test réel
+   (2026-09-15) : la lecture par blocs séparés et espacés fatigue sur de nombreuses chaînes. */
 .sp-editor-highlighter {
-	margin: 1em 0;
+	margin: 1em 0 0 0;
 	padding: 10px 3px;
 	font-size: 15px;
 	background-color: #d9e1e8;
+	border: 1px solid #ccc;
+	border-bottom: none;
+	box-sizing: border-box;
+}
+
+.sp-editor-highlighter ~ .translation-wrapper textarea {
+	margin-top: 0 !important;
+	border-top-left-radius: 0 !important;
+	border-top-right-radius: 0 !important;
 }
 
 /* Neutralise le surlignage jaune posé par GlotDict sur les mêmes chaînes
