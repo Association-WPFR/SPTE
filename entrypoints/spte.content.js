@@ -240,22 +240,18 @@ export default defineContentScript({
 			target.focus();
 		}
 
-		// Rend un compteur cliquable pour sauter à sa première occurrence sur la page.
+		// Rend un compteur cliquable pour sauter à sa première occurrence sur la page. C'est un
+		// <button>, pas un lien : il ne navigue nulle part, il déplace juste le focus sur la
+		// page actuelle (role="link" était sémantiquement faux — corrigé après relecture UI/UX).
 		/**
 		 * @param {Element} counter
 		 * @param {string} cssClass
+		 * @param {string} label
 		 */
-		function makeCounterClickable(counter, cssClass) {
-			counter.setAttribute('tabindex', '0');
-			counter.setAttribute('role', 'link');
+		function makeCounterClickable(counter, cssClass, label) {
+			counter.setAttribute('aria-label', `Aller à la première occurrence : ${label}`);
 			counter.classList.add('sp-warning-title--clickable');
 			counter.addEventListener('click', () => jumpToFirstWarning(cssClass));
-			counter.addEventListener('keydown', (/** @type {KeyboardEvent} */ e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					e.preventDefault();
-					jumpToFirstWarning(cssClass);
-				}
-			});
 		}
 
 		// Affiche les statistiques de résultats dans l’en-tête.
@@ -276,8 +272,8 @@ export default defineContentScript({
 						counter.textContent = String(Number(counter.textContent) + rule.counter);
 					} else {
 						const title = createElement('SPAN', {}, rule.title);
-						counter = createElement('SPAN', { class: `${rule.cssClass} sp-warning-title` }, String(rule.counter));
-						makeCounterClickable(counter, rule.cssClass);
+						counter = createElement('BUTTON', { type: 'button', class: `${rule.cssClass} sp-warning-title` }, String(rule.counter));
+						makeCounterClickable(counter, rule.cssClass, rule.title);
 						title.append(counter);
 						resultsData.append(title);
 					}
@@ -292,8 +288,8 @@ export default defineContentScript({
 			if (counter) {
 				counter.textContent = String(nbCharacter);
 			} else if (nbCharacter) {
-				counter = createElement('SPAN', { class: `${charClass} sp-warning-title` }, String(nbCharacter));
-				makeCounterClickable(counter, charClass);
+				counter = createElement('BUTTON', { type: 'button', class: `${charClass} sp-warning-title` }, String(nbCharacter));
+				makeCounterClickable(counter, charClass, charTitle.replace(/\s*:\s*$/, ''));
 				title.append(counter);
 				resultsData.append(title);
 			}

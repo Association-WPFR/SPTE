@@ -324,10 +324,19 @@
 	text-align: center !important;
 	min-width: 22px !important;
 	min-height: 23px !important;
+	border: 0 !important;
+	font: inherit !important;
 }
 
+/* Compteur cliquable (issue #3) : role natif de <button>, mais l'affordance visuelle
+   (souligné au survol/focus) manquait pour signaler que c'est interactif. */
 .sp-warning-title--clickable {
 	cursor: pointer !important;
+}
+
+.sp-warning-title--clickable:hover,
+.sp-warning-title--clickable:focus-visible {
+	text-decoration: underline !important;
 }
 
 [class*="sp-warning--"],
