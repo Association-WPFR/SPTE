@@ -12,10 +12,10 @@
 - Réécriture du README (mise à jour des contenus, des liens, de l’information au sujet de la reprise du projet par WPFR.net, remerciements à Loïc évidemment)
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
 - Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut, 85% fixe) et « Agrandir le reste de GlotPress » (85% fixe aussi désormais, le champ « Largeur maximale » est retiré)
-- Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement — le bouton « Enregistrer » a été retiré, devenu inutile
+- Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
 
 ### Removed
-- Réglage « Locales supplémentaires » (fr-be, fr-ca) : les règles typographiques de SPTE sont calées sur le guide fr.wordpress.org (France), qui ne s'applique pas tel quel au français du Québec ni de Belgique (ex : le Québec n'utilise pas d'espace avant « ; ! ? »). Aucun usage connu de ce réglage à ce jour.
+- Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. SPTE est pensé pour les besoins de la locale fr et les règles de l'équipe fr.wordpress.org (France). Aucun usage connu de ce réglage à ce jour par d'autres communautés francophones.
 
 ### Fixed
 - Réglages jamais correctement initialisés au premier lancement, provoquant un retéléchargement en boucle du glossaire officiel
@@ -27,10 +27,11 @@
 - Certaines lignes du tableau sans case à cocher plantaient (ex: ligne d'historique de révision)
 - Double espace cassant le balisage HTML
 - Faux positifs du glossaire sur des mots identiques en français et en anglais (ex : « plugin »)
-- Bouton « Réinitialiser » des couleurs qui soumettait tout le formulaire dans la popups des réglages
 - Faux positif sur « ?) »/« !) » (point d'interrogation ou d'exclamation suivi d'une parenthèse fermante)
 - Réglage « Agrandir la page » qui semblait actif par défaut sans effet visible (il contrôlait en réalité le reste de GlotPress, pas la table de traduction déjà agrandie inconditionnellement)
-- Bouton « Réinitialiser » des couleurs qui décalait les éléments au clic (bordure ajoutée uniquement à l'état actif) et n'enregistrait jamais la réinitialisation
+- Bouton « Réinitialiser » des couleurs qui soumettait tout le formulaire des réglages au lieu de juste réinitialiser les couleurs
+- Bouton « Réinitialiser » des couleurs qui décalait les éléments au clic (bordure ajoutée uniquement à l'état actif, jamais au repos)
+- Bouton « Réinitialiser » des couleurs qui n'enregistrait jamais son propre effet (il fallait cliquer sur « Enregistrer » séparément)
 
 ## [2.0.0] - 01 mai 2023
 
