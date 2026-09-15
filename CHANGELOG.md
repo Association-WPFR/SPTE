@@ -31,6 +31,8 @@
 
 ### Fixed
 - Les notices GlotDict (ex : le décompte affiché par le bouton « Review ») s'affichent de nouveau (le conteneur qui les récupère n'était jamais inséré dans la page)
+- Le texte du highlighter (aperçu surligné dans le panneau d'édition) fait maintenant le même retour à la ligne que le champ de traduction, pour faciliter la comparaison visuelle des chaînes multi-lignes
+- Un guillemet français collé à une balise HTML (ex : `<strong>«texte»</strong>`) n'est plus signalé à tort comme collé à du texte
 - Les réglages s'initialisent maintenant correctement au premier lancement (ils provoquaient un retéléchargement en boucle du glossaire officiel)
 - Les réglages s'enregistrent et se rechargent maintenant correctement sur Firefox
 - Compatibilité rétablie avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
