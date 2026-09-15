@@ -51,8 +51,9 @@ describe('addPermalinkButton', () => {
 		const button = brother.querySelector('.sp-copy-permalink');
 		expect(button).not.toBeNull();
 		expect(brother.querySelector('.panel-header-actions__next').nextElementSibling).toBe(button);
-		// Dashicon plutôt qu'un emoji, pour se fondre avec les autres boutons du panneau.
-		expect(button.querySelector('.dashicons-admin-links')).not.toBeNull();
+		// SVG inline plutôt qu'un dashicon (police que WordPress remplace progressivement) ou un
+		// emoji (toujours en couleur, tranche avec les autres boutons du panneau).
+		expect(button.querySelector('svg')).not.toBeNull();
 	});
 
 	it('copie l’URL absolue du permalien au clic', () => {
