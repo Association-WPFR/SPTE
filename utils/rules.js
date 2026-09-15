@@ -93,7 +93,7 @@ export const rgxBadWords = new RegExp(`(?<=[\\s,:;"']|^)(?<!«\\s)${data.badWord
 // Détecte les apostrophes droites et l'apostrophe courbe inversée (U+2018, à ne pas confondre
 // avec U+2019 qui est la bonne apostrophe courbe et ne doit jamais être signalée).
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSingleQuotes
-export const rgxSingleQuotes = new RegExp('(?<!href\\=|href\\=\'[a-z0-9.]*?|%[a-z])[\u0027\u2018]', 'gm');
+export const rgxSingleQuotes = new RegExp('(?<!href\\=|href\\=\'[a-z0-9.]*?|%[a-z])[\u0027\u2018](?!%[a-z])', 'gm');
 
 // Détecte les guillemets doubles droits (à remplacer par des guillemets français « »). Exclut
 // les guillemets d'un attribut HTML (href="...", title="..."), puisque le texte traité peut

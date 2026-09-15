@@ -108,11 +108,9 @@ describe('rgxSingleQuotes', () => {
 	it('ne détecte jamais la bonne apostrophe courbe (U+2019)', () => {
 		expect(matches(rgxSingleQuotes, 'l’extension')).toEqual([]);
 	});
-	// ÉCART DOCUMENTÉ : le wiki liste une exception « si elle est suivie par le signe % »
-	// (Ex: `'%s`) via un `(?!%)` en fin de regex, mais ce lookahead n’existe plus dans le code
-	// actuel (probablement perdu lors de l’ajout de la détection de l’apostrophe courbe inversée
-	// U+2018). Une apostrophe suivie de `%s` est donc désormais signalée à tort.
-	it.skip('ignore une apostrophe droite suivie du signe % (exception perdue)', () => {
+	// Issue #6 : l'apostrophe précédée de "%lettre" était déjà exclue, mais pas celle suivie
+	// immédiatement de "%lettre" (ex: l'apostrophe ouvrante de '%s').
+	it('ignore une apostrophe droite suivie du signe % (issue #6)', () => {
 		expect(matches(rgxSingleQuotes, '\'%s')).toEqual([]);
 	});
 });
@@ -549,7 +547,7 @@ describe('rgxClosingFrQuote', () => {
 	])('ignore un guillemet fermant non suivi d’une espace, s’il est suivi de %s', (_label, text) => {
 		expect(matches(rgxClosingFrQuote, text)).toEqual([]);
 	});
-	// Issue #19 : cas type "(texte) »" — vérifié non reproductible avec l'exemple exact de
+	// Issue #19 : cas type "(texte) »" (espace insécable) — vérifié non reproductible avec l'exemple exact de
 	// l'issue (aucune des 2 règles ne signale ce cas aujourd'hui).
 	it('ignore une parenthèse fermante suivie d’une espace insécable puis d’un guillemet fermant', () => {
 		const text = '« La Berceuse (femme balançant un berceau) » par Vincent Van Gogh (1889)';
