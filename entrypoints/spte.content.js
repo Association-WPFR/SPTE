@@ -230,6 +230,34 @@ export default defineContentScript({
 			e.preventDefault();
 		}
 
+		// Fait défiler la page jusqu'à la première occurrence d'un avertissement donné et lui
+		// donne le focus. Voir issue #3.
+		/** @param {string} cssClass */
+		function jumpToFirstWarning(cssClass) {
+			const target = /** @type {HTMLElement | null} */ (document.querySelector(`.${cssClass}`));
+			if (!target) { return; }
+			target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			target.focus();
+		}
+
+		// Rend un compteur cliquable pour sauter à sa première occurrence sur la page.
+		/**
+		 * @param {Element} counter
+		 * @param {string} cssClass
+		 */
+		function makeCounterClickable(counter, cssClass) {
+			counter.setAttribute('tabindex', '0');
+			counter.setAttribute('role', 'link');
+			counter.classList.add('sp-warning-title--clickable');
+			counter.addEventListener('click', () => jumpToFirstWarning(cssClass));
+			counter.addEventListener('keydown', (/** @type {KeyboardEvent} */ e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					jumpToFirstWarning(cssClass);
+				}
+			});
+		}
+
 		// Affiche les statistiques de résultats dans l’en-tête.
 		function displayResults() {
 			let nbCharacter = 0;
@@ -249,6 +277,7 @@ export default defineContentScript({
 					} else {
 						const title = createElement('SPAN', {}, rule.title);
 						counter = createElement('SPAN', { class: `${rule.cssClass} sp-warning-title` }, String(rule.counter));
+						makeCounterClickable(counter, rule.cssClass);
 						title.append(counter);
 						resultsData.append(title);
 					}
@@ -264,6 +293,7 @@ export default defineContentScript({
 				counter.textContent = String(nbCharacter);
 			} else if (nbCharacter) {
 				counter = createElement('SPAN', { class: `${charClass} sp-warning-title` }, String(nbCharacter));
+				makeCounterClickable(counter, charClass);
 				title.append(counter);
 				resultsData.append(title);
 			}

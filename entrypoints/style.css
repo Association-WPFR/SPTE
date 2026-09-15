@@ -315,6 +315,10 @@
 	min-height: 23px !important;
 }
 
+.sp-warning-title--clickable {
+	cursor: pointer !important;
+}
+
 [class*="sp-warning--"],
 .sp-nbkspaces--showing,
 .sp-spaces--showing {
