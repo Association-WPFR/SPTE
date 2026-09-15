@@ -28,6 +28,7 @@
 - Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
 
 ### Fixed
+- Les notices GlotDict (ex : le décompte affiché par le bouton « Review ») s'affichent de nouveau (le conteneur qui les récupère n'était jamais inséré dans la page)
 - Les réglages s'initialisent maintenant correctement au premier lancement (ils provoquaient un retéléchargement en boucle du glossaire officiel)
 - Les réglages s'enregistrent et se rechargent maintenant correctement sur Firefox
 - Compatibilité rétablie avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
