@@ -67,6 +67,16 @@
 	background-color: #d9e1e8;
 }
 
+/* Bouton "copier le permalien", inséré entre "Next" et le menu contextuel. */
+.sp-copy-permalink {
+	background: none;
+	border: 0;
+	cursor: pointer;
+	font-size: 16px;
+	line-height: 1;
+	padding: 0 6px;
+}
+
 /* Neutralise le surlignage jaune posé par GlotDict sur les mêmes chaînes
    que SPTE, pour éviter que les deux extensions ne se marchent dessus. */
 [style*="background-color:yellow"] {

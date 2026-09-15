@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import {
 	addForeignToolTip,
 	addEditorHighlighter,
+	addPermalinkButton,
 	matchTextWrapping,
 	hideNonWarningRows,
 	showAllRows,
@@ -35,6 +36,42 @@ describe('addForeignToolTip', () => {
 		// La ligne d'historique n'a pas de .translation-text ; on simule l'appel tel qu'il
 		// arriverait réellement (translation = un élément quelconque de cette ligne).
 		expect(() => addForeignToolTip(historyRow)).not.toThrow();
+	});
+});
+
+describe('addPermalinkButton', () => {
+	beforeEach(() => {
+		document.body.innerHTML = translationsTableHTML;
+		Object.assign(navigator, { clipboard: { writeText: vi.fn() } });
+	});
+
+	it('ajoute le bouton entre "Next" et le menu contextuel', () => {
+		const brother = document.querySelector('#editor-1-1');
+		addPermalinkButton(brother);
+		const button = brother.querySelector('.sp-copy-permalink');
+		expect(button).not.toBeNull();
+		expect(brother.querySelector('.panel-header-actions__next').nextElementSibling).toBe(button);
+	});
+
+	it('copie l’URL absolue du permalien au clic', () => {
+		const brother = document.querySelector('#editor-1-1');
+		addPermalinkButton(brother);
+		/** @type {HTMLElement} */ (brother.querySelector('.sp-copy-permalink')).click();
+		expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+			expect.stringContaining('/projects/wp-plugins/example/stable/fr/default/'),
+		);
+	});
+
+	it('ne l’ajoute qu’une seule fois si appelé plusieurs fois', () => {
+		const brother = document.querySelector('#editor-1-1');
+		addPermalinkButton(brother);
+		addPermalinkButton(brother);
+		expect(brother.querySelectorAll('.sp-copy-permalink')).toHaveLength(1);
+	});
+
+	it('ne plante pas si le bouton "Next" est absent', () => {
+		const brother = document.createElement('div');
+		expect(() => addPermalinkButton(brother)).not.toThrow();
 	});
 });
 

@@ -41,6 +41,23 @@ export function matchTextWrapping(el, textarea) {
 	el.style.wordSpacing = style.wordSpacing;
 }
 
+// Ajoute un bouton pour copier le permalien de la traduction dans le presse-papier, sans passer
+// par le menu contextuel (clic > nouvel onglet > copie manuelle de l'URL).
+/** @param {Element} brother */
+export function addPermalinkButton(brother) {
+	if (brother.querySelector('.sp-copy-permalink')) { return; } // déjà ajouté
+	const nextButton = brother.querySelector('.panel-header-actions__next');
+	if (!nextButton) { return; }
+	const permalink = /** @type {HTMLAnchorElement | undefined} */ ([...brother.querySelectorAll('.button-menu__dropdown a')]
+		.find((a) => a.textContent?.trim() === 'Permalink to translation'));
+	if (!permalink) { return; }
+	const button = createElement('BUTTON', { type: 'button', class: 'sp-copy-permalink with-tooltip', 'aria-label': 'Copier le permalien de cette traduction' }, '🔗');
+	button.addEventListener('click', () => {
+		navigator.clipboard.writeText(permalink.href);
+	});
+	nextButton.insertAdjacentElement('afterend', button);
+}
+
 // Clone l’aperçu surligné dans le panneau d’édition.
 /** @param {Element} translation */
 export function addEditorHighlighter(translation) {
@@ -49,6 +66,7 @@ export function addEditorHighlighter(translation) {
 	const brother = preview.nextElementSibling;
 	// La toute dernière ligne du tableau n'a pas de ligne suivante.
 	if (!brother) { return; }
+	addPermalinkButton(brother);
 	const brotherHighlighter = brother.querySelector('.sp-editor-highlighter');
 	if (brotherHighlighter) {
 		brotherHighlighter.parentNode?.removeChild(brotherHighlighter);
