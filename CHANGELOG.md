@@ -3,49 +3,58 @@
 ## [3.0.0] - xx septembre 2026
 
 ### Added
-- Fichier LICENSE (GPL v2+)
-- Outillage de développement : WXT (génère automatiquement les manifests Chrome et Firefox), ESLint, Vitest, .editorconfig, Dependabot, CONTRIBUTING.md, .nvmrc (build reproductible côté AMO)
-- Mode sombre du popup de réglages (suit le choix de l'OS/browser).
 - Nouvelle règle détectant les guillemets doubles droits (`"`), à remplacer par les guillemets français « »
 - Nouvelle règle détectant un point/tiret/astérisque utilisé à la place du point médian épicène (ex: administrateur.rice, abonné-e-s)
-- La locale française remonte aussi en première position, avec son drapeau, sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (en plus du tableau des locales par projet qui existait déjà)
 - Les compteurs d'avertissements (mots déconseillés, guillemets, ponctuation...) sont cliquables (et accessibles au clavier) : ils font défiler la page jusqu'à la première occurrence correspondante
 - Bouton pour copier le permalien d'une traduction, à côté du bouton « Next » du panneau d'édition (au lieu du menu contextuel)
 - Indicateur de chargement pendant la recherche « Cohérence d'une chaîne »
+- Mode sombre du popup de réglages (suit le choix de l'OS/browser).
+- La locale française remonte aussi en première position, avec son drapeau, sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (en plus du tableau des locales par projet qui existait déjà)
+- Outillage de développement : WXT (génère automatiquement les manifests Chrome et Firefox), ESLint, Vitest, .editorconfig, Dependabot, CONTRIBUTING.md, .nvmrc (build reproductible côté AMO)
+- Fichier LICENSE (GPL v2+)
 
 ### Changed
-- Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
-- Firefox aligné en Manifest V3 (alignement sur la version Chrome déjà gérée depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer.
-- Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
+- Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
+- Le filtre « Tout »/« Les avertissements » devient un toggle unique « Afficher uniquement les avertissements de cette page (x) », x étant le nombre de lignes concernées sur la page ; grisé et désactivé automatiquement quand il n'y a rien à filtrer
 - Liste des mots bannis enrichie de 19 anglicismes supplémentaires (source : table « Termes critiques » de thierrypigot/wp-fr-typo)
 - Liste des mots bannis enrichie de 7 entrées supplémentaires (« entête », « et/ou », « customizer », « template », « templates », « add-ons », « événement »), en partie récupérées de Pull Requests jamais mergées sur un fork du dépôt
 - Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut, 85% fixe) et « Agrandir le reste de GlotPress » (85% fixe aussi désormais, le champ « Largeur maximale » est retiré)
-- Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
-- Le filtre « Tout »/« Les avertissements » devient un toggle unique « Afficher uniquement les avertissements de cette page (x) », x étant le nombre de lignes concernées sur la page ; grisé et désactivé automatiquement quand il n'y a rien à filtrer
 - Le réglage « Contraste des textes » ne recolore plus que le contenu de traduction, plus la navigation ni le pied de page du site (hors du rôle de SPTE)
+- Firefox aligné en Manifest V3 (alignement sur la version Chrome déjà gérée depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer.
+- Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
+- Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
 
 ### Removed
 - Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
 
 ### Fixed
-- Le bandeau de résultats (compteurs d'avertissements) n'affiche plus les compteurs collés les uns aux autres sans espacement ; le titre « Éléments à vérifier » et le lien « Masquer la légende » restent alignés sur la même ligne quel que soit le nombre de compteurs affichés en dessous
-- Les notices GlotDict (ex : le décompte affiché par le bouton « Review ») s'affichent de nouveau (le conteneur qui les récupère n'était jamais inséré dans la page)
-- Le texte du highlighter (aperçu surligné dans le panneau d'édition) fait maintenant le même retour à la ligne que le champ de traduction, pour faciliter la comparaison visuelle des chaînes multi-lignes
-- Un guillemet français collé à une balise HTML (ex : `<strong>«texte»</strong>`) n'est plus signalé à tort comme collé à du texte
 - Les réglages s'initialisent maintenant correctement au premier lancement (ils provoquaient un retéléchargement en boucle du glossaire officiel)
 - Les réglages s'enregistrent et se rechargent maintenant correctement sur Firefox
 - Compatibilité rétablie avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
-- Le tri de la locale française fonctionne de nouveau dans le tableau des locales d'un projet (la structure HTML visée de GlotPress avait changé)
-- Les mots signalés sont de nouveau focusables au clavier (à tester plus en détail si quelqu'un s'y connait bien)
-- Les cases à cocher des réglages ont maintenant un nom accessible pour les lecteurs d'écran (idem)
-- La popup de recherche de cohérence gère maintenant le focus au clavier (idem)
-- Curseur de survol des interrupteurs de réglages corrigé (un résidu IE restait dans le code)
-- Couleur de l'interrupteur de réglages rendue cohérente (bleu ; une définition CSS en double l'écrasait)
-- Bordure des interrupteurs de réglages corrigée (`border: 2px` sans `solid` annulait leur style)
-- Sélecteurs CSS obsolètes retirés (résidus d'anciennes versions du popup)
-- Propriété CSS `font-smoothing: antialiased` non standard retirée
 - Les lignes du tableau sans case à cocher ne provoquent plus de plantage (ex: ligne d'historique de révision)
 - Le double espace qui cassait le balisage HTML des avertissements est corrigé
+- Le bandeau de résultats s'affiche maintenant même quand la page ne comporte aucun avertissement (« aucun élément à vérifier »), pour distinguer une vérification effectuée d'une extension qui n'aurait pas tourné
+- Le lien « Masquer la légende » redevient visible (« Afficher la légende ») une fois la légende masquée, au lieu de disparaître entièrement
+- Les mots signalés sont de nouveau focusables au clavier (à tester plus en détail si quelqu'un s'y connait bien)
+- Les notices GlotDict (ex : le décompte affiché par le bouton « Review ») s'affichent de nouveau (le conteneur qui les récupère n'était jamais inséré dans la page)
+- Le tri de la locale française fonctionne de nouveau dans le tableau des locales d'un projet (la structure HTML visée de GlotPress avait changé)
+- Le bandeau de résultats (compteurs d'avertissements) n'affiche plus les compteurs collés les uns aux autres sans espacement ; le titre « Éléments à vérifier » et le lien « Masquer la légende » restent alignés sur la même ligne quel que soit le nombre de compteurs affichés en dessous
+- Le texte du highlighter (aperçu surligné dans le panneau d'édition) fait maintenant le même retour à la ligne que le champ de traduction, pour faciliter la comparaison visuelle des chaînes multi-lignes
+- Un guillemet français collé à une balise HTML (ex : `<strong>«texte»</strong>`) n'est plus signalé à tort comme collé à du texte
+- Les cases à cocher des réglages ont maintenant un nom accessible pour les lecteurs d'écran (idem)
+- La popup de recherche de cohérence gère maintenant le focus au clavier (idem)
+- Le sélecteur de couleur natif n'est plus forcé en champ texte hexadécimal sous Firefox (Firefox supporte `input[type=color]` nativement depuis 2014, ce contournement était obsolète)
+- Couleur de l'interrupteur de réglages rendue cohérente (bleu ; une définition CSS en double l'écrasait)
+- Bordure des interrupteurs de réglages corrigée (`border: 2px` sans `solid` annulait leur style)
+- Curseur de survol des interrupteurs de réglages corrigé (un résidu IE restait dans le code)
+- Les transitions du popup de réglages (onglets, boutons) sont maintenant animées en douceur comme les interrupteurs, au lieu de changer d'état instantanément
+- L'effet réel du réglage « Agrandir la page » est maintenant explicite (il contrôlait le reste de GlotPress, pas la table de traduction déjà agrandie ; voir aussi Changed pour le nouveau découpage en 2 réglages)
+- Le bouton « Réinitialiser » ne soumet plus tout le formulaire des réglages, il réinitialise seulement les couleurs ce qui est son comportement attendu
+- Le bouton « Réinitialiser » enregistre maintenant son propre effet immédiatement (il fallait auparavant cliquer sur « Enregistrer » séparément)
+- Le bouton « Réinitialiser » ne décale plus les éléments au clic (bordure désormais réservée dès l'état de repos)
+- Le bouton « Réinitialiser » est repositionné sur la ligne du réglage « Couleurs des avertissements » (il n'était pas aligné, ce qui pouvait laisser croire à une réinitialisation globale des réglages)
+- Sélecteurs CSS obsolètes retirés (résidus d'anciennes versions du popup)
+- Propriété CSS `font-smoothing: antialiased` non standard retirée
 - Les mots identiques en français et en anglais (ex : « plugin ») ne sont plus signalés à tort par le glossaire
 - « ?) »/« !) » (point d'interrogation ou d'exclamation suivi d'une parenthèse fermante) ne sont plus signalés à tort
 - L'apostrophe courbe inversée (U+2018) est désormais détectée, au même titre que l'apostrophe droite
@@ -61,16 +70,6 @@
 - Le nom du projet en cours de traduction (ex : une extension nommée « Widget ») n'est plus signalé à tort par le glossaire
 - Un point-virgule en toute fin de chaîne n'est plus signalé à tort
 - Un double espace au milieu d'une phrase est désormais détecté (la règle ne couvrait auparavant que le début/fin de ligne)
-- L'effet réel du réglage « Agrandir la page » est maintenant explicite (il contrôlait le reste de GlotPress, pas la table de traduction déjà agrandie ; voir aussi Changed pour le nouveau découpage en 2 réglages)
-- Le bouton « Réinitialiser » ne soumet plus tout le formulaire des réglages, il réinitialise seulement les couleurs ce qui est son comportement attendu
-- Le bouton « Réinitialiser » ne décale plus les éléments au clic (bordure désormais réservée dès l'état de repos)
-- Le bouton « Réinitialiser » enregistre maintenant son propre effet immédiatement (il fallait auparavant cliquer sur « Enregistrer » séparément)
-- Le bouton « Réinitialiser » est repositionné sur la ligne du réglage « Couleurs des avertissements » (il n'était pas aligné, ce qui pouvait laisser croire à une réinitialisation globale des réglages)
-- Le sélecteur de couleur natif n'est plus forcé en champ texte hexadécimal sous Firefox (Firefox supporte `input[type=color]` nativement depuis 2014, ce contournement était obsolète)
-- Le bandeau de résultats s'affiche maintenant même quand la page ne comporte aucun avertissement (« aucun élément à vérifier »), pour distinguer une vérification effectuée d'une extension qui n'aurait pas tourné
-- Le lien « Masquer la légende » redevient visible (« Afficher la légende ») une fois la légende masquée, au lieu de disparaître entièrement
-- La mise en page du popup de réglages (couleurs, interrupteurs) utilise désormais flexbox au lieu de `float`, pour éviter tout chevauchement visuel à fort zoom ou grande police système
-- Les transitions du popup de réglages (onglets, boutons) sont maintenant animées en douceur comme les interrupteurs, au lieu de changer d'état instantanément
 
 ## [2.0.0] - 01 mai 2023
 
