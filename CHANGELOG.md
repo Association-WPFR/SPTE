@@ -14,6 +14,7 @@
 - Nouvelle règle détectant un point/tiret/astérisque utilisé à la place du point médian épicène (ex: administrateur.rice, abonné-e-s)
 - La locale française remonte aussi en première position, avec son drapeau, sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (en plus du tableau des locales par projet qui existait déjà)
 - Les compteurs d'avertissements (mots déconseillés, guillemets, ponctuation...) sont cliquables (et accessibles au clavier) : ils font défiler la page jusqu'à la première occurrence correspondante
+- Bouton pour copier le permalien d'une traduction, à côté du bouton « Next » du panneau d'édition (au lieu du menu contextuel)
 
 ### Changed
 - Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
