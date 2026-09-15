@@ -31,6 +31,7 @@
 - Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
 
 ### Fixed
+- Le bandeau de résultats (compteurs d'avertissements) n'affiche plus les compteurs collés les uns aux autres sans espacement ; le titre « Éléments à vérifier » et le lien « Masquer la légende » restent alignés sur la même ligne quel que soit le nombre de compteurs affichés en dessous
 - Les notices GlotDict (ex : le décompte affiché par le bouton « Review ») s'affichent de nouveau (le conteneur qui les récupère n'était jamais inséré dans la page)
 - Le texte du highlighter (aperçu surligné dans le panneau d'édition) fait maintenant le même retour à la ligne que le champ de traduction, pour faciliter la comparaison visuelle des chaînes multi-lignes
 - Un guillemet français collé à une balise HTML (ex : `<strong>«texte»</strong>`) n'est plus signalé à tort comme collé à du texte

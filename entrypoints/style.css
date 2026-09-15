@@ -1,17 +1,4 @@
 /* ==========================================================================
-   Sommaire
-   1. Info-bulle de traduction (survol de la ligne)
-   2. Compatibilité GlotDict
-   3. En-tête sticky (barre de filtres GlotPress)
-   4. Bandeau de résultats (compteur, titre, légendes)
-   5. Surlignage des avertissements + info-bulles associées
-   6. Barre de contrôles (filtres d'affichage des résultats)
-   7. Divers
-   8. Media queries
-   9. Meilleure lisibilité (thème alternatif optionnel)
-   ========================================================================== */
-
-/* ==========================================================================
    1. Info-bulle de traduction (survol de la ligne)
    ========================================================================== */
 
@@ -67,9 +54,7 @@
 	background-color: #d9e1e8;
 }
 
-/* Bouton "copier le permalien", inséré entre "Next" et le menu contextuel. Utilise un dashicon
-   (police déjà chargée par WordPress sur cette page) pour se fondre avec les autres boutons du
-   panneau plutôt qu'un emoji, qui tranchait trop visuellement (toujours rendu en couleur). */
+/* Bouton "copier le permalien", inséré entre "Next" et le menu contextuel. */
 .sp-copy-permalink {
 	background: none;
 	border: 0;
@@ -199,6 +184,7 @@
    ========================================================================== */
 
 #sp-results {
+	position: relative;
 	font-weight: bold;
 	margin: 8px 0 4px 0;
 }
@@ -207,23 +193,24 @@
 	padding: 6px 1em 5px;
 	margin-top: .3em;
 	background: #f3f2fb;
-	display: -ms-flexbox;
 	display: flex;
-	-ms-flex-align: center;
+	flex-wrap: wrap;
 	align-items: center;
-	-ms-flex-pack: center;
 	justify-content: center;
+	column-gap: 1.5em;
+	row-gap: 4px;
 }
 
 .sp-results__title {
-	margin: 5px 100px 5px 0;
+	flex: 1 0 100%;
+	margin: 5px 0;
 	font-size: 14px;
 	color: red;
 	text-transform: uppercase;
+	text-align: center;
 }
 
 .sp-results__captions {
-	position: relative;
 	padding: .1em 9em .9em .9em;
 	background: #f4f3f7;
 	margin-top: -7px;
@@ -233,7 +220,7 @@
 #sp-results__toggle-caption {
 	position: absolute;
 	right: .5rem;
-	top: -25px;
+	top: 8px;
 	padding: 0;
 	font-size: .85rem;
 	color: #756f79 !important;
@@ -312,7 +299,7 @@
 }
 
 /* ==========================================================================
-   5. Surlignage des avertissements + info-bulles associées
+   5. Avertissements + info-bulles
    ========================================================================== */
 
 .sp-warning-title {
@@ -328,8 +315,7 @@
 	font: inherit !important;
 }
 
-/* Compteur cliquable (issue #3) : role natif de <button>, mais l'affordance visuelle
-   (souligné au survol/focus) manquait pour signaler que c'est interactif. */
+/* Compteur cliquable. */
 .sp-warning-title--clickable {
 	cursor: pointer !important;
 }
@@ -365,7 +351,7 @@
 	color: white;
 }
 
-/* Bulle d'info (contenu injecté via l'attribut data-message) */
+/* Contenu injecté via l'attribut data-message */
 [class*="sp-warning--"]:not(.sp-warning-title)::before,
 .sp-nbkspaces--showing::before,
 .sp-spaces--showing::before {
@@ -425,7 +411,7 @@
 }
 
 /* ==========================================================================
-   6. Barre de contrôles (filtres d'affichage des résultats)
+   6. Filtres d'affichage des résultats
    ========================================================================== */
 
 #sp-controls {
@@ -513,15 +499,10 @@
 	.sp-results__data {
 		padding: 6px 2em 5px;
 	}
-
-	.sp-results__title {
-		margin: 5px 30px 5px 0px;
-		;
-	}
 }
 
 /* ==========================================================================
-   9. Meilleure lisibilité (thème alternatif optionnel)
+   9. Meilleure lisibilité
    ========================================================================== */
 
 .sp-better-readability {
