@@ -1,5 +1,8 @@
 const data = {
 	badWord: [
+		// N'ajouter ici que des mots qui n'ont JAMAIS de sens correct en français (contrairement
+		// à "paramètres" ou "motif", qui sont des mots français ordinaires ailleurs et créeraient
+		// des faux positifs).
 		'etes vous',
 		'ets',
 		'fdp',
@@ -14,9 +17,6 @@ const data = {
 		'roter l\'image',
 		'responsif',
 		's4est',
-		// N'ajouter ici que des mots qui n'ont JAMAIS de sens correct en français (contrairement
-		// à "paramètres" ou "motif", qui sont des mots français ordinaires ailleurs et créeraient
-		// des faux positifs).
 		'plugin',
 		'greffon',
 		'uploader',
@@ -83,20 +83,17 @@ function escapeRegExp(str) {
 
 const fileExtensions = data.fileExtensions.join('|');
 
-// Contexte partagé par rgxColon/rgxComma : exclut un caractère quand il est entouré par un
-// bloc `{{ }}` ou `[[ ]]` (interpolation JS, ex: {{foo:bar}}, [[a,b]]). Voir issue #27.
+// Contexte partagé par rgxColon/rgxComma : exclut un caractère entouré d'un bloc `{{ }}`/`[[ ]]` (interpolation JS, ex: {{foo:bar}}). Voir issue #27.
 const doubleBracketGuard = '(?:(?<=\\{\\{[a-zA-Z0-9:,]*)(?=[a-zA-Z0-9:,]*\\}\\})|(?<=\\[\\[[a-zA-Z0-9:,]*)(?=[a-zA-Z0-9:,]*\\]\\]))';
 
-// Contexte partagé par rgxOpenParenthesis/rgxCloseParenthesis : exclut un appel de fonction
-// façon WPCS (ex: registerBlockType( name, settings );), reconnu à sa parenthèse fermante
-// suivie d'un point-virgule. Voir issue #8.
+// Contexte partagé par rgxOpenParenthesis/rgxCloseParenthesis : exclut un appel de fonction façon WPCS
+// (ex: registerBlockType( name, settings );), reconnu à sa parenthèse fermante suivie d'un point-virgule. Voir issue #8.
 const wpcsFunctionCallGuard = '[^()]*\\)\\s*;';
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxBadWords
 export const rgxBadWords = new RegExp(`(?<=[\\s,:;"']|^)(?<!«\\s)${data.badWord.map(escapeRegExp).join('(?=[\\s,.:;"\']|$)|(?<=[\\s,:;"\']|^)(?<!«\\s)')}(?=[\\s,.:;"']|$)`, 'gmi');
 
-// Inclut l'apostrophe courbe inversée (U+2018), à ne pas confondre avec U+2019 qui est la
-// bonne apostrophe courbe et ne doit jamais être signalée.
+// Inclut l'apostrophe courbe inversée (U+2018), à ne pas confondre avec U+2019 (la bonne, jamais signalée).
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSingleQuotes
 export const rgxSingleQuotes = new RegExp('(?<!href\\=|href\\=\'[a-z0-9.]*?|%[a-z])[\u0027\u2018](?!%[a-z])', 'gm');
 
@@ -120,9 +117,8 @@ export const rgxOpenBrace = new RegExp(`(?<! |\\${data.openBrace}|^)\\${data.ope
 export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)|\\.\\.\\.`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxPeriod
-// La 2e alternative (point collé entre 2 mots, ex: "mot.mot") ne se déclenche jamais en
-// pratique : son lookbehind négatif matche toujours une chaîne vide et neutralise la
-// condition. Comportement conservé tel quel — ne pas "corriger" sans test dédié.
+// La 2e alternative (point collé entre 2 mots, ex: "mot.mot") ne se déclenche jamais : son lookbehind
+// négatif matche toujours une chaîne vide. Comportement conservé tel quel, ne pas "corriger" sans test dédié.
 export const rgxPeriod = new RegExp(`(?<= |\u00a0)\\${data.period}(?!${fileExtensions})|(?<![a-zÀ-ú0-9\\${data.period}]*?)\\${data.period}(?=[a-zÀ-ú0-9])|\\${data.period}( $|\u00a0$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxComma

@@ -24,10 +24,6 @@ import {
 	rules,
 } from './rules';
 
-// Tests de caractérisation : figent le comportement ACTUEL des regex, écarts avec le wiki
-// compris. Ne pas modifier ces attentes sans vérifier que le nouveau comportement est
-// intentionnel.
-
 /**
  * @param {RegExp} regex
  * @param {string} text

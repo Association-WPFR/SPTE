@@ -17,18 +17,14 @@ export default defineConfig({
       128: '/icons/icon128.png',
     },
 
-    // Version calculée depuis les fonctionnalités CSS/JS réellement utilisées (actuellement
-    // `light-dark()`), pas un plancher de prudence arbitraire — cf. politique de compat'
-    // dans TODO.md. À recalculer à chaque fonctionnalité plus récente adoptée.
     minimum_chrome_version: '123',
 
-    // Identifiant Firefox obligatoire pour publier/mettre à jour sur l’AMO.
-    // Doit correspondre exactement à l’identifiant de la fiche SPTE existante sur l’AMO.
+    // Identifiant Firefox obligatoire pour publier/mettre à jour : il doit correspondre exactement à l’identifiant de la fiche SPTE existante.
     browser_specific_settings: {
       gecko: {
         id: 'contact@wpfr.net',
         strict_min_version: '120.0',
-        // Obligatoire par Mozilla à terme pour toutes les extensions AMO. SPTE ne collecte rien.
+        // Obligatoire pour Mozilla même si SPTE ne collecte rien.
         data_collection_permissions: {
           required: ['none'],
         },

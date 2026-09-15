@@ -16,16 +16,13 @@ import './style.css';
 export default defineContentScript({
 	matches: ['https://translate.wordpress.org/*'],
 	main() {
-		// Si le script est réinjecté sans navigation complète (ex: rechargement de l'extension
-		// depuis about:debugging pendant le développement), on évite de recréer et réinsérer
-		// tous les éléments SPTE par-dessus ceux déjà présents.
+		// Évite de réinsérer les éléments SPTE si l'extension est rechargée sans navigation (ex: about:debugging).
 		if (document.getElementById('sp-controls')) { return; }
 
 		const rulesById = new Map(rules.map((rule) => [rule.id, rule]));
 		const onTranslateWordPressRoot = (/https:\/\/translate\.wordpress\.org\//).test(window.location.href);
 
-		// Slug de locale dérivé du chemin de l'URL, validé par pattern (fr, fr-be...) pour éviter
-		// de prendre un segment sans rapport (ex: 'wp-plugins') — repli sur 'fr' sinon.
+		// Slug de locale dérivé de l'URL (validé par pattern pour éviter un segment sans rapport, ex: 'wp-plugins'), repli sur 'fr' sinon.
 		let currentProjectLocaleSlug = '';
 		const pathSegments = window.location.pathname.split('/').filter(Boolean);
 		const localeSlugPattern = /^[a-z]{2,3}(-[a-z0-9]{2,6})?$/;
@@ -58,9 +55,7 @@ export default defineContentScript({
 		const isConnected = document.querySelector('body.logged-in') !== null;
 		const GDmayBeOnBoard = localStorage.getItem('gd_language') !== null;
 
-		// Nom du projet en cours de traduction (breadcrumb : Projects > catégorie > nom du
-		// projet > branche > locale), pour ne pas signaler à tort son propre nom dans badWords
-		// (ex: une extension nommée "Widget"). Voir issue #38.
+		// Nom du projet (breadcrumb), pour ne pas signaler à tort son propre nom dans badWords (ex: une extension nommée "Widget"). Voir issue #38.
 		const projectName = document.querySelector('.breadcrumb li:nth-child(3) a')?.textContent?.trim() ?? '';
 
 		const spPopup = createElement('DIV', { id: 'sp-the-popup', class: 'sp-the-popup--hidden', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Résultats de cohérence', tabindex: '-1' });
@@ -158,15 +153,13 @@ export default defineContentScript({
 			let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
 			for (const rule of rules) {
 				text = text.replace(rule.regex, (string) => {
-					// Un cas présent dans text mais pas dans textWithoutTags est à l'intérieur d'une balise :
-					// il ne doit pas être traité. Ça ne marche que si l'ordre de ce replace() reste identique
-					// à celui du textWithoutTags.replace(string, '') qui suit, un seul match à la fois.
+					// Un match absent de textWithoutTags est à l'intérieur d'une balise, à ignorer. Suppose que
+					// l'ordre de ce replace() et du textWithoutTags.replace(string, '') qui suit reste identique.
 					if (!textWithoutTags.match(rule.regex)) {
 						return string;
 					}
 
-					// Le mot fait partie du nom du projet en cours de traduction (ex: une extension
-					// nommée "Widget") : ce n'est pas un anglicisme à corriger. Voir issue #38.
+					// Le mot fait partie du nom du projet (ex: une extension nommée "Widget") : pas un anglicisme à corriger. Voir issue #38.
 					if (rule.id === 'badWords' && isPartOfProjectName(string, projectName)) {
 						return string;
 					}
@@ -223,17 +216,15 @@ export default defineContentScript({
 		// Défilement + focus sur la première occurrence (accessibilité). Voir issue #3.
 		/** @param {string} cssClass */
 		function jumpToFirstWarning(cssClass) {
-			// Le compteur lui-même porte la même classe que ce qu'il cherche (ex: sp-warning--word
-			// sur le bouton ET sur chaque mot surligné) : sans exclusion, il se trouverait
-			// lui-même en premier puisqu'il est placé avant le tableau dans le DOM (en-tête).
+			// Exclut le compteur lui-même (même classe que ce qu'il cherche, ex: sp-warning--word) : sinon
+			// il se trouverait en premier puisqu'il précède le tableau dans le DOM (en-tête).
 			const target = /** @type {HTMLElement | null} */ (document.querySelector(`.${cssClass}:not(.sp-warning-title)`));
 			if (!target) { return; }
 			target.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			target.focus();
 		}
 
-		// C'est un <button>, pas un lien : il ne navigue nulle part, il déplace juste le focus
-		// sur la page actuelle.
+		// C'est un <button>, pas un lien : il ne navigue nulle part, il déplace juste le focus sur la page actuelle.
 		/**
 		 * @param {Element} counter
 		 * @param {string} cssClass
@@ -257,8 +248,7 @@ export default defineContentScript({
 				if (rule.title && rule.title !== charTitle) {
 					let counter = document.querySelector(`.${rule.cssClass}.sp-warning-title`);
 					if (counter) {
-						// Deux règles peuvent partager le même cssClass (ex: quotes/doubleQuotes) :
-						// on cumule plutôt que d'écraser le compteur de la première.
+						// Deux règles peuvent partager le même cssClass (ex: quotes/doubleQuotes) : on cumule plutôt que d'écraser.
 						counter.textContent = String(Number(counter.textContent) + rule.counter);
 					} else {
 						const title = createElement('SPAN', {}, rule.title);
@@ -337,9 +327,8 @@ export default defineContentScript({
 		// Page de présentation d'un projet (liste des locales) uniquement. Logique testée dans utils/dom.test.js.
 		function frenchiesGoFirst() {
 			moveFrenchRowToFirst(frenchStatsGlobal, GDmayBeOnBoard);
-			// Pas de garde GlotDict ici : GlotDict n'a aucune emprise sur cette page (vérifié en
-			// live, aucun élément/script gd- présent), contrairement au tableau des locales d'un
-			// projet où son propre réordonnancement peut entrer en conflit avec le nôtre.
+			// Pas de garde GlotDict ici : vérifié en live, GlotDict n'a aucune emprise sur cette page
+			// (contrairement au tableau des locales d'un projet, où son réordonnancement peut entrer en conflit avec le nôtre).
 			moveFrenchLocaleCardToFirst(frenchLocaleCard, false);
 		}
 
@@ -573,9 +562,8 @@ export default defineContentScript({
 						const entries = rows.slice(1)
 							.filter((row) => !row.some((field) => field.toLowerCase().includes('spte') || field.toLowerCase().includes('[np]')));
 
-						// Ne garde un terme anglais que si une traduction officielle diffère du mot lui-même
-						// (sinon un mot identique en FR/EN, ex. « plugin », serait surligné à tort). Limitation
-						// connue : un terme polysémique (ex. « support » nom/verbe) reste signalé dans tous les cas.
+						// Ne garde un terme que si sa traduction officielle diffère (sinon un mot identique FR/EN,
+						// ex. « plugin », serait signalé à tort). Limite connue : un terme polysémique (ex. « support » nom/verbe) reste signalé dans tous les cas.
 						const termsWithDifferentTranslation = new Set();
 						entries.forEach((row) => {
 							const en = (row[enIndex] || '').trim().toLowerCase();
@@ -607,15 +595,13 @@ export default defineContentScript({
 							console.log('Impossible d’initialiser les paramètres');
 						});
 					} else {
-						// Format CSV inattendu (colonne "en" introuvable) : on ne bloque pas tout,
-						// SPTE continue avec la liste de mots déconseillés déjà en place.
+						// Format CSV inattendu (colonne "en" introuvable) : on ne bloque pas tout, SPTE continue sans le glossaire à jour.
 						console.log('Glossaire officiel : format inattendu, SPTE continue sans le glossaire à jour.');
 						mainProcesses(spteSettings);
 					}
 				}).catch(() => {
-					// Le téléchargement du glossaire a échoué (réseau, wp.org indisponible...) : sans ce
-					// filet, mainProcesses() n'était jamais appelé et SPTE semblait totalement inactif,
-					// sans le moindre indice pour comprendre pourquoi.
+					// Le téléchargement du glossaire a échoué (réseau, wp.org indisponible...) : sans ce filet,
+					// mainProcesses() n'était jamais appelé et SPTE semblait totalement inactif, sans indice.
 					console.log('Glossaire officiel : téléchargement impossible, SPTE continue sans le glossaire à jour.');
 					mainProcesses(spteSettings);
 				});

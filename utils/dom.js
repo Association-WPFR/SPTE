@@ -1,7 +1,6 @@
 import { createElement } from './helpers';
 
-// Fonctions DOM à risque (lignes de tableau parfois incomplètes), testées sur de vraies
-// fixtures HTML (utils/fixtures/*.html) sans navigateur.
+// Fonctions DOM à risque (lignes de tableau parfois incomplètes), testées sur de vraies fixtures HTML (utils/fixtures/*.html) sans navigateur.
 
 // Affiche la chaîne traduite sans aucune balise, au survol de la colonne actions.
 /** @param {Element} translation */
@@ -20,9 +19,8 @@ export function addForeignToolTip(translation) {
 	hook.append(toolTip);
 }
 
-// Aligne la largeur de texte utile du highlighter sur celle du textarea de traduction, pour que
-// le retour à la ligne se fasse aux mêmes endroits (comparaison visuelle plus facile). Copie le
-// style calculé plutôt que des valeurs fixes, pour rester correct si GlotPress change son CSS.
+// Aligne le retour à la ligne du highlighter sur celui du textarea (comparaison visuelle plus facile).
+// Copie le style calculé plutôt que des valeurs fixes, pour rester correct si GlotPress change son CSS.
 /**
  * @param {HTMLElement} el
  * @param {Element} textarea
@@ -41,8 +39,7 @@ export function matchTextWrapping(el, textarea) {
 	el.style.wordSpacing = style.wordSpacing;
 }
 
-// Ajoute un bouton pour copier le permalien de la traduction dans le presse-papier, sans passer
-// par le menu contextuel (clic > nouvel onglet > copie manuelle de l'URL).
+// Ajoute un bouton pour copier le permalien de la traduction, sans passer par le menu contextuel (clic > nouvel onglet > copie manuelle).
 /** @param {Element} brother */
 export function addPermalinkButton(brother) {
 	if (brother.querySelector('.sp-copy-permalink')) { return; } // déjà ajouté
@@ -52,12 +49,10 @@ export function addPermalinkButton(brother) {
 		.find((a) => a.textContent?.trim() === 'Permalink to translation'));
 	if (!permalink) { return; }
 	const button = createElement('BUTTON', { type: 'button', class: 'sp-copy-permalink with-tooltip', 'aria-label': 'Copier le permalien de cette traduction' });
-	// SVG inline plutôt qu'un dashicon : se fond visuellement de la même façon (currentColor,
-	// taille similaire) sans dépendre d'une police que WordPress a gelée et remplace
-	// progressivement par des icônes SVG (@wordpress/icons) depuis la version 7.1.
-	// 16px et non 20px : Feather dessine ses icônes bord à bord sur son viewBox, alors que les
-	// dashicons voisins ont une marge intégrée dans la police — à taille égale, le SVG paraît
-	// plus gros. 16px recrée cette marge visuelle (issue remontée par test réel, 2026-09-15).
+	// SVG inline plutôt qu'un dashicon : même rendu visuel (currentColor, taille similaire) sans dépendre
+	// d'une police que WordPress gèle et remplace progressivement par des icônes SVG (@wordpress/icons) depuis la 7.1.
+	// 16px et non 20px : Feather dessine ses icônes bord à bord, alors que les dashicons voisins ont une marge
+	// intégrée dans la police — à taille égale le SVG paraît plus gros. 16px recrée cette marge (testé en réel, 2026-09-15).
 	button.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
 	button.addEventListener('click', () => {
 		navigator.clipboard.writeText(permalink.href);
@@ -91,8 +86,7 @@ export function addEditorHighlighter(translation) {
 	}
 }
 
-// Coche/décoche la case d'une ligne en toute sécurité — certaines lignes (ex: historique de
-// révision) n'ont pas de case en première colonne.
+// Coche/décoche la case d'une ligne en toute sécurité : certaines (ex: historique de révision) n'en ont pas.
 /**
  * @param {Element} row
  * @param {boolean} checked
@@ -105,8 +99,7 @@ export function setRowCheckboxSafely(row, checked) {
 	return true;
 }
 
-// Masque les lignes sans avertissement (filtre "Les avertissements"), en décochant leur case
-// à cocher au passage si la sélection en masse est active.
+// Masque les lignes sans avertissement (filtre "Les avertissements"), décoche leur case au passage si la sélection en masse est active.
 /**
  * @param {Iterable<Element>} rows
  * @param {boolean} resetCheckbox
@@ -126,8 +119,7 @@ export function showAllRows(rows) {
 	}
 }
 
-// Coche/décoche la case de toutes les lignes en erreur "certain" (bouton "Cocher les mots et
-// apostrophes"). Retourne le nombre de lignes réellement cochées, pour l'affichage du compteur.
+// Coche/décoche les lignes en erreur "certain" (bouton "Cocher les mots et apostrophes"). Retourne le nombre coché, pour le compteur.
 /**
  * @param {Iterable<Element>} rows
  * @param {boolean} checked
@@ -142,9 +134,8 @@ export function setErrorRowsSelection(rows, checked) {
 	return count;
 }
 
-// Remonte la ligne de la locale française en première position du tableau des locales d'un
-// projet. Ne fait rien si GlotDict est présent (évite un conflit avec son propre
-// mécanisme de réordonnancement).
+// Remonte la ligne de la locale française en première position du tableau des locales d'un projet.
+// Ne fait rien si GlotDict est présent (évite un conflit avec son propre réordonnancement).
 /**
  * @param {Element | null} frenchLink
  * @param {boolean} glotDictPresent
@@ -161,9 +152,8 @@ export function moveFrenchRowToFirst(frenchLink, glotDictPresent) {
 	return false;
 }
 
-// Remonte la carte de la locale française en première position de l'annuaire des locales
-// (page d'accueil de translate.wordpress.org, structure #locales différente d'un tableau).
-// Ne fait rien si GlotDict est présent (évite un conflit avec son propre réordonnancement).
+// Remonte la carte de la locale française en première position de l'annuaire des locales (page d'accueil,
+// structure #locales différente d'un tableau). Ne fait rien si GlotDict est présent (évite un conflit).
 /**
  * @param {Element | null} frenchLink
  * @param {boolean} glotDictPresent
