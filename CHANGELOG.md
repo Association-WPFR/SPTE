@@ -52,6 +52,8 @@
 - Le « ! » de « !important » (syntaxe CSS) n'est plus signalé à tort
 - Les deux-points d'un format de date PHP (ex : `Y/m/d g:s:i A`) ne sont plus signalés à tort
 - Un deux-points à l'intérieur d'un bloc `{{ }}` n'est plus signalé à tort
+- Une parenthèse ouvrante précédée d'un `<br>` n'est plus signalée à tort
+- Un appel de fonction façon WPCS (ex : `registerBlockType( name, settings );`) n'est plus signalé à tort
 - Un point-virgule en toute fin de chaîne n'est plus signalé à tort
 - Un double espace au milieu d'une phrase est désormais détecté (la règle ne couvrait auparavant que le début/fin de ligne)
 - L'effet réel du réglage « Agrandir la page » est maintenant explicite (il contrôlait le reste de GlotPress, pas la table de traduction déjà agrandie ; voir aussi Changed pour le nouveau découpage en 2 réglages)
