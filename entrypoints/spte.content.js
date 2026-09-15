@@ -234,7 +234,10 @@ export default defineContentScript({
 		// donne le focus. Voir issue #3.
 		/** @param {string} cssClass */
 		function jumpToFirstWarning(cssClass) {
-			const target = /** @type {HTMLElement | null} */ (document.querySelector(`.${cssClass}`));
+			// Le compteur lui-même porte la même classe que ce qu'il cherche (ex: sp-warning--word
+			// sur le bouton ET sur chaque mot surligné) : sans exclusion, il se trouverait
+			// lui-même en premier puisqu'il est placé avant le tableau dans le DOM (en-tête).
+			const target = /** @type {HTMLElement | null} */ (document.querySelector(`.${cssClass}:not(.sp-warning-title)`));
 			if (!target) { return; }
 			target.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			target.focus();
