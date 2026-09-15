@@ -8,6 +8,7 @@ import {
 	hideNonWarningRows,
 	showAllRows,
 	moveFrenchRowToFirst,
+	moveFrenchLocaleCardToFirst,
 	setErrorRowsSelection,
 } from '../utils/dom';
 import './style.css';
@@ -97,6 +98,7 @@ export default defineContentScript({
 
 		// Éléments spécifiques à la locale française.
 		const frenchStatsGlobal = document.querySelector('#stats-table tr a[href*="/locale/fr/"]');
+		const frenchLocaleCard = document.querySelector('#locales a[href*="/locale/fr/"]');
 		const frenchStatsSpecific = document.querySelector('#translation-sets tr a[href*="/fr/"]');
 
 		// GlotDict plante s'il s'exécute après SPTE et trouve des balises qu'il n'attend pas : on force ses réglages pour les désactiver en amont.
@@ -307,6 +309,7 @@ export default defineContentScript({
 		// remonter la ligne FR en première position du tableau (logique testée dans utils/dom.test.js).
 		function frenchiesGoFirst() {
 			moveFrenchRowToFirst(frenchStatsGlobal, GDmayBeOnBoard);
+			moveFrenchLocaleCardToFirst(frenchLocaleCard, GDmayBeOnBoard);
 		}
 
 		// Ajoute un drapeau français sur la locale française dans les différents tableaux pour mieux l’identifier.
@@ -509,7 +512,7 @@ export default defineContentScript({
 				declareEvents();
 			}
 
-			if (onTranslateWordPressRoot && frenchStatsGlobal) {
+			if (onTranslateWordPressRoot && (frenchStatsGlobal || frenchLocaleCard)) {
 				frenchiesGoFirst();
 			}
 			frenchFlag(spteSettings.spteFrenchFlag);

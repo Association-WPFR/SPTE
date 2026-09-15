@@ -113,3 +113,22 @@ export function moveFrenchRowToFirst(frenchLink, glotDictPresent) {
 	}
 	return false;
 }
+
+// Remonte la carte de la locale française en première position de l'annuaire des locales
+// (page d'accueil de translate.wordpress.org, structure #locales différente d'un tableau).
+// Ne fait rien si GlotDict est présent (évite un conflit avec son propre réordonnancement).
+/**
+ * @param {Element | null} frenchLink
+ * @param {boolean} glotDictPresent
+ * @returns {boolean}
+ */
+export function moveFrenchLocaleCardToFirst(frenchLink, glotDictPresent) {
+	const frenchCard = frenchLink?.closest('.locale');
+	const localesList = frenchCard?.closest('#locales');
+	const firstCard = localesList?.firstElementChild;
+	if (firstCard && frenchCard && firstCard !== frenchCard && !glotDictPresent) {
+		firstCard.before(frenchCard);
+		return true;
+	}
+	return false;
+}

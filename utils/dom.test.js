@@ -7,6 +7,7 @@ import {
 	hideNonWarningRows,
 	showAllRows,
 	moveFrenchRowToFirst,
+	moveFrenchLocaleCardToFirst,
 	setRowCheckboxSafely,
 	setErrorRowsSelection,
 } from './dom';
@@ -14,6 +15,7 @@ import {
 // Fixtures réelles, cf. utils/fixtures/*.html pour leur provenance.
 const translationsTableHTML = readFileSync(join(__dirname, 'fixtures/translations-table.html'), 'utf-8');
 const statsTableHTML = readFileSync(join(__dirname, 'fixtures/stats-table.html'), 'utf-8');
+const localesListHTML = readFileSync(join(__dirname, 'fixtures/locales-list.html'), 'utf-8');
 
 describe('addForeignToolTip', () => {
 	beforeEach(() => {
@@ -165,5 +167,37 @@ describe('moveFrenchRowToFirst', () => {
 	it('ne plante pas si le lien français est absent (sélecteur mort, ex: #locales disparu)', () => {
 		expect(() => moveFrenchRowToFirst(null, false)).not.toThrow();
 		expect(moveFrenchRowToFirst(null, false)).toBe(false);
+	});
+});
+
+describe('moveFrenchLocaleCardToFirst', () => {
+	beforeEach(() => {
+		document.body.innerHTML = localesListHTML;
+	});
+
+	it('remonte la carte française en première position (annuaire #locales de la page d’accueil)', () => {
+		const frenchLink = document.querySelector('a[href="/locale/fr/"]');
+		const localesList = document.querySelector('#locales');
+		expect(localesList.firstElementChild.querySelector('.code a')?.textContent).toBe('af');
+
+		const moved = moveFrenchLocaleCardToFirst(frenchLink, false);
+
+		expect(moved).toBe(true);
+		expect(localesList.firstElementChild.querySelector('.code a')?.textContent).toBe('fr_FR');
+	});
+
+	it('ne fait rien si GlotDict est présent (évite le conflit avec son propre réordonnancement)', () => {
+		const frenchLink = document.querySelector('a[href="/locale/fr/"]');
+		const localesList = document.querySelector('#locales');
+
+		const moved = moveFrenchLocaleCardToFirst(frenchLink, true);
+
+		expect(moved).toBe(false);
+		expect(localesList.firstElementChild.querySelector('.code a')?.textContent).toBe('af');
+	});
+
+	it('ne plante pas si le lien français est absent (sélecteur mort)', () => {
+		expect(() => moveFrenchLocaleCardToFirst(null, false)).not.toThrow();
+		expect(moveFrenchLocaleCardToFirst(null, false)).toBe(false);
 	});
 });
