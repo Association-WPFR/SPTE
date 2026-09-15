@@ -1,17 +1,4 @@
 /* ==========================================================================
-   Sommaire
-   1. Base
-   2. Onglets (Réglages / À propos)
-   3. Conteneur principal de la popup
-   4. En-tête / logo
-   5. Panneau de réglages
-   6. Formulaire
-   7. Boutons
-   8. Interrupteur (toggle)
-   9. Divers
-   ========================================================================== */
-
-/* ==========================================================================
    1. Base
    ========================================================================== */
 
@@ -380,4 +367,3 @@ input[type=text]:focus {
     display: inline-block;
     width: 100%;
 }
-
