@@ -233,6 +233,19 @@ describe('rgxOpenParenthesis', () => {
 	it.skip('détecte une parenthèse ouvrante suivie de "x)" (exception non documentée)', () => {
 		expect(matches(rgxOpenParenthesis, 'affiché(x)')).toHaveLength(1);
 	});
+	// Issue #20 : <br> est la seule balise HTML auto-fermante pouvant s'écrire sans "/>", donc
+	// non couverte par l'exclusion générique des balises HTML.
+	it('ignore une parenthèse ouvrante précédée de <br>', () => {
+		expect(matches(rgxOpenParenthesis, 'Vincent Van Gogh<br>(Néerlandais, 1853-1890)')).toEqual([]);
+	});
+	it('détecte toujours une parenthèse ouvrante collée à un mot ordinaire (pas de <br>)', () => {
+		expect(matches(rgxOpenParenthesis, 'Van Gogh(Néerlandais, 1853-1890)')).toHaveLength(1);
+	});
+	// Issue #8 : un appel de fonction façon WPCS a des espaces à l'intérieur des parenthèses,
+	// reconnu à sa parenthèse fermante suivie d'un point-virgule.
+	it('ignore un appel de fonction façon WPCS (registerBlockType( name, settings );)', () => {
+		expect(matches(rgxOpenParenthesis, 'registerBlockType( name, settings );')).toEqual([]);
+	});
 });
 
 describe('rgxEllipsis', () => {
@@ -357,6 +370,14 @@ describe('rgxCloseParenthesis', () => {
 	// comme exception. "affiché(x)" n'est donc plus détecté alors qu'il devrait l'être.
 	it.skip('détecte une parenthèse fermante précédée de "(x" (lettre non exceptée par le wiki)', () => {
 		expect(matches(rgxCloseParenthesis, 'affiché(x)')).toHaveLength(1);
+	});
+	// Issue #8 : un appel de fonction façon WPCS a des espaces à l'intérieur des parenthèses,
+	// reconnu à sa parenthèse fermante suivie d'un point-virgule.
+	it('ignore un appel de fonction façon WPCS (registerBlockType( name, settings );)', () => {
+		expect(matches(rgxCloseParenthesis, 'registerBlockType( name, settings );')).toEqual([]);
+	});
+	it('détecte toujours une parenthèse fermante précédée d’une espace sans point-virgule après', () => {
+		expect(matches(rgxCloseParenthesis, 'texte ) suite')).toHaveLength(1);
 	});
 });
 
@@ -527,6 +548,13 @@ describe('rgxClosingFrQuote', () => {
 		['une espace insécable puis un point-virgule', 'mot\u00a0»\u00a0;'],
 	])('ignore un guillemet fermant non suivi d’une espace, s’il est suivi de %s', (_label, text) => {
 		expect(matches(rgxClosingFrQuote, text)).toEqual([]);
+	});
+	// Issue #19 : cas type "(texte) »" — vérifié non reproductible avec l'exemple exact de
+	// l'issue (aucune des 2 règles ne signale ce cas aujourd'hui).
+	it('ignore une parenthèse fermante suivie d’une espace insécable puis d’un guillemet fermant', () => {
+		const text = '« La Berceuse (femme balançant un berceau) » par Vincent Van Gogh (1889)';
+		expect(matches(rgxClosingFrQuote, text)).toEqual([]);
+		expect(matches(rgxCloseParenthesis, text)).toEqual([]);
 	});
 });
 
