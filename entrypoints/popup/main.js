@@ -3,7 +3,6 @@ import { createDefaultSettings } from '../../utils/settings';
 /** @typedef {import('../../utils/settings').SpteSettings} SpteSettings */
 
 const settingsForm = document.querySelector('#settings-form');
-const isFirefox = import.meta.env.FIREFOX;
 
 /** @returns {Record<string, HTMLInputElement | null>} */
 function getFormFields() {
@@ -23,17 +22,6 @@ function getFormFields() {
 /** @param {Record<string, HTMLInputElement | null>} fields */
 function hasAllFields(fields) {
 	return Object.values(fields).every(Boolean);
-}
-
-if (isFirefox) {
-	document.querySelectorAll('#settings-color__word, #settings-color__quote, #settings-color__char').forEach((element) => {
-		const input = /** @type {HTMLInputElement} */ (element);
-		input.type = 'text';
-		input.style.width = '55px';
-		input.style.margin = '0 10px';
-		input.closest('label').style.width = '33%';
-		input.closest('label').style.margin = '0 0 8px 0';
-	});
 }
 
 async function saveSettings() {

@@ -69,6 +69,7 @@
 - Le bouton « Réinitialiser » ne décale plus les éléments au clic (bordure désormais réservée dès l'état de repos)
 - Le bouton « Réinitialiser » enregistre maintenant son propre effet immédiatement (il fallait auparavant cliquer sur « Enregistrer » séparément)
 - Le bouton « Réinitialiser » est repositionné sur la ligne du réglage « Couleurs des avertissements » (il n'était pas aligné, ce qui pouvait laisser croire à une réinitialisation globale des réglages)
+- Le sélecteur de couleur natif n'est plus forcé en champ texte hexadécimal sous Firefox (Firefox supporte `input[type=color]` nativement depuis 2014, ce contournement était obsolète)
 
 ## [2.0.0] - 01 mai 2023
 
