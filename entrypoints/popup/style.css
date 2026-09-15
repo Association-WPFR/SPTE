@@ -17,6 +17,7 @@ html {
     --border-color: light-dark(#d6d6d6, #83838f);
     --text-link: light-dark(#4f4f69, #b3b3d1);
     --text-link-hover: light-dark(black, white);
+    --transition: all .2s ease;
 
     text-rendering: optimizeLegibility;
     -moz-osx-font-smoothing: grayscale;
@@ -37,6 +38,7 @@ label.tab {
     color: #fff;
     border-radius: 3px 3px 0px 0px;
     font-weight: normal;
+    transition: var(--transition);
 }
 
 .panels {
@@ -155,16 +157,19 @@ span.hint {
 
 /* Réglages des couleurs (surlignage des avertissements) */
 
+.input-fields.settings-color {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .settings-color legend {
     width: 100%;
-    float: left;
     padding: 0;
     font-weight: bold;
     margin: 3px 0 10px 0;
 }
 
 .settings-color-field {
-    float: left;
     text-align: center;
     font-size: 13px;
     margin: 0 16px 8px 0;
@@ -229,7 +234,7 @@ button {
     height: 28px;
     color: white;
     background: #2c2c3c;
-    transition: all .2s ease;
+    transition: var(--transition);
     border: 0;
     border-radius: 4px;
     cursor: pointer;
@@ -300,7 +305,6 @@ input[type=text]:focus {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    float: right;
 }
 
 .toggle+.toggle-btn:after,
@@ -346,7 +350,6 @@ input[type=text]:focus {
 }
 
 .toggle-text {
-    float: left;
     margin-bottom: 2px;
 }
 
@@ -364,6 +367,8 @@ input[type=text]:focus {
 }
 
 .toggle-container {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
 }

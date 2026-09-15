@@ -73,6 +73,8 @@
 - Le bandeau de résultats s'affiche maintenant même quand la page ne comporte aucun avertissement (« aucun élément à vérifier »), pour distinguer une vérification effectuée d'une extension qui n'aurait pas tourné
 - Le lien « Masquer la légende » redevient visible (« Afficher la légende ») une fois la légende masquée, au lieu de disparaître entièrement
 - La recherche « Cohérence d'une chaîne » affiche un indicateur de chargement pendant la requête, au lieu de laisser la popup vide/figée
+- La mise en page du popup de réglages (couleurs, interrupteurs) utilise désormais flexbox au lieu de `float`, pour éviter tout chevauchement visuel à fort zoom ou grande police système
+- Les transitions du popup de réglages (onglets, boutons) sont maintenant animées en douceur comme les interrupteurs, au lieu de changer d'état instantanément
 
 ## [2.0.0] - 01 mai 2023
 
