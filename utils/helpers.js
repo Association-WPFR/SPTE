@@ -66,3 +66,15 @@ export function parseCsv(text) {
 	}
 	return rows.filter((r) => r.length > 1 || (r.length === 1 && r[0] !== ''));
 }
+
+// Un mot signalé par badWords qui fait partie du nom du projet en cours de traduction (ex: une
+// extension nommée "Widget") n'est pas un anglicisme à corriger. Voir issue #38.
+/**
+ * @param {string} word
+ * @param {string} projectName
+ * @returns {boolean}
+ */
+export function isPartOfProjectName(word, projectName) {
+	if (!projectName) { return false; }
+	return projectName.toLowerCase().includes(word.toLowerCase());
+}

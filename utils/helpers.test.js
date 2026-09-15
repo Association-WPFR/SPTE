@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseCsv } from './helpers';
+import { parseCsv, isPartOfProjectName } from './helpers';
 
 describe('parseCsv', () => {
 	it('découpe des lignes CSV simples', () => {
@@ -36,5 +36,25 @@ describe('parseCsv', () => {
 			['en', 'fr'],
 			['plugin', 'extension'],
 		]);
+	});
+});
+
+// Issue #38 : un mot du glossaire qui fait partie du nom de l'extension en cours de traduction
+// (ex: "Widget") n'est pas un anglicisme à corriger.
+describe('isPartOfProjectName', () => {
+	it('détecte un mot contenu dans le nom du projet', () => {
+		expect(isPartOfProjectName('Widget', 'Super Widget – Blocks & More')).toBe(true);
+	});
+
+	it('ignore la casse', () => {
+		expect(isPartOfProjectName('widget', 'Super Widget')).toBe(true);
+	});
+
+	it('retourne false si le mot n’est pas dans le nom du projet', () => {
+		expect(isPartOfProjectName('plugin', 'Super Widget')).toBe(false);
+	});
+
+	it('retourne false si le nom du projet est vide (breadcrumb absent/non lu)', () => {
+		expect(isPartOfProjectName('widget', '')).toBe(false);
 	});
 });

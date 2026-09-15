@@ -1,5 +1,5 @@
 import { rules, charTitle, charClass } from '../utils/rules';
-import { addStyle, createElement, parseCsv } from '../utils/helpers';
+import { addStyle, createElement, parseCsv, isPartOfProjectName } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
 import { createDefaultSettings } from '../utils/settings';
 import {
@@ -56,6 +56,11 @@ export default defineContentScript({
 		const filterToolbar = document.querySelector('.filter-toolbar');
 		const isConnected = document.querySelector('body.logged-in') !== null;
 		const GDmayBeOnBoard = localStorage.getItem('gd_language') !== null;
+
+		// Nom du projet en cours de traduction (breadcrumb : Projects > catégorie > nom du
+		// projet > branche > locale), pour ne pas signaler à tort son propre nom dans badWords
+		// (ex: une extension nommée "Widget"). Voir issue #38.
+		const projectName = document.querySelector('.breadcrumb li:nth-child(3) a')?.textContent?.trim() ?? '';
 
 		// Principaux éléments créés.
 		const spPopup = createElement('DIV', { id: 'sp-the-popup', class: 'sp-the-popup--hidden', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Résultats de cohérence', tabindex: '-1' });
@@ -166,6 +171,12 @@ export default defineContentScript({
 						// Ce qui est IMPORTANT dans ce procédé pour éviter les vérifications à l’intérieur des balises,
 						// c’est que l’ordre de "replace(rule.regex)" soit le même que celui du "textWithoutTags.replace(string, '')" qui suit,
 						// et que seul le premier élément de "textWithoutTags.match(rule.regex)" soit vérifié ici.
+						return string;
+					}
+
+					// Le mot signalé fait partie du nom du projet en cours de traduction (ex: une
+					// extension nommée "Widget") : ce n'est pas un anglicisme à corriger. Voir issue #38.
+					if (rule.id === 'badWords' && isPartOfProjectName(string, projectName)) {
 						return string;
 					}
 
