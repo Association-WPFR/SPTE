@@ -13,6 +13,7 @@
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
 - Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut, 85% fixe) et « Agrandir le reste de GlotPress » (85% fixe aussi désormais, le champ « Largeur maximale » est retiré)
 - Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
+- Le réglage « Contraste des textes » ne recolore plus que le contenu de traduction, plus la navigation ni le pied de page du site (hors du rôle de SPTE)
 
 ### Removed
 - Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
