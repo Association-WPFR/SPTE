@@ -1,5 +1,4 @@
-// Affiche l'icône et le popup de SPTE uniquement sur translate.wordpress.org,
-// et les désactive/masque sur tous les autres sites.
+// Icône et popup actifs uniquement sur translate.wordpress.org, désactivés ailleurs.
 export default defineBackground(() => {
   browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     browser.action.disable();

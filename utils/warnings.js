@@ -1,6 +1,5 @@
 /** @typedef {import('./rules').TypographyRule} TypographyRule */
 
-// Construit le HTML du <span> de surlignage pour un mot/caractère détecté par une règle.
 /**
  * @param {TypographyRule} rule
  * @param {string} matchedString

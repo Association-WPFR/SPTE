@@ -21,9 +21,7 @@ export default defineContentScript({
 		// tous les éléments SPTE par-dessus ceux déjà présents.
 		if (document.getElementById('sp-controls')) { return; }
 
-		// Accès rapide à une règle par son id.
 		const rulesById = new Map(rules.map((rule) => [rule.id, rule]));
-		// Vérification de la localisation.
 		const onTranslateWordPressRoot = (/https:\/\/translate\.wordpress\.org\//).test(window.location.href);
 
 		// Slug de locale dérivé du chemin de l'URL, validé par pattern (fr, fr-be...) pour éviter
@@ -39,7 +37,6 @@ export default defineContentScript({
 		// Élément déclencheur de la popup de cohérence, pour restaurer le focus à sa fermeture.
 		let popupTriggerElement = null;
 
-		// Liens externes utilisés par SPTE.
 		const typographyURL = 'https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/';
 		const glossaryURL = `https://translate.wordpress.org/locale/${currentProjectLocaleSlug}/default/glossary/`;
 		// Export CSV officiel du glossaire (colonnes en,fr,pos,description).
@@ -49,7 +46,6 @@ export default defineContentScript({
 		let lsHideCaption = localStorage.getItem('spteHideCaption') === 'true';
 		let lsShowOnlyWarning = localStorage.getItem('spteShowOnlyWarning') === 'true';
 
-		// Principaux éléments existants.
 		const gpContent = /** @type {HTMLElement | null} */ (document.querySelector('.gp-content'));
 		if (gpContent) { gpContent.style.maxWidth = '85% !important'; }
 		const translations = document.querySelectorAll('tr.preview:not(.sp-has-spte-error) .translation-text');
@@ -67,7 +63,6 @@ export default defineContentScript({
 		// (ex: une extension nommée "Widget"). Voir issue #38.
 		const projectName = document.querySelector('.breadcrumb li:nth-child(3) a')?.textContent?.trim() ?? '';
 
-		// Principaux éléments créés.
 		const spPopup = createElement('DIV', { id: 'sp-the-popup', class: 'sp-the-popup--hidden', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Résultats de cohérence', tabindex: '-1' });
 		const spGDNoticesContainer = createElement('DIV', { id: 'sp-gd-notices-container' });
 		const spConsistency = createElement('DIV', { id: 'sp-consist-container' });
@@ -103,7 +98,6 @@ export default defineContentScript({
 			pteControls.append(spSelectErrors, spSelectErrorsLabel);
 		}
 
-		// Éléments spécifiques à la locale française.
 		const frenchStatsGlobal = document.querySelector('#stats-table tr a[href*="/locale/fr/"]');
 		const frenchLocaleCard = document.querySelector('#locales a[href*="/locale/fr/"]');
 		const frenchStatsSpecific = document.querySelector('#translation-sets tr a[href*="/fr/"]');
@@ -114,9 +108,6 @@ export default defineContentScript({
 			localStorage.setItem('gd_non_breaking_space_highlight', 'true');
 		}
 
-		// addForeignToolTip() et addEditorHighlighter() sont dans utils/dom.js.
-
-		// Ajoute des classes CSS à la ligne d’aperçu selon les avertissements.
 		function tagTRTranslations(preview) {
 			const hasTranslation = preview.classList.contains('has-translations');
 			const trad = preview.querySelector('.translation-text');
@@ -129,7 +120,7 @@ export default defineContentScript({
 			}
 		}
 
-		// Affichage des lignes (logique testée dans utils/dom.test.js).
+		// Logique testée dans utils/dom.test.js.
 		function rowsDisplay() {
 			const rows = document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)');
 			if (lsShowOnlyWarning) {
@@ -140,7 +131,6 @@ export default defineContentScript({
 			updateWarningFilterState();
 		}
 
-		// Met à jour le compteur et l'état (grisé si zéro) du toggle "avertissements de cette page".
 		function updateWarningFilterState() {
 			if (!showOnlyWarning || !showOnlyWarningLabel) { return; }
 			const warningCount = document.querySelectorAll('tr.preview.sp-has-spte-warning').length;
@@ -160,27 +150,23 @@ export default defineContentScript({
 			// Inutile de traiter les anciennes traductions rejetées, sauf celle qu’on vient de rejeter, et uniquement pour les compteurs.
 			if (!preview || (preview.classList.contains('status-rejected') && newStatus !== 'rejected')) { return; }
 
-			// Récupère le texte.
 			let text = translation.innerHTML;
 
 			// Pour la compatibilité des regex, on remplace les entités HTML d’espace insécable par le vrai caractère.
 			text = text.replaceAll(/&nbsp;/gmi, ' ');
 
-			// On mémorise le texte sans les balises.
 			let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
-			// Pour chaque règle typographique...
 			for (const rule of rules) {
 				text = text.replace(rule.regex, (string) => {
-					// Si le cas est présent dans le texte mais pas dans textWithoutTags, il ne doit pas être traité.
+					// Un cas présent dans text mais pas dans textWithoutTags est à l'intérieur d'une balise :
+					// il ne doit pas être traité. Ça ne marche que si l'ordre de ce replace() reste identique
+					// à celui du textWithoutTags.replace(string, '') qui suit, un seul match à la fois.
 					if (!textWithoutTags.match(rule.regex)) {
-						// Ce qui est IMPORTANT dans ce procédé pour éviter les vérifications à l’intérieur des balises,
-						// c’est que l’ordre de "replace(rule.regex)" soit le même que celui du "textWithoutTags.replace(string, '')" qui suit,
-						// et que seul le premier élément de "textWithoutTags.match(rule.regex)" soit vérifié ici.
 						return string;
 					}
 
-					// Le mot signalé fait partie du nom du projet en cours de traduction (ex: une
-					// extension nommée "Widget") : ce n'est pas un anglicisme à corriger. Voir issue #38.
+					// Le mot fait partie du nom du projet en cours de traduction (ex: une extension
+					// nommée "Widget") : ce n'est pas un anglicisme à corriger. Voir issue #38.
 					if (rule.id === 'badWords' && isPartOfProjectName(string, projectName)) {
 						return string;
 					}
@@ -226,7 +212,6 @@ export default defineContentScript({
 			tagTRTranslations(preview);
 		}
 
-		// Affiche/masque la légende.
 		function toggleCaption(e) {
 			lsHideCaption = lsHideCaption !== true;
 			resultsCaption.classList.toggle('sp-results__captions--closed');
@@ -235,8 +220,7 @@ export default defineContentScript({
 			e.preventDefault();
 		}
 
-		// Fait défiler la page jusqu'à la première occurrence d'un avertissement donné et lui
-		// donne le focus. Voir issue #3.
+		// Défilement + focus sur la première occurrence (accessibilité). Voir issue #3.
 		/** @param {string} cssClass */
 		function jumpToFirstWarning(cssClass) {
 			// Le compteur lui-même porte la même classe que ce qu'il cherche (ex: sp-warning--word
@@ -248,9 +232,8 @@ export default defineContentScript({
 			target.focus();
 		}
 
-		// Rend un compteur cliquable pour sauter à sa première occurrence sur la page. C'est un
-		// <button>, pas un lien : il ne navigue nulle part, il déplace juste le focus sur la
-		// page actuelle (role="link" était sémantiquement faux — corrigé après relecture UI/UX).
+		// C'est un <button>, pas un lien : il ne navigue nulle part, il déplace juste le focus
+		// sur la page actuelle.
 		/**
 		 * @param {Element} counter
 		 * @param {string} cssClass
@@ -262,7 +245,6 @@ export default defineContentScript({
 			counter.addEventListener('click', () => jumpToFirstWarning(cssClass));
 		}
 
-		// Affiche les statistiques de résultats dans l’en-tête.
 		function displayResults() {
 			let nbCharacter = 0;
 			let nbTotal = 0;
@@ -329,7 +311,6 @@ export default defineContentScript({
 			}
 		}
 
-		// Gère les contrôles.
 		function manageControls() {
 			if (!showOnlyWarning) { return; }
 
@@ -353,8 +334,7 @@ export default defineContentScript({
 			});
 		}
 
-		// Spécifique à la page de présentation d’un projet (liste des locales disponibles), fait
-		// remonter la ligne FR en première position du tableau (logique testée dans utils/dom.test.js).
+		// Page de présentation d'un projet (liste des locales) uniquement. Logique testée dans utils/dom.test.js.
 		function frenchiesGoFirst() {
 			moveFrenchRowToFirst(frenchStatsGlobal, GDmayBeOnBoard);
 			// Pas de garde GlotDict ici : GlotDict n'a aucune emprise sur cette page (vérifié en
@@ -363,7 +343,6 @@ export default defineContentScript({
 			moveFrenchLocaleCardToFirst(frenchLocaleCard, false);
 		}
 
-		// Ajoute un drapeau français sur la locale française dans les différents tableaux pour mieux l’identifier.
 		function frenchFlag(spteFrenchFlag) {
 			if (spteFrenchFlag && spteFrenchFlag === 'false') { return; }
 
@@ -378,7 +357,6 @@ export default defineContentScript({
 			}
 		}
 
-		// Observe les mutations.
 		function observeMutations() {
 			const observerMutations = new MutationObserver((mutations) => {
 				/** @type {string | undefined} */
@@ -414,7 +392,7 @@ export default defineContentScript({
 							newStatus = addedNode.classList.value.match('(?<=status-)(\\w*)(?= )')?.[0];
 						}
 
-						// Notices de GlotDict. Attention, si le parent doit changer, on vérifie que addedNode n’a pas déjà été ajouté au parent.
+						// Notices de GlotDict : si le parent doit changer, on vérifie que addedNode n’a pas déjà été ajouté au parent.
 						if (GDmayBeOnBoard && addedNode.parentNode !== spGDNoticesContainer && addedNode.id.startsWith('gd-') && addedNode.classList.contains('notice')) {
 							spGDNoticesContainer.appendChild(addedNode);
 						}

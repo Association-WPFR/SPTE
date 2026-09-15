@@ -65,7 +65,6 @@ export function addPermalinkButton(brother) {
 	nextButton.insertAdjacentElement('afterend', button);
 }
 
-// Clone l’aperçu surligné dans le panneau d’édition.
 /** @param {Element} translation */
 export function addEditorHighlighter(translation) {
 	const preview = translation.closest('tr');
@@ -119,7 +118,7 @@ export function hideNonWarningRows(rows, resetCheckbox) {
 	}
 }
 
-// Réaffiche toutes les lignes (filtre "Tout").
+// Filtre "Tout".
 /** @param {Iterable<Element>} rows */
 export function showAllRows(rows) {
 	for (const row of rows) {
