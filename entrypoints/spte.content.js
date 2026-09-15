@@ -397,7 +397,7 @@ export default defineContentScript({
 				spControls.append(pteControls);
 			}
 			spControls.append(spFilters, spConsistency);
-			filterToolbar.append(spControls);
+			filterToolbar.append(spGDNoticesContainer, spControls);
 		}
 
 		function checkConsistency() {
