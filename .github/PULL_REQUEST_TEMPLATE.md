@@ -1,6 +1,5 @@
-Ce que ça change, en 1-2 phrases.
-
-Closes #
+Récap de ce que la PR change, en quelques phrases et ce qui doit être testé.
 
 - [ ] `npm test` et `npm run lint` passent
-- [ ] CHANGELOG.md mis à jour si le changement est visible pour un utilisateur ou un contributeur
+
+Issue(s) liée(s) :
