@@ -51,7 +51,8 @@ export function addPermalinkButton(brother) {
 	const permalink = /** @type {HTMLAnchorElement | undefined} */ ([...brother.querySelectorAll('.button-menu__dropdown a')]
 		.find((a) => a.textContent?.trim() === 'Permalink to translation'));
 	if (!permalink) { return; }
-	const button = createElement('BUTTON', { type: 'button', class: 'sp-copy-permalink with-tooltip', 'aria-label': 'Copier le permalien de cette traduction' }, '🔗');
+	const button = createElement('BUTTON', { type: 'button', class: 'sp-copy-permalink with-tooltip', 'aria-label': 'Copier le permalien de cette traduction' });
+	button.append(createElement('SPAN', { class: 'dashicons dashicons-admin-links', 'aria-hidden': 'true' }));
 	button.addEventListener('click', () => {
 		navigator.clipboard.writeText(permalink.href);
 	});

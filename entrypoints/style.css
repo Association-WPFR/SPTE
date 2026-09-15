@@ -67,12 +67,13 @@
 	background-color: #d9e1e8;
 }
 
-/* Bouton "copier le permalien", inséré entre "Next" et le menu contextuel. */
+/* Bouton "copier le permalien", inséré entre "Next" et le menu contextuel. Utilise un dashicon
+   (police déjà chargée par WordPress sur cette page) pour se fondre avec les autres boutons du
+   panneau plutôt qu'un emoji, qui tranchait trop visuellement (toujours rendu en couleur). */
 .sp-copy-permalink {
 	background: none;
 	border: 0;
 	cursor: pointer;
-	font-size: 16px;
 	line-height: 1;
 	padding: 0 6px;
 }

@@ -51,6 +51,8 @@ describe('addPermalinkButton', () => {
 		const button = brother.querySelector('.sp-copy-permalink');
 		expect(button).not.toBeNull();
 		expect(brother.querySelector('.panel-header-actions__next').nextElementSibling).toBe(button);
+		// Dashicon plutôt qu'un emoji, pour se fondre avec les autres boutons du panneau.
+		expect(button.querySelector('.dashicons-admin-links')).not.toBeNull();
 	});
 
 	it('copie l’URL absolue du permalien au clic', () => {
