@@ -155,8 +155,6 @@ span.hint {
     margin-top: 7px;
 }
 
-/* Réglages des couleurs (surlignage des avertissements) */
-
 .settings-color legend {
     width: 100%;
     float: left;
@@ -175,8 +173,6 @@ span.hint {
 .settings-color-field+.settings-color-field+.settings-color-field {
     margin-right: 0;
 }
-
-/* Champs de saisie */
 
 input {
     display: block;

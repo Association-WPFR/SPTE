@@ -325,7 +325,6 @@
 	font: inherit !important;
 }
 
-/* Compteur cliquable. */
 .sp-warning-title--clickable {
 	cursor: pointer !important;
 }
@@ -361,7 +360,6 @@
 	color: white;
 }
 
-/* Contenu injecté via l'attribut data-message */
 [class*="sp-warning--"]:not(.sp-warning-title)::before,
 .sp-nbkspaces--showing::before,
 .sp-spaces--showing::before {

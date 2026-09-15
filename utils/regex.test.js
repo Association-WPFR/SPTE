@@ -26,7 +26,7 @@ import {
 
 // Tests de caractérisation : figent le comportement ACTUEL des regex, écarts avec le wiki
 // compris. Ne pas modifier ces attentes sans vérifier que le nouveau comportement est
-// intentionnel (et le documenter dans TODO.md).
+// intentionnel.
 
 /**
  * @param {RegExp} regex
