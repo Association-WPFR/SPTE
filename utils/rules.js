@@ -158,10 +158,10 @@ export const rgxColon = new RegExp(`(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| 
 export const rgxSemiColon = new RegExp(`(?<!\u00a0|:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?!$)|(?<!:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?! |$)`, 'gmi');
 
 // Détecte le guillemet français fermant. https://github.com/Association-WPFR/SPTE/wiki/rgxClosingFrQuote
-export const rgxClosingFrQuote = new RegExp(`(?<!\u00a0)${data.closingFrQuote}|${data.closingFrQuote}(?! |\\.|\\,|\u00a0\\?|\u00a0\\!|\u00a0\\:|\u00a0\\;|$)`, 'gmi');
+export const rgxClosingFrQuote = new RegExp(`(?<!\u00a0)${data.closingFrQuote}|${data.closingFrQuote}(?! |\\.|\\,|\u00a0\\?|\u00a0\\!|\u00a0\\:|\u00a0\\;|&lt;|$)`, 'gmi');
 
 // Détecte le guillemet français ouvrant. https://github.com/Association-WPFR/SPTE/wiki/rgxOpenFrQuote
-export const rgxOpenFrQuote = new RegExp(`(?<! |^)${data.openFrQuote}|${data.openFrQuote}(?!\u00a0|$)`, 'gmi');
+export const rgxOpenFrQuote = new RegExp(`(?<! |^|&gt;)${data.openFrQuote}|${data.openFrQuote}(?!\u00a0|$)`, 'gmi');
 
 // Détecte un point médian mal formé (écriture épicène) : caractère de substitution
 // (point, tiret, astérisque) à la place du vrai point médian U+00B7 (·). Validation

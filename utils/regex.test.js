@@ -561,6 +561,12 @@ describe('rgxClosingFrQuote', () => {
 		expect(matches(rgxClosingFrQuote, text)).toEqual([]);
 		expect(matches(rgxCloseParenthesis, text)).toEqual([]);
 	});
+	// Cas réel remonté (translate.wordpress.org, mediapapa) : un guillemet fermant collé à une
+	// balise HTML échappée (ex: »&lt;/strong&gt;) n'est pas un vrai texte collé, la balise
+	// doit être traitée comme invisible.
+	it('ignore un guillemet fermant suivi d’une balise HTML échappée (ex: </strong>)', () => {
+		expect(matches(rgxClosingFrQuote, 'Pro »&lt;/strong&gt; suite')).toEqual([]);
+	});
 });
 
 describe('rgxOpenFrQuote', () => {
@@ -572,6 +578,12 @@ describe('rgxOpenFrQuote', () => {
 	});
 	it('ignore un guillemet ouvrant qui débute la chaîne et est suivi d’une espace insécable', () => {
 		expect(matches(rgxOpenFrQuote, '«\u00a0texte')).toEqual([]);
+	});
+	// Cas réel remonté (translate.wordpress.org, mediapapa) : un guillemet ouvrant collé à une
+	// balise HTML échappée (ex: &lt;strong&gt;«) n'est pas un vrai texte collé, la balise
+	// doit être traitée comme invisible.
+	it('ignore un guillemet ouvrant précédé d’une balise HTML échappée (ex: <strong>)', () => {
+		expect(matches(rgxOpenFrQuote, 'texte &lt;strong&gt;« texte')).toEqual([]);
 	});
 });
 
