@@ -4,43 +4,42 @@
 
 ### Added
 - Fichier LICENSE (GPL v2+)
-- Mise en place de WXT (package.json, wxt.config.ts) : fondation pour la génération automatique des manifests Chrome et Firefox et la migration vers TypeScript
-- Firefox alignement en Manifest V3 (alignement sur la version Chrome déjà géré depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer
-- Mode sombre du popup de réglages (suit le choix de l'OS/browser)
+- Mise en place de WXT (package.json, wxt.config.ts) : facilite la génération automatique des manifests Chrome et Firefox.
+- Firefox alignement en Manifest V3 (alignement sur la version Chrome déjà géré depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer.
+- Mode sombre du popup de réglages (suit le choix de l'OS/browser).
 
 ### Changed
-- Réécriture du README (contenus et liens mis à jour)
-- Mention dans le README de la reprise du projet par WPFR.net, avec remerciements à Loïc
+- Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
 - Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut, 85% fixe) et « Agrandir le reste de GlotPress » (85% fixe aussi désormais, le champ « Largeur maximale » est retiré)
 - Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
 
 ### Removed
-- Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. SPTE est pensé pour les besoins de la locale fr et les règles de l'équipe fr.wordpress.org (France). Aucun usage connu de ce réglage à ce jour par d'autres communautés francophones.
+- Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
 
 ### Fixed
-- Réglages jamais correctement initialisés au premier lancement, provoquant un retéléchargement en boucle du glossaire officiel
-- Réglages jamais sauvegardés ni rechargés sur Firefox
-- Compatibilité avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
-- Tri de la locale française plus fonctionnel dans le tableau des locales d'un projet (structure de GlotPress ayant changé)
-- Couleur des liens du pied de page en thème « Meilleure lisibilité » (structure de GlotPress ayant changé, sans rapport avec GlotDict)
-- Mots signalés non focusables au clavier (liens factices neutralisés par un `preventDefault()` global)
-- Cases à cocher des réglages sans nom accessible pour les lecteurs d'écran
-- Popup de recherche de cohérence sans gestion du focus au clavier
-- Curseur de survol invalide (résidu Internet Explorer) sur les interrupteurs de réglages
-- Couleur de l'interrupteur de réglages incohérente (bleu écrasé par une définition CSS en doublon)
-- Bordure des interrupteurs de réglages qui annulait leur style (`border: 2px` sans `solid`)
+- Les réglages s'initialisent maintenant correctement au premier lancement (ils provoquaient un retéléchargement en boucle du glossaire officiel)
+- Les réglages s'enregistrent et se rechargent maintenant correctement sur Firefox
+- Compatibilité rétablie avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
+- Le tri de la locale française fonctionne de nouveau dans le tableau des locales d'un projet (la structure HTML visée de GlotPress avait changé)
+- La couleur des liens du pied de page s'applique de nouveau avec le réglage « Contraste des textes » (la structure du pied de page a changé côté GlotPress, sans rapport avec GlotDict)
+- Les mots signalés sont de nouveau focusables au clavier
+- Les cases à cocher des réglages ont maintenant un nom accessible pour les lecteurs d'écran
+- La popup de recherche de cohérence gère maintenant le focus au clavier
+- Curseur de survol des interrupteurs de réglages corrigé (un résidu Internet Explorer invalide restait dans le code)
+- Couleur de l'interrupteur de réglages rendue cohérente (bleu ; une définition CSS en double l'écrasait)
+- Bordure des interrupteurs de réglages corrigée (`border: 2px` sans `solid` annulait leur style)
 - Sélecteurs CSS obsolètes retirés (résidus d'anciennes versions du popup)
 - Propriété CSS `font-smoothing: antialiased` non standard retirée (ignorée par tous les navigateurs)
-- Certaines lignes du tableau sans case à cocher plantaient (ex: ligne d'historique de révision)
-- Double espace cassant le balisage HTML
-- Faux positifs du glossaire sur des mots identiques en français et en anglais (ex : « plugin »)
-- Faux positif sur « ?) »/« !) » (point d'interrogation ou d'exclamation suivi d'une parenthèse fermante)
-- Réglage « Agrandir la page » qui semblait actif par défaut sans effet visible (il contrôlait en réalité le reste de GlotPress, pas la table de traduction déjà agrandie inconditionnellement)
-- Bouton « Réinitialiser » soumettait tout le formulaire des réglages au lieu de juste réinitialiser les couleurs
-- Bouton « Réinitialiser » décalait les éléments au clic (bordure ajoutée uniquement à l'état actif, jamais au repos)
-- Bouton « Réinitialiser » n'enregistrait jamais son propre effet (il fallait cliquer sur « Enregistrer » séparément)
-- Bouton « Réinitialiser » trop éloigné visuellement de « Couleurs des avertissements » (placé à l'autre bout de la ligne), pouvant laisser croire à une réinitialisation de tous les réglages plutôt que des seules couleurs
+- Les lignes du tableau sans case à cocher ne provoquent plus de plantage (ex: ligne d'historique de révision)
+- Le double espace qui cassait le balisage HTML des avertissements est corrigé
+- Les mots identiques en français et en anglais (ex : « plugin ») ne sont plus signalés à tort par le glossaire
+- « ?) »/« !) » (point d'interrogation ou d'exclamation suivi d'une parenthèse fermante) ne sont plus signalés à tort
+- L'effet réel du réglage « Agrandir la page » est maintenant explicite (il contrôlait le reste de GlotPress, pas la table de traduction déjà agrandie ; voir aussi Changed pour le nouveau découpage en 2 réglages)
+- Le bouton « Réinitialiser » ne soumet plus tout le formulaire des réglages, il réinitialise seulement les couleurs
+- Le bouton « Réinitialiser » ne décale plus les éléments au clic (bordure désormais réservée dès l'état de repos)
+- Le bouton « Réinitialiser » enregistre maintenant son propre effet immédiatement (il fallait auparavant cliquer sur « Enregistrer » séparément)
+- Le bouton « Réinitialiser » est rapproché visuellement de « Couleurs des avertissements » (il était à l'autre bout de la ligne, pouvant laisser croire à une réinitialisation globale)
 
 ## [2.0.0] - 01 mai 2023
 
