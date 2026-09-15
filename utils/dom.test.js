@@ -4,6 +4,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import {
 	addForeignToolTip,
 	addEditorHighlighter,
+	matchTextWrapping,
 	hideNonWarningRows,
 	showAllRows,
 	moveFrenchRowToFirst,
@@ -57,6 +58,31 @@ describe('addEditorHighlighter', () => {
 		lastRow.parentElement.appendChild(lastRow);
 		const translated = lastRow.querySelector('.original-text'); // pas de .translation-text ici, peu importe pour ce test
 		expect(() => addEditorHighlighter(translated)).not.toThrow();
+	});
+});
+
+// Idée d'amélioration remontée par Jason (2026-09-15, captures d'écran) : le highlighter et le
+// textarea de traduction n'avaient pas la même largeur de texte utile, décalant le retour à la
+// ligne des chaînes multi-lignes et gênant la comparaison visuelle.
+describe('matchTextWrapping', () => {
+	it('copie la largeur, le padding, les bordures et la police du textarea', () => {
+		const textarea = document.createElement('textarea');
+		textarea.setAttribute('style', 'box-sizing: border-box; width: 480px; padding-left: 8px; padding-right: 8px; border-left-width: 1px; border-right-width: 1px; font-family: Arial; font-size: 14px; letter-spacing: 0.5px; word-spacing: 1px;');
+		document.body.append(textarea);
+
+		const el = document.createElement('div');
+		matchTextWrapping(el, textarea);
+
+		expect(el.style.boxSizing).toBe('border-box');
+		expect(el.style.width).toBe('480px');
+		expect(el.style.paddingLeft).toBe('8px');
+		expect(el.style.paddingRight).toBe('8px');
+		expect(el.style.borderLeftWidth).toBe('1px');
+		expect(el.style.borderRightWidth).toBe('1px');
+		expect(el.style.fontFamily).toBe('Arial');
+		expect(el.style.fontSize).toBe('14px');
+		expect(el.style.letterSpacing).toBe('0.5px');
+		expect(el.style.wordSpacing).toBe('1px');
 	});
 });
 

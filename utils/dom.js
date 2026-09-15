@@ -20,6 +20,27 @@ export function addForeignToolTip(translation) {
 	hook.append(toolTip);
 }
 
+// Aligne la largeur de texte utile du highlighter sur celle du textarea de traduction, pour que
+// le retour à la ligne se fasse aux mêmes endroits (comparaison visuelle plus facile). Copie le
+// style calculé plutôt que des valeurs fixes, pour rester correct si GlotPress change son CSS.
+/**
+ * @param {HTMLElement} el
+ * @param {Element} textarea
+ */
+export function matchTextWrapping(el, textarea) {
+	const style = getComputedStyle(textarea);
+	el.style.boxSizing = style.boxSizing;
+	el.style.width = style.width;
+	el.style.paddingLeft = style.paddingLeft;
+	el.style.paddingRight = style.paddingRight;
+	el.style.borderLeftWidth = style.borderLeftWidth;
+	el.style.borderRightWidth = style.borderRightWidth;
+	el.style.fontFamily = style.fontFamily;
+	el.style.fontSize = style.fontSize;
+	el.style.letterSpacing = style.letterSpacing;
+	el.style.wordSpacing = style.wordSpacing;
+}
+
 // Clone l’aperçu surligné dans le panneau d’édition.
 /** @param {Element} translation */
 export function addEditorHighlighter(translation) {
@@ -36,6 +57,8 @@ export function addEditorHighlighter(translation) {
 		const help = createElement('DIV', { class: 'sp-editor-highlighter' });
 		const trad = preview.querySelector('.translation-text');
 		const hook = brother.querySelector('.source-details');
+		const textarea = brother.querySelector('textarea.foreign-text');
+		if (textarea) { matchTextWrapping(help, textarea); }
 		if (trad && hook) {
 			const copycat = trad.cloneNode(true);
 			help.append(copycat);
