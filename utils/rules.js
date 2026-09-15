@@ -1,8 +1,5 @@
 const data = {
 	badWord: [
-		// N'ajouter ici que des mots qui n'ont JAMAIS de sens correct en français (contrairement
-		// à "paramètres" ou "motif", qui sont des mots français ordinaires ailleurs et créeraient
-		// des faux positifs).
 		'etes vous',
 		'ets',
 		'fdp',
@@ -42,8 +39,7 @@ const data = {
 		'template',
 		'templates',
 		'add-ons',
-		// Orthographe d'avant la réforme de 1990 : le glossaire officiel WordPress prescrit
-		// "évènement" (accent grave), pas "événement" (accent aigu).
+		// Le glossaire officiel WordPress prescrit "évènement" (accent grave), pas "événement" (accent aigu).
 		'événement',
 	],
 	slash: '/',
