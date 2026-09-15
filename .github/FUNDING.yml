@@ -1,0 +1,8 @@
+# Ces lignes servent à afficher un bouton "Sponsor" sur la page GitHub du dépôt.
+# Décommente et remplis UNIQUEMENT les lignes qui correspondent à un lien de don réel de WPFR.net.
+# Format complet : https://docs.github.com/fr/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+
+# github: [octocat]
+# open_collective: wpfr
+# liberapay: wpfr
+# custom: ["https://exemple.fr/faire-un-don"]
