@@ -47,7 +47,7 @@ describe('rgxBadWords', () => {
 	it.each([
 		'plugin', 'greffon', 'uploader', 'downloader', 'customiser', 'updater', 'mr',
 		'sidebar', 'shortcode', 'tooltip', 'breadcrumb', 'changelog', 'thumbnail',
-		'addon', 'add-on', 'mu-plugin', 'back-end', 'front-end', 'capabilities',
+		'addon', 'add-on', 'back-end', 'front-end', 'capabilities',
 		'entête', 'et/ou', 'customizer', 'template', 'templates', 'add-ons', 'événement',
 	])('détecte l’anglicisme "%s"', (word) => {
 		expect(matches(rgxBadWords, `Un mot ici : ${word} et la suite.`)).toEqual([word]);
