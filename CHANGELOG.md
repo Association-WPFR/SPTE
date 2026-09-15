@@ -9,7 +9,8 @@
 - Mode sombre du popup de réglages (suit le choix de l'OS/browser)
 
 ### Changed
-- Réécriture du README (mise à jour des contenus, des liens, de l’information au sujet de la reprise du projet par WPFR.net, remerciements à Loïc évidemment)
+- Réécriture du README (contenus et liens mis à jour)
+- Mention dans le README de la reprise du projet par WPFR.net, avec remerciements à Loïc
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
 - Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut, 85% fixe) et « Agrandir le reste de GlotPress » (85% fixe aussi désormais, le champ « Largeur maximale » est retiré)
 - Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
@@ -21,17 +22,25 @@
 - Réglages jamais correctement initialisés au premier lancement, provoquant un retéléchargement en boucle du glossaire officiel
 - Réglages jamais sauvegardés ni rechargés sur Firefox
 - Compatibilité avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
-- Tri de la locale française et couleur des liens du pied de page (structure de GlotPress ayant changé, sans rapport avec GlotDict)
-- Accessibilité : mots signalés non focusables au clavier, cases à cocher des réglages sans nom accessible, popup de recherche de cohérence sans gestion du focus
-- Plusieurs bugs CSS (curseur invalide, bordure et couleurs de l'interrupteur incorrectes, sélecteurs obsolètes)
+- Tri de la locale française plus fonctionnel dans le tableau des locales d'un projet (structure de GlotPress ayant changé)
+- Couleur des liens du pied de page en thème « Meilleure lisibilité » (structure de GlotPress ayant changé, sans rapport avec GlotDict)
+- Mots signalés non focusables au clavier (liens factices neutralisés par un `preventDefault()` global)
+- Cases à cocher des réglages sans nom accessible pour les lecteurs d'écran
+- Popup de recherche de cohérence sans gestion du focus au clavier
+- Curseur de survol invalide (résidu Internet Explorer) sur les interrupteurs de réglages
+- Couleur de l'interrupteur de réglages incohérente (bleu écrasé par une définition CSS en doublon)
+- Bordure des interrupteurs de réglages qui annulait leur style (`border: 2px` sans `solid`)
+- Sélecteurs CSS obsolètes retirés (résidus d'anciennes versions du popup)
+- Propriété CSS `font-smoothing: antialiased` non standard retirée (ignorée par tous les navigateurs)
 - Certaines lignes du tableau sans case à cocher plantaient (ex: ligne d'historique de révision)
 - Double espace cassant le balisage HTML
 - Faux positifs du glossaire sur des mots identiques en français et en anglais (ex : « plugin »)
 - Faux positif sur « ?) »/« !) » (point d'interrogation ou d'exclamation suivi d'une parenthèse fermante)
 - Réglage « Agrandir la page » qui semblait actif par défaut sans effet visible (il contrôlait en réalité le reste de GlotPress, pas la table de traduction déjà agrandie inconditionnellement)
-- Bouton « Réinitialiser » des couleurs qui soumettait tout le formulaire des réglages au lieu de juste réinitialiser les couleurs
-- Bouton « Réinitialiser » des couleurs qui décalait les éléments au clic (bordure ajoutée uniquement à l'état actif, jamais au repos)
-- Bouton « Réinitialiser » des couleurs qui n'enregistrait jamais son propre effet (il fallait cliquer sur « Enregistrer » séparément)
+- Bouton « Réinitialiser » soumettait tout le formulaire des réglages au lieu de juste réinitialiser les couleurs
+- Bouton « Réinitialiser » décalait les éléments au clic (bordure ajoutée uniquement à l'état actif, jamais au repos)
+- Bouton « Réinitialiser » n'enregistrait jamais son propre effet (il fallait cliquer sur « Enregistrer » séparément)
+- Bouton « Réinitialiser » trop éloigné visuellement de « Couleurs des avertissements » (placé à l'autre bout de la ligne), pouvant laisser croire à une réinitialisation de tous les réglages plutôt que des seules couleurs
 
 ## [2.0.0] - 01 mai 2023
 
