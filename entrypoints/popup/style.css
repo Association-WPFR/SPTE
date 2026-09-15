@@ -249,13 +249,13 @@ button {
 }
 
 button.fieldset-btn-lnk {
-    float: right;
+    display: inline;
     height: auto;
     background: transparent;
     color: var(--text-link);
     text-decoration: underline;
     width: auto;
-    margin-top: 0;
+    margin: 0 0 0 8px;
     border: 2px solid transparent;
 }
 
