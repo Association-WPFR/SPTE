@@ -55,6 +55,8 @@
 - Un deux-points à l'intérieur d'un bloc `{{ }}` n'est plus signalé à tort
 - Une parenthèse ouvrante précédée d'un `<br>` n'est plus signalée à tort
 - Un appel de fonction façon WPCS (ex : `registerBlockType( name, settings );`) n'est plus signalé à tort
+- Une apostrophe droite suivie immédiatement de `%lettre` (ex : `'%s`) n'est plus signalée à tort
+- Le nom du projet en cours de traduction (ex : une extension nommée « Widget ») n'est plus signalé à tort par le glossaire
 - Un point-virgule en toute fin de chaîne n'est plus signalé à tort
 - Un double espace au milieu d'une phrase est désormais détecté (la règle ne couvrait auparavant que le début/fin de ligne)
 - L'effet réel du réglage « Agrandir la page » est maintenant explicite (il contrôlait le reste de GlotPress, pas la table de traduction déjà agrandie ; voir aussi Changed pour le nouveau découpage en 2 réglages)
