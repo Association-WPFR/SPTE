@@ -7,6 +7,9 @@
 - Mise en place de WXT (package.json, wxt.config.ts) : facilite la génération automatique des manifests Chrome et Firefox.
 - Firefox alignement en Manifest V3 (alignement sur la version Chrome déjà géré depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer.
 - Mode sombre du popup de réglages (suit le choix de l'OS/browser).
+- ESLint pour la qualité du code
+- Suite de tests automatisés (Vitest)
+- La locale française remonte aussi en première position sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (fonctionnait déjà uniquement sur le tableau des locales d'un projet)
 
 ### Changed
 - Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
@@ -23,23 +26,23 @@
 - Les réglages s'enregistrent et se rechargent maintenant correctement sur Firefox
 - Compatibilité rétablie avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
 - Le tri de la locale française fonctionne de nouveau dans le tableau des locales d'un projet (la structure HTML visée de GlotPress avait changé)
-- Les mots signalés sont de nouveau focusables au clavier
-- Les cases à cocher des réglages ont maintenant un nom accessible pour les lecteurs d'écran
-- La popup de recherche de cohérence gère maintenant le focus au clavier
-- Curseur de survol des interrupteurs de réglages corrigé (un résidu Internet Explorer invalide restait dans le code)
+- Les mots signalés sont de nouveau focusables au clavier (à tester plus en détail si quelqu'un s'y connait bien)
+- Les cases à cocher des réglages ont maintenant un nom accessible pour les lecteurs d'écran (idem)
+- La popup de recherche de cohérence gère maintenant le focus au clavier (idem)
+- Curseur de survol des interrupteurs de réglages corrigé (un résidu IE restait dans le code)
 - Couleur de l'interrupteur de réglages rendue cohérente (bleu ; une définition CSS en double l'écrasait)
 - Bordure des interrupteurs de réglages corrigée (`border: 2px` sans `solid` annulait leur style)
 - Sélecteurs CSS obsolètes retirés (résidus d'anciennes versions du popup)
-- Propriété CSS `font-smoothing: antialiased` non standard retirée (ignorée par tous les navigateurs)
+- Propriété CSS `font-smoothing: antialiased` non standard retirée
 - Les lignes du tableau sans case à cocher ne provoquent plus de plantage (ex: ligne d'historique de révision)
 - Le double espace qui cassait le balisage HTML des avertissements est corrigé
 - Les mots identiques en français et en anglais (ex : « plugin ») ne sont plus signalés à tort par le glossaire
 - « ?) »/« !) » (point d'interrogation ou d'exclamation suivi d'une parenthèse fermante) ne sont plus signalés à tort
 - L'effet réel du réglage « Agrandir la page » est maintenant explicite (il contrôlait le reste de GlotPress, pas la table de traduction déjà agrandie ; voir aussi Changed pour le nouveau découpage en 2 réglages)
-- Le bouton « Réinitialiser » ne soumet plus tout le formulaire des réglages, il réinitialise seulement les couleurs
+- Le bouton « Réinitialiser » ne soumet plus tout le formulaire des réglages, il réinitialise seulement les couleurs ce qui est son comportement attendu
 - Le bouton « Réinitialiser » ne décale plus les éléments au clic (bordure désormais réservée dès l'état de repos)
 - Le bouton « Réinitialiser » enregistre maintenant son propre effet immédiatement (il fallait auparavant cliquer sur « Enregistrer » séparément)
-- Le bouton « Réinitialiser » est rapproché visuellement de « Couleurs des avertissements » (il était à l'autre bout de la ligne, pouvant laisser croire à une réinitialisation globale)
+- Le bouton « Réinitialiser » est repoistionné sur la ligne du réglage « Couleurs des avertissements » (il n'était pas aligné, ce qui pouvait laisser croire à une réinitialisation globale des réglages)
 
 ## [2.0.0] - 01 mai 2023
 
