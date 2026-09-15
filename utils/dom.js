@@ -55,7 +55,10 @@ export function addPermalinkButton(brother) {
 	// SVG inline plutôt qu'un dashicon : se fond visuellement de la même façon (currentColor,
 	// taille similaire) sans dépendre d'une police que WordPress a gelée et remplace
 	// progressivement par des icônes SVG (@wordpress/icons) depuis la version 7.1.
-	button.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
+	// 16px et non 20px : Feather dessine ses icônes bord à bord sur son viewBox, alors que les
+	// dashicons voisins ont une marge intégrée dans la police — à taille égale, le SVG paraît
+	// plus gros. 16px recrée cette marge visuelle (issue remontée par test réel, 2026-09-15).
+	button.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
 	button.addEventListener('click', () => {
 		navigator.clipboard.writeText(permalink.href);
 	});
