@@ -230,7 +230,7 @@ export default defineContentScript({
 		function toggleCaption(e) {
 			lsHideCaption = lsHideCaption !== true;
 			resultsCaption.classList.toggle('sp-results__captions--closed');
-			e.target.textContent = (e.target.textContent === 'Masquer la légende') ? '' : 'Masquer la légende';
+			e.target.textContent = (e.target.textContent === 'Masquer la légende') ? 'Afficher la légende' : 'Masquer la légende';
 			localStorage.setItem('spteHideCaption', ((lsHideCaption === true) ? 'true' : 'false'));
 			e.preventDefault();
 		}
@@ -302,19 +302,22 @@ export default defineContentScript({
 				resultsData.append(title);
 			}
 
-			resultsTitle.textContent = `éléments à vérifier : ${nbTotal}`;
+			resultsTitle.textContent = nbTotal ? `éléments à vérifier : ${nbTotal}` : 'aucun élément à vérifier';
+			resultsTitle.classList.add('sp-results__title');
+			resultsTitle.classList.toggle('sp-results__title--ok', nbTotal === 0);
+			filterToolbar.append(results);
 
-			if (nbTotal && !resultsTitle.classList.contains('sp-results__title')) {
-				resultsTitle.classList.add('sp-results__title');
+			if (nbTotal) {
 				if (lsHideCaption) {
-					hideCaption.textContent = '';
+					hideCaption.textContent = 'Afficher la légende';
 					resultsCaption.classList.add('sp-results__captions--closed');
 				} else {
 					hideCaption.textContent = 'Masquer la légende';
 				}
 				hideCaption.onclick = toggleCaption;
 				resultsCaption.append(hideCaption, caption, glossaryLink, typographyLink);
-				filterToolbar.append(results);
+			} else {
+				resultsCaption.replaceChildren();
 			}
 			const characters = document.querySelector('.sp-warning-title.sp-warning--char');
 			if (nbCharacter === 0 && characters?.parentElement) {

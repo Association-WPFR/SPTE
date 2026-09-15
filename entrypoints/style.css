@@ -210,6 +210,10 @@
 	text-align: center;
 }
 
+.sp-results__title--ok {
+	color: #0f8a3d;
+}
+
 .sp-results__captions {
 	padding: .1em 9em .9em .9em;
 	background: #f4f3f7;
@@ -548,6 +552,10 @@
 
 	.gp-content .sp-results__title {
 		color: #df0d0c;
+	}
+
+	.gp-content .sp-results__title--ok {
+		color: #0f8a3d;
 	}
 
 	.gp-content .sp-warning--word {
