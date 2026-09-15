@@ -10,6 +10,8 @@
 - Suite de tests automatisés (Vitest)
 - .editorconfig, Dependabot et CONTRIBUTING.md pour la maintenance du dépôt
 - .nvmrc (version Node figée, requis pour un build reproductible côté AMO)
+- CI GitHub Actions (lint + typecheck + tests + build sur chaque Pull Request)
+- Templates d'issue et de Pull Request, `FUNDING.yml`
 - Nouvelle règle détectant les guillemets doubles droits (`"`), à remplacer par les guillemets français « »
 - Nouvelle règle détectant un point/tiret/astérisque utilisé à la place du point médian épicène (ex: administrateur.rice, abonné-e-s)
 - La locale française remonte aussi en première position, avec son drapeau, sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (en plus du tableau des locales par projet qui existait déjà)
