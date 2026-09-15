@@ -52,8 +52,15 @@ describe('rgxBadWords', () => {
 		'plugin', 'greffon', 'uploader', 'downloader', 'customiser', 'updater', 'mr',
 		'sidebar', 'shortcode', 'tooltip', 'breadcrumb', 'changelog', 'thumbnail',
 		'addon', 'add-on', 'mu-plugin', 'back-end', 'front-end', 'capabilities',
+		'entête', 'et/ou', 'customizer', 'template', 'templates', 'add-ons', 'événement',
 	])('détecte l’anglicisme "%s"', (word) => {
 		expect(matches(rgxBadWords, `Un mot ici : ${word} et la suite.`)).toEqual([word]);
+	});
+	// Issue #42 : "évènement" (accent grave) est la forme prescrite par le glossaire officiel
+	// WordPress depuis la réforme de 1990 — ne doit jamais être signalé, contrairement à
+	// "événement" (accent aigu, forme désormais déconseillée).
+	it('ignore la forme correcte "évènement" (accent grave)', () => {
+		expect(matches(rgxBadWords, 'Un évènement important arrive.')).toEqual([]);
 	});
 
 	// Tests transposés depuis le wiki (rgxBadWords.md) : le mot doit être détecté quand il est

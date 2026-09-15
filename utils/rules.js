@@ -39,6 +39,15 @@ const data = {
 		'back-end',
 		'front-end',
 		'capabilities',
+		'entête',
+		'et/ou',
+		'customizer',
+		'template',
+		'templates',
+		'add-ons',
+		// Orthographe d'avant la réforme de 1990 : le glossaire officiel WordPress prescrit
+		// "évènement" (accent grave), pas "événement" (accent aigu).
+		'événement',
 	],
 	slash: '/',
 	openHook: '[',
