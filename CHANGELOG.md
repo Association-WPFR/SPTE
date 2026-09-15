@@ -19,6 +19,7 @@
 - Firefox aligné en Manifest V3 (alignement sur la version Chrome déjà gérée depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer.
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
 - Liste des mots bannis enrichie de 19 anglicismes supplémentaires (source : table « Termes critiques » de thierrypigot/wp-fr-typo)
+- Liste des mots bannis enrichie de 7 entrées supplémentaires (« entête », « et/ou », « customizer », « template », « templates », « add-ons », « événement »), en partie récupérées de Pull Requests jamais mergées sur un fork du dépôt
 - Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut, 85% fixe) et « Agrandir le reste de GlotPress » (85% fixe aussi désormais, le champ « Largeur maximale » est retiré)
 - Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
 - Le filtre « Tout »/« Les avertissements » devient un toggle unique « Afficher uniquement les avertissements de cette page (x) », x étant le nombre de lignes concernées sur la page ; grisé et désactivé automatiquement quand il n'y a rien à filtrer
