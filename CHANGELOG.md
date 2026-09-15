@@ -9,7 +9,7 @@
 - Mode sombre du popup de réglages (suit le choix de l'OS/browser).
 - ESLint pour la qualité du code
 - Suite de tests automatisés (Vitest)
-- La locale française remonte aussi en première position sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (fonctionnait déjà uniquement sur le tableau des locales d'un projet)
+- La locale française remonte aussi en première position, avec son drapeau, sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (en plus du tableau des locales par projet qui existait déjà)
 
 ### Changed
 - Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
