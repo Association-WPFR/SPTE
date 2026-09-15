@@ -4,17 +4,14 @@
 
 ### Added
 - Fichier LICENSE (GPL v2+)
-- Mise en place de WXT (package.json, wxt.config.ts) : facilite la génération automatique des manifests Chrome et Firefox.
+- Outillage de développement : WXT (génère automatiquement les manifests Chrome et Firefox), ESLint, Vitest, .editorconfig, Dependabot, CONTRIBUTING.md, .nvmrc (build reproductible côté AMO)
 - Mode sombre du popup de réglages (suit le choix de l'OS/browser).
-- ESLint pour la qualité du code
-- Suite de tests automatisés (Vitest)
-- .editorconfig, Dependabot et CONTRIBUTING.md pour la maintenance du dépôt
-- .nvmrc (version Node figée, requis pour un build reproductible côté AMO)
 - Nouvelle règle détectant les guillemets doubles droits (`"`), à remplacer par les guillemets français « »
 - Nouvelle règle détectant un point/tiret/astérisque utilisé à la place du point médian épicène (ex: administrateur.rice, abonné-e-s)
 - La locale française remonte aussi en première position, avec son drapeau, sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (en plus du tableau des locales par projet qui existait déjà)
 - Les compteurs d'avertissements (mots déconseillés, guillemets, ponctuation...) sont cliquables (et accessibles au clavier) : ils font défiler la page jusqu'à la première occurrence correspondante
 - Bouton pour copier le permalien d'une traduction, à côté du bouton « Next » du panneau d'édition (au lieu du menu contextuel)
+- Indicateur de chargement pendant la recherche « Cohérence d'une chaîne »
 
 ### Changed
 - Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
@@ -72,7 +69,6 @@
 - Le sélecteur de couleur natif n'est plus forcé en champ texte hexadécimal sous Firefox (Firefox supporte `input[type=color]` nativement depuis 2014, ce contournement était obsolète)
 - Le bandeau de résultats s'affiche maintenant même quand la page ne comporte aucun avertissement (« aucun élément à vérifier »), pour distinguer une vérification effectuée d'une extension qui n'aurait pas tourné
 - Le lien « Masquer la légende » redevient visible (« Afficher la légende ») une fois la légende masquée, au lieu de disparaître entièrement
-- La recherche « Cohérence d'une chaîne » affiche un indicateur de chargement pendant la requête, au lieu de laisser la popup vide/figée
 - La mise en page du popup de réglages (couleurs, interrupteurs) utilise désormais flexbox au lieu de `float`, pour éviter tout chevauchement visuel à fort zoom ou grande police système
 - Les transitions du popup de réglages (onglets, boutons) sont maintenant animées en douceur comme les interrupteurs, au lieu de changer d'état instantanément
 
