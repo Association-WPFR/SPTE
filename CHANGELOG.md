@@ -5,15 +5,20 @@
 ### Added
 - Fichier LICENSE (GPL v2+)
 - Mise en place de WXT (package.json, wxt.config.ts) : facilite la génération automatique des manifests Chrome et Firefox.
-- Firefox alignement en Manifest V3 (alignement sur la version Chrome déjà géré depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer.
 - Mode sombre du popup de réglages (suit le choix de l'OS/browser).
 - ESLint pour la qualité du code
 - Suite de tests automatisés (Vitest)
+- .editorconfig, Dependabot et CONTRIBUTING.md pour la maintenance du dépôt
+- .nvmrc (version Node figée, requis pour un build reproductible côté AMO)
+- Nouvelle règle détectant les guillemets doubles droits (`"`), à remplacer par les guillemets français « »
+- Nouvelle règle détectant un point/tiret/astérisque utilisé à la place du point médian épicène (ex: administrateur.rice, abonné-e-s)
 - La locale française remonte aussi en première position, avec son drapeau, sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (en plus du tableau des locales par projet qui existait déjà)
 
 ### Changed
 - Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
+- Firefox aligné en Manifest V3 (alignement sur la version Chrome déjà gérée depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer.
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
+- Liste des mots bannis enrichie de 19 anglicismes supplémentaires (source : table « Termes critiques » de thierrypigot/wp-fr-typo)
 - Séparation en 2 réglages distincts de l'agrandissement de la page : « Agrandir les pages de traduction » (actif par défaut, 85% fixe) et « Agrandir le reste de GlotPress » (85% fixe aussi désormais, le champ « Largeur maximale » est retiré)
 - Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
 - Le réglage « Contraste des textes » ne recolore plus que le contenu de traduction, plus la navigation ni le pied de page du site (hors du rôle de SPTE)
@@ -38,11 +43,20 @@
 - Le double espace qui cassait le balisage HTML des avertissements est corrigé
 - Les mots identiques en français et en anglais (ex : « plugin ») ne sont plus signalés à tort par le glossaire
 - « ?) »/« !) » (point d'interrogation ou d'exclamation suivi d'une parenthèse fermante) ne sont plus signalés à tort
+- L'apostrophe courbe inversée (U+2018) est désormais détectée, au même titre que l'apostrophe droite
+- Une accolade ouvrante suivie d'un espace puis d'un mot collé à la fermante (ex : « { name} », style d'interpolation de variable) n'est plus signalée à tort
+- Trois points ASCII successifs (« ... ») sont désormais détectés au même titre que les points de suspension
+- Une virgule à l'intérieur d'un bloc `[[ ]]` n'est plus signalée à tort
+- Le « ! » de « !important » (syntaxe CSS) n'est plus signalé à tort
+- Les deux-points d'un format de date PHP (ex : `Y/m/d g:s:i A`) ne sont plus signalés à tort
+- Un deux-points à l'intérieur d'un bloc `{{ }}` n'est plus signalé à tort
+- Un point-virgule en toute fin de chaîne n'est plus signalé à tort
+- Un double espace au milieu d'une phrase est désormais détecté (la règle ne couvrait auparavant que le début/fin de ligne)
 - L'effet réel du réglage « Agrandir la page » est maintenant explicite (il contrôlait le reste de GlotPress, pas la table de traduction déjà agrandie ; voir aussi Changed pour le nouveau découpage en 2 réglages)
 - Le bouton « Réinitialiser » ne soumet plus tout le formulaire des réglages, il réinitialise seulement les couleurs ce qui est son comportement attendu
 - Le bouton « Réinitialiser » ne décale plus les éléments au clic (bordure désormais réservée dès l'état de repos)
 - Le bouton « Réinitialiser » enregistre maintenant son propre effet immédiatement (il fallait auparavant cliquer sur « Enregistrer » séparément)
-- Le bouton « Réinitialiser » est repoistionné sur la ligne du réglage « Couleurs des avertissements » (il n'était pas aligné, ce qui pouvait laisser croire à une réinitialisation globale des réglages)
+- Le bouton « Réinitialiser » est repositionné sur la ligne du réglage « Couleurs des avertissements » (il n'était pas aligné, ce qui pouvait laisser croire à une réinitialisation globale des réglages)
 
 ## [2.0.0] - 01 mai 2023
 
