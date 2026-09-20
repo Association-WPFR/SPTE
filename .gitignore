@@ -25,3 +25,6 @@ CLAUDE.md
 tmp/
 npm-debug.log*
 *.log
+
+# Config Claude Code locale (skills/plugins scopés à ce repo) — jamais commitée
+.claude/
