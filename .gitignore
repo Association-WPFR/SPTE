@@ -19,12 +19,8 @@ coverage/
 # Fichiers et logs divers
 .DS_Store
 TODO.md
-CLAUDE.md
 
 # Fichiers de travail temporaires (notes, brouillons, punch-lists) — jamais commités
 tmp/
 npm-debug.log*
 *.log
-
-# Config Claude Code locale (skills/plugins scopés à ce repo) — jamais commitée
-.claude/
