@@ -14,10 +14,13 @@ import {
 	rgxCloseParenthesis,
 	rgxCloseBrace,
 	rgxExclamationPoint,
+	rgxExclamationPointStrict,
 	rgxPlusSign,
 	rgxQuestionMark,
+	rgxQuestionMarkStrict,
 	rgxColon,
 	rgxSemiColon,
+	rgxSemiColonStrict,
 	rgxClosingFrQuote,
 	rgxOpenFrQuote,
 	rgxEpicenePunctuation,
@@ -417,6 +420,20 @@ describe('rgxExclamationPoint', () => {
 	it('ignore un point d’exclamation suivi d’une parenthèse fermante', () => {
 		expect(matches(rgxExclamationPoint, 'Bravo' + '\u00a0' + '!)')).toEqual([]);
 	});
+	// Le guide du traducteur recommande l'espace fine insécable (U+202F) devant "!", que
+	// SPTE doit reconnaître comme une insécable valide au même titre que U+00A0.
+	it('ignore un point d’exclamation précédé d’une espace fine insécable (U+202F)', () => {
+		expect(matches(rgxExclamationPoint, 'Bravo' + '\u202f' + '!')).toEqual([]);
+	});
+});
+
+describe('rgxExclamationPointStrict', () => {
+	it('accepte l’espace fine insécable (U+202F)', () => {
+		expect(matches(rgxExclamationPointStrict, 'Bravo' + '\u202f' + '!')).toEqual([]);
+	});
+	it('signale l’espace insécable normale (U+00A0), non recommandée devant "!"', () => {
+		expect(matches(rgxExclamationPointStrict, 'Bravo' + '\u00a0' + '!')).toHaveLength(1);
+	});
 });
 
 describe('rgxPlusSign', () => {
@@ -457,6 +474,18 @@ describe('rgxQuestionMark', () => {
 	// "les identifiants ont-ils été modifiés ?)") : "?)" est la typographie correcte.
 	it('ignore un point d’interrogation suivi d’une parenthèse fermante', () => {
 		expect(matches(rgxQuestionMark, 'Pourquoi' + '\u00a0' + '?)')).toEqual([]);
+	});
+	it('ignore un point d’interrogation précédé d’une espace fine insécable (U+202F)', () => {
+		expect(matches(rgxQuestionMark, 'Pourquoi' + '\u202f' + '?')).toEqual([]);
+	});
+});
+
+describe('rgxQuestionMarkStrict', () => {
+	it('accepte l’espace fine insécable (U+202F)', () => {
+		expect(matches(rgxQuestionMarkStrict, 'Pourquoi' + '\u202f' + '?')).toEqual([]);
+	});
+	it('signale l’espace insécable normale (U+00A0), non recommandée devant "?"', () => {
+		expect(matches(rgxQuestionMarkStrict, 'Pourquoi' + '\u00a0' + '?')).toHaveLength(1);
 	});
 });
 
@@ -516,6 +545,9 @@ describe('rgxColon', () => {
 	it.skip('ignore le smiley ":-)" — exception disparue', () => {
 		expect(matches(rgxColon, ':-)')).toEqual([]);
 	});
+	it('ignore un deux-points précédé d’une espace fine insécable (U+202F)', () => {
+		expect(matches(rgxColon, 'Titre' + '\u202f' + ': texte')).toEqual([]);
+	});
 });
 
 describe('rgxSemiColon', () => {
@@ -530,6 +562,18 @@ describe('rgxSemiColon', () => {
 	// ponctuation qui ont déjà une exception fin-de-chaîne.
 	it('ignore un point-virgule en toute fin de chaîne', () => {
 		expect(matches(rgxSemiColon, 'item de liste;')).toEqual([]);
+	});
+	it('ignore un point-virgule précédé d’une espace fine insécable (U+202F)', () => {
+		expect(matches(rgxSemiColon, 'un' + '\u202f' + '; deux')).toEqual([]);
+	});
+});
+
+describe('rgxSemiColonStrict', () => {
+	it('accepte l’espace fine insécable (U+202F)', () => {
+		expect(matches(rgxSemiColonStrict, 'un' + '\u202f' + '; deux')).toEqual([]);
+	});
+	it('signale l’espace insécable normale (U+00A0), non recommandée devant ";"', () => {
+		expect(matches(rgxSemiColonStrict, 'un' + '\u00a0' + '; deux')).toHaveLength(1);
 	});
 });
 
@@ -562,6 +606,12 @@ describe('rgxClosingFrQuote', () => {
 	// doit être traitée comme invisible.
 	it('ignore un guillemet fermant suivi d’une balise HTML échappée (ex: </strong>)', () => {
 		expect(matches(rgxClosingFrQuote, 'Pro »&lt;/strong&gt; suite')).toEqual([]);
+	});
+	it('ignore un guillemet fermant précédé d’une espace fine insécable (U+202F)', () => {
+		expect(matches(rgxClosingFrQuote, 'texte' + '\u202f' + '»')).toEqual([]);
+	});
+	it('ignore un guillemet fermant suivi d’une espace fine insécable puis d’un point d’exclamation', () => {
+		expect(matches(rgxClosingFrQuote, 'mot' + '\u202f' + '»' + '\u202f' + '!')).toEqual([]);
 	});
 });
 
@@ -620,5 +670,18 @@ describe('règle Space (double espace interne)', () => {
 	});
 	it('ignore une espace simple entre deux mots', () => {
 		expect(matches(spaceRegex, 'mot mot')).toEqual([]);
+	});
+});
+
+describe('règle nbkSpaces (visualisation)', () => {
+	// La visualisation doit surligner les 2 variantes d'espace insécable utilisées en
+	// français : U+00A0 (normale) et U+202F (fine), cf. rgxExclamationPoint/rgxSemiColon/etc.
+	const nbkSpacesRegex = rules.find((rule) => rule.id === 'nbkSpaces').regex;
+
+	it('détecte l’espace insécable normale (U+00A0)', () => {
+		expect(matches(nbkSpacesRegex, 'mot' + ' ' + 'mot')).toEqual([' ']);
+	});
+	it('détecte l’espace fine insécable (U+202F)', () => {
+		expect(matches(nbkSpacesRegex, 'mot' + ' ' + 'mot')).toEqual([' ']);
 	});
 });

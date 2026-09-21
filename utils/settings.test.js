@@ -15,6 +15,7 @@ describe('createDefaultSettings', () => {
 			spteActiveGlossary: 'checked',
 			spteLastUpdateGlossary: '',
 			spteGlossary: '',
+			spteStrictNarrowSpace: '',
 		});
 	});
 

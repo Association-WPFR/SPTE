@@ -1,4 +1,4 @@
-import { rules, charTitle, charClass } from '../utils/rules';
+import { rules, charTitle, charClass, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
 import { addStyle, createElement, parseCsv, isPartOfProjectName } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
 import { createDefaultSettings } from '../utils/settings';
@@ -512,8 +512,16 @@ export default defineContentScript({
 			rulesById.get('badWords').regex = newRgxBadWords;
 		}
 
+		function applyStrictNarrowSpace(enabled) {
+			if (!enabled) { return; }
+			rulesById.get('exclamationPoint').regex = rgxExclamationPointStrict;
+			rulesById.get('questionMark').regex = rgxQuestionMarkStrict;
+			rulesById.get('semiColon').regex = rgxSemiColonStrict;
+		}
+
 		function mainProcesses(spteSettings) {
 			document.body.appendChild(spPopup);
+			applyStrictNarrowSpace(spteSettings.spteStrictNarrowSpace === 'true');
 			gpContentMaxWidth(spteSettings.spteEnlargeTable, spteSettings.spteGpcontentBig);
 			if (spteSettings.spteBetterReadability && spteSettings.spteBetterReadability === 'true') { document.body.classList.add('sp-better-readability'); }
 

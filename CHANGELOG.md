@@ -12,6 +12,7 @@
 - La locale française remonte aussi en première position, avec son drapeau, sur l'annuaire des locales de la page d'accueil de translate.wordpress.org (en plus du tableau des locales par projet qui existait déjà)
 - Outillage de développement : WXT (génère automatiquement les manifests Chrome et Firefox), ESLint, Vitest, .editorconfig, Dependabot, CONTRIBUTING.md, .nvmrc (build reproductible côté AMO)
 - Fichier LICENSE (GPL v2+)
+- Réglage « Espace fine insécable stricte » : signale l'espace insécable normale (U+00A0) au lieu de l'espace fine insécable (U+202F) devant « ; ! ? », désactivé par défaut
 
 ### Changed
 - Tous les réglages du popup (couleurs comprises) s'enregistrent et rechargent la page immédiatement, le bouton « Enregistrer » a été retiré. Plus simple et évite d'oublier de cliquer sur enregistrer.
@@ -38,6 +39,7 @@
 - Les mots signalés sont de nouveau focusables au clavier (à tester plus en détail si quelqu'un s'y connait bien)
 - Les notices GlotDict (ex : le décompte affiché par le bouton « Review ») s'affichent de nouveau (le conteneur qui les récupère n'était jamais inséré dans la page)
 - Le tri de la locale française fonctionne de nouveau dans le tableau des locales d'un projet (la structure HTML visée de GlotPress avait changé)
+- L'espace fine insécable (U+202F), recommandée par le guide du traducteur devant « ; ! ? », n'est plus signalée à tort comme une espace manquante (seule l'espace insécable normale U+00A0 était reconnue jusque-là)
 - Le bandeau de résultats (compteurs d'avertissements) n'affiche plus les compteurs collés les uns aux autres sans espacement ; le titre « Éléments à vérifier » et le lien « Masquer la légende » restent alignés sur la même ligne quel que soit le nombre de compteurs affichés en dessous
 - Le texte du highlighter (aperçu surligné dans le panneau d'édition) fait maintenant le même retour à la ligne que le champ de traduction, pour faciliter la comparaison visuelle des chaînes multi-lignes
 - Un guillemet français collé à une balise HTML (ex : `<strong>«texte»</strong>`) n'est plus signalé à tort comme collé à du texte

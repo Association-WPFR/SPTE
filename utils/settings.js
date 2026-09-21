@@ -11,6 +11,7 @@
  * @property {string} spteActiveGlossary
  * @property {string} spteLastUpdateGlossary
  * @property {string[] | string} spteGlossary
+ * @property {string} spteStrictNarrowSpace
  */
 
 /**
@@ -30,6 +31,7 @@ export function createDefaultSettings(overrides = {}) {
 		spteActiveGlossary: 'checked',
 		spteLastUpdateGlossary: '',
 		spteGlossary: '',
+		spteStrictNarrowSpace: '',
 		...overrides,
 	};
 }

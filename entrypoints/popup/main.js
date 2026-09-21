@@ -16,6 +16,7 @@ function getFormFields() {
 		enlargeTable: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-enlarge-table')),
 		gpcontentBig: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-gpcontent-big')),
 		gpActiveGlossary: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-importglossary')),
+		strictNarrowSpace: /** @type {HTMLInputElement | null} */ (document.querySelector('#settings-strictnarrowspace')),
 	};
 }
 
@@ -27,7 +28,7 @@ function hasAllFields(fields) {
 async function saveSettings() {
 	const fields = getFormFields();
 	if (!hasAllFields(fields)) { return; }
-	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary } = fields;
+	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary, strictNarrowSpace } = fields;
 
 	const data = await browser.storage.local.get('spteSettings');
 	const existingSettings = /** @type {SpteSettings | undefined} */ (data.spteSettings);
@@ -47,6 +48,7 @@ async function saveSettings() {
 	settings.spteEnlargeTable = enlargeTable.checked ? 'true' : 'false';
 	settings.spteGpcontentBig = gpcontentBig.checked ? 'true' : 'false';
 	settings.spteActiveGlossary = gpActiveGlossary.checked ? 'true' : 'false';
+	settings.spteStrictNarrowSpace = strictNarrowSpace.checked ? 'true' : 'false';
 
 	try {
 		await browser.storage.local.set({ spteSettings: settings });
@@ -60,7 +62,7 @@ async function restoreSettings() {
 	const data = await browser.storage.local.get('spteSettings');
 	const settings = /** @type {SpteSettings | undefined} */ (data.spteSettings);
 	const fields = getFormFields();
-	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary } = fields;
+	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary, strictNarrowSpace } = fields;
 	const initSettings = createDefaultSettings();
 	if (settings === undefined) {
 		if (blackToolTip) { blackToolTip.checked = true; }
@@ -121,6 +123,8 @@ async function restoreSettings() {
 	if (settings.spteActiveGlossary) {
 		gpActiveGlossary.checked = (settings.spteActiveGlossary === 'false') ? false : true;
 	}
+
+	strictNarrowSpace.checked = settings.spteStrictNarrowSpace === 'true';
 }
 
 document.addEventListener('DOMContentLoaded', restoreSettings);

@@ -71,6 +71,14 @@ function escapeRegExp(str) {
 	return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/gm, '\\$&');
 }
 
+// Le guide du traducteur WP FR distingue 2 espaces insécables : U+00A0 (normale, devant
+// ":"/"»") et U+202F (fine, devant "; ! ?"). SPTE n'a longtemps reconnu que U+00A0 comme
+// insécable valide, ce qui signalait à tort du texte utilisant correctement U+202F.
+// https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/
+const NBSP = ' ';
+const NNBSP = ' ';
+const nbspAny = `(?:${NBSP}|${NNBSP})`;
+
 const fileExtensions = data.fileExtensions.join('|');
 
 // Contexte partagé par rgxColon/rgxComma : exclut un caractère entouré d'un bloc `{{ }}`/`[[ ]]` (interpolation JS, ex: {{foo:bar}}). Voir issue #27.
@@ -124,22 +132,40 @@ export const rgxCloseParenthesis = new RegExp(`(?<= |\u00a0|\\([a-d]|\\([f-r]|\\
 export const rgxCloseBrace = new RegExp(`(?<=[ |\u00a0])\\${data.closeBrace}|(?<!\\${data.closeBrace})\\${data.closeBrace}(?=[a-zÀ-ú0-9]|\u00a0| $|\u00a0$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxExclamationPoint
-export const rgxExclamationPoint = new RegExp(`(?<!\u00a0|^)\\${data.exclamationPoint}(?!important)|\\${data.exclamationPoint}(?!important)(?! |$|\\))`, 'gmi');
+// Accepte U+00A0 ou U+202F comme insécable valide devant "!". La variante stricte
+// (setting "espace fine insécable stricte") n'accepte que U+202F, la seule recommandée
+// par le guide du traducteur pour "! ? ;".
+function buildExclamationPointRegex(requiredNbsp) {
+	return new RegExp(`(?<!${requiredNbsp}|^)\\${data.exclamationPoint}(?!important)|\\${data.exclamationPoint}(?!important)(?! |$|\\))`, 'gmi');
+}
+export const rgxExclamationPoint = buildExclamationPointRegex(nbspAny);
+export const rgxExclamationPointStrict = buildExclamationPointRegex(NNBSP);
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxPlusSign
 export const rgxPlusSign = new RegExp(`(?<!\u00a0|google|^)\\${data.plusSign}|\\${data.plusSign}(?! |$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxQuestionMark
-export const rgxQuestionMark = new RegExp(`(?<!\u00a0|\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}|(?<!\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}(?! |$|\\))`, 'gmi');
+function buildQuestionMarkRegex(requiredNbsp) {
+	return new RegExp(`(?<!${requiredNbsp}|\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}|(?<!\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}(?! |$|\\))`, 'gmi');
+}
+export const rgxQuestionMark = buildQuestionMarkRegex(nbspAny);
+export const rgxQuestionMarkStrict = buildQuestionMarkRegex(NNBSP);
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxColon
-export const rgxColon = new RegExp(`(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?= )|(?<=\u00a0)${data.colon}(?! |$)|(?<!\u00a0|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?! )`, 'gmi');
+// U+00A0 reste la seule espace recommandée devant ":" (pas de variante stricte ici) ;
+// on élargit juste la détection pour ne plus signaler à tort du texte utilisant U+202F.
+export const rgxColon = new RegExp(`(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?= )|(?<=${nbspAny})${data.colon}(?! |$)|(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?! )`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSemiColon
-export const rgxSemiColon = new RegExp(`(?<!\u00a0|:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?!$)|(?<!:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?! |$)`, 'gmi');
+function buildSemiColonRegex(requiredNbsp) {
+	return new RegExp(`(?<!${requiredNbsp}|:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?!$)|(?<!:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?! |$)`, 'gmi');
+}
+export const rgxSemiColon = buildSemiColonRegex(nbspAny);
+export const rgxSemiColonStrict = buildSemiColonRegex(NNBSP);
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxClosingFrQuote
-export const rgxClosingFrQuote = new RegExp(`(?<!\u00a0)${data.closingFrQuote}|${data.closingFrQuote}(?! |\\.|\\,|\u00a0\\?|\u00a0\\!|\u00a0\\:|\u00a0\\;|&lt;|$)`, 'gmi');
+// U+00A0 reste la seule espace recommandée devant "»" (pas de variante stricte ici).
+export const rgxClosingFrQuote = new RegExp(`(?<!${nbspAny})${data.closingFrQuote}|${data.closingFrQuote}(?! |\\.|\\,|${nbspAny}\\?|${nbspAny}\\!|${nbspAny}\\:|${nbspAny}\\;|&lt;|$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxOpenFrQuote
 export const rgxOpenFrQuote = new RegExp(`(?<! |^|&gt;)${data.openFrQuote}|${data.openFrQuote}(?!\u00a0|$)`, 'gmi');
@@ -403,6 +429,6 @@ export const rules = [
 		severity: 'info',
 		cssClass: 'sp-nbkspaces--showing',
 		counter: 0,
-		regex: /\u00A0/gm,
+		regex: /[\u00A0\u202F]/gm,
 	},
 ];
