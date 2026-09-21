@@ -1,3 +1,42 @@
-Avant chaque commit touchant le code (hors CHANGELOG.md/TODO.md/README.md) : vérifier si CHANGELOG.md doit être mis à jour, et si oui l'écrire en respectant les règles déjà établies (une ligne par élément modifié, Fixed formulé en "ça marche maintenant" plutôt qu'en bug).
+# CLAUDE.md
 
-Si un chantier technique notable est fait sans que CHANGELOG.md ou TODO.md le reflète, le signaler avant de committer plutôt que de committer silencieusement.
+Ce fichier donne le contexte de session à Claude Code sur ce dépôt.
+
+## What this is
+
+**SPTE** — extension WebExtension (Chrome + Firefox) de vérification typographique pour les traductions françaises de WordPress sur translate.wordpress.org.
+
+## Stack
+
+JavaScript (pas de TypeScript, `checkJs` seul), bâti avec [WXT](https://wxt.dev/), tests avec Vitest, lint avec ESLint (flat config).
+
+## Commands
+
+```bash
+npm run dev            # build + watch, Chrome
+npm run dev:firefox    # build + watch, Firefox
+npm run build          # build de prod, Chrome
+npm run build:firefox  # build de prod, Firefox
+npm run lint           # ESLint
+npm run typecheck      # wxt prepare && tsc --noEmit
+npm test               # vitest run
+npm run zip            # paquet prêt à l'upload
+```
+
+## Architecture
+
+Voir `.claude/ARCHITECTURE.md` pour l'arborescence complète et les contraintes de design à préserver.
+
+## Files never to modify
+
+`.output/`, `.wxt/` (générés par WXT), `node_modules/`.
+
+## Git workflow
+
+Branche par défaut : `main`. À la date de ce scaffold, le développement actif se fait sur `refonte/3.0` (PR #64 ouverte vers `main`) — vérifier la branche courante avant de supposer que `main` reflète l'état du code.
+
+## Pointers
+
+- **Toujours chargées** : `.claude/rules/*.md` — checklists bloquantes.
+- **Architecture** : `.claude/ARCHITECTURE.md`.
+- **Skills** (à la demande) : aucune pour l'instant — à ajouter dans `.claude/skills/` au fil des besoins (ex. conventions spécifiques aux règles de détection typo dans `utils/rules.js`).
