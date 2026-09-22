@@ -41,4 +41,4 @@ Comment ce dépôt est organisé, et pourquoi.
 
 ## Known pitfalls
 
-- Ce dépôt vit actuellement sur la branche `refonte/3.0` (118 commits d'avance sur `main`, PR #64 en cours) — vérifier sur quelle branche on travaille avant de supposer que `main` reflète l'état courant du code.
+- Vérifier sur quelle branche on travaille avant de supposer que `main` reflète l'état courant du code.
