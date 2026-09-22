@@ -9,8 +9,6 @@
   ![Lines](https://img.shields.io/badge/lines-45.61%25-red.svg?style=flat)
 </p>
 
-> Couverture (lignes) générée par `npm run test:coverage` puis `npx istanbul-badges-readme` — à jour au dernier commit qui a régénéré ce fichier, pas en continu (pas d'auto-commit CI).
-
 > → *English speakers: read [Why is this extension only available for French speakers?](https://github.com/Association-WPFR/SPTE/wiki/Why-is-this-extension-only-available-for-French-speakers%3F).*
 >
 > → *Lire le [Wiki](https://github.com/Association-WPFR/SPTE/wiki) pour de plus amples (et actualisées) informations.*
