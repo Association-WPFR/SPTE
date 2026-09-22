@@ -33,10 +33,10 @@ Voir `.claude/ARCHITECTURE.md` pour l'arborescence complète et les contraintes 
 
 ## Git workflow
 
-Branche par défaut : `main`. À la date de ce scaffold, le développement actif se fait sur `refonte/3.0` (PR #64 ouverte vers `main`) — vérifier la branche courante avant de supposer que `main` reflète l'état du code.
+Branche par défaut : `main`. Toujours vérifier si une PR ou une branche courante est active avant de supposer que `main` est la version la plus récente/avancée du code.
 
 ## Pointers
 
 - **Toujours chargées** : `.claude/rules/*.md` — checklists bloquantes.
 - **Architecture** : `.claude/ARCHITECTURE.md`.
-- **Skills** (à la demande) : aucune pour l'instant — à ajouter dans `.claude/skills/` au fil des besoins (ex. conventions spécifiques aux règles de détection typo dans `utils/rules.js`).
+- **Skills** (à la demande) : aucune pour l'instant, seront à ajouter dans `.claude/skills/` au fil des besoins.
