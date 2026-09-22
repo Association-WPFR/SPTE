@@ -2,11 +2,11 @@
   <img src="public/icons/spte.png" alt="SPTE" width="160" />
 </p>
 
-<p align="center">
+<div align="center">
 
 [![Version 3.0.0](https://img.shields.io/badge/version-3.0.0-blue?style=flat-square)](CHANGELOG.md) [![Licence GPL v2+](https://img.shields.io/badge/licence-GPL%20v2%2B-276749?style=flat-square)](LICENSE) [![Tests : Vitest](https://img.shields.io/badge/tests-vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://github.com/Association-WPFR/SPTE/actions/workflows/ci.yml) [![Lines](https://img.shields.io/badge/lines-45.61%25-red.svg?style=flat)](https://github.com/Association-WPFR/SPTE/actions/workflows/ci.yml)
 
-</p>
+</div>
 
 > → *English speakers: read [Why is this extension only available for French speakers?](https://github.com/Association-WPFR/SPTE/wiki/Why-is-this-extension-only-available-for-French-speakers%3F).*
 >
