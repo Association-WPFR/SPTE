@@ -6,11 +6,10 @@
   <img src="https://img.shields.io/badge/version-3.0.0-blue?style=flat-square" alt="Version 3.0.0" />
   <img src="https://img.shields.io/badge/licence-GPL%20v2%2B-276749?style=flat-square" alt="Licence GPL v2+" />
   <img src="https://img.shields.io/badge/tests-vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white" alt="Tests : Vitest" />
+  ![Lines](https://img.shields.io/badge/lines-45.61%25-red.svg?style=flat)
 </p>
 
-![Statements](https://img.shields.io/badge/statements-45.61%25-red.svg?style=flat) ![Branches](https://img.shields.io/badge/branches-42.77%25-red.svg?style=flat) ![Functions](https://img.shields.io/badge/functions-46.15%25-red.svg?style=flat) ![Lines](https://img.shields.io/badge/lines-45.61%25-red.svg?style=flat)
-
-> Couverture générée par `npm run test:coverage` puis `npx istanbul-badges-readme` — chiffres à jour au dernier commit qui a régénéré ce fichier, pas nécessairement en continu (pas d'auto-commit CI).
+> Couverture (lignes) générée par `npm run test:coverage` puis `npx istanbul-badges-readme` — à jour au dernier commit qui a régénéré ce fichier, pas en continu (pas d'auto-commit CI).
 
 > → *English speakers: read [Why is this extension only available for French speakers?](https://github.com/Association-WPFR/SPTE/wiki/Why-is-this-extension-only-available-for-French-speakers%3F).*
 >
