@@ -20,6 +20,7 @@ npm run build:firefox  # build de prod, Firefox
 npm run lint           # ESLint
 npm run typecheck      # wxt prepare && tsc --noEmit
 npm test               # vitest run
+npm run test:coverage  # vitest run --coverage ; suivi de npx istanbul-badges-readme pour rafraîchir les badges du README
 npm run zip            # paquet prêt à l'upload
 ```
 

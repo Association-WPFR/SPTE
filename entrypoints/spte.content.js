@@ -32,7 +32,7 @@ function tagTRTranslations(preview) {
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
-function updateWarningFilterState(ctx) {
+export function updateWarningFilterState(ctx) {
 	if (!ctx.showOnlyWarning || !ctx.showOnlyWarningLabel) { return; }
 	const warningCount = document.querySelectorAll('tr.preview.sp-has-spte-warning').length;
 	ctx.showOnlyWarningLabel.textContent = `Afficher uniquement les avertissements de cette page (${warningCount})`;
@@ -44,7 +44,7 @@ function updateWarningFilterState(ctx) {
 
 // Logique testée dans utils/dom.test.js.
 /** @param {ReturnType<typeof buildContext>} ctx */
-function rowsDisplay(ctx) {
+export function rowsDisplay(ctx) {
 	const rows = document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)');
 	if (ctx.lsShowOnlyWarning) {
 		hideNonWarningRows(rows, Boolean(ctx.bulkActions));
@@ -56,7 +56,7 @@ function rowsDisplay(ctx) {
 
 // Vérifie et traite les traductions, surligne les éléments (avec le statut « rejeté » on ne fait que décompter).
 /** @param {ReturnType<typeof buildContext>} ctx */
-function checkTranslation(ctx, translation, oldStatus, newStatus) {
+export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 	const preview = translation.closest('tr.preview');
 
 	addForeignToolTip(translation);
@@ -256,7 +256,7 @@ function frenchiesGoFirst(ctx) {
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
-function frenchFlag(ctx, spteFrenchFlag) {
+export function frenchFlag(ctx, spteFrenchFlag) {
 	if (spteFrenchFlag && spteFrenchFlag === 'false') { return; }
 
 	if (ctx.frenchStatsSpecific) {
@@ -424,7 +424,7 @@ function blackToolTip(spteBlackToolTip) {
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
-function gpContentMaxWidth(ctx, spteEnlargeTable, spteGpcontentBig) {
+export function gpContentMaxWidth(ctx, spteEnlargeTable, spteGpcontentBig) {
 	const enlargeTable = spteEnlargeTable !== 'false';
 	const enlargeRest = spteGpcontentBig === 'true';
 
@@ -434,7 +434,7 @@ function gpContentMaxWidth(ctx, spteEnlargeTable, spteGpcontentBig) {
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
-function getGlossaryRegex(ctx, glossary) {
+export function getGlossaryRegex(ctx, glossary) {
 	const badWordsRegexPattern = ctx.rulesById.get('badWords').regex.source;
 	// On duplique chaque mot avec un s final pour pouvoir traiter les pluriels.
 	const glossaryWithPlurals = glossary.reduce((a, i) => a.concat(i, `${i}s`), []);
@@ -444,7 +444,7 @@ function getGlossaryRegex(ctx, glossary) {
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
-function applyStrictNarrowSpace(ctx, enabled) {
+export function applyStrictNarrowSpace(ctx, enabled) {
 	if (!enabled) { return; }
 	ctx.rulesById.get('exclamationPoint').regex = rgxExclamationPointStrict;
 	ctx.rulesById.get('questionMark').regex = rgxQuestionMarkStrict;

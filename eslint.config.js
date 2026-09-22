@@ -38,6 +38,6 @@ export default [
 		},
 	},
 	{
-		ignores: ['.output/**', '.wxt/**', 'node_modules/**'],
+		ignores: ['.output/**', '.wxt/**', 'node_modules/**', 'coverage/**'],
 	},
 ];

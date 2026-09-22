@@ -1,4 +1,4 @@
-import { createDefaultSettings } from '../../utils/settings';
+import { createDefaultSettings, formValuesToSettings, settingsToFormValues } from '../../utils/settings';
 
 /** @typedef {import('../../utils/settings').SpteSettings} SpteSettings */
 
@@ -31,24 +31,19 @@ async function saveSettings() {
 	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary, strictNarrowSpace } = fields;
 
 	const data = await browser.storage.local.get('spteSettings');
-	const existingSettings = /** @type {SpteSettings | undefined} */ (data.spteSettings);
-	/** @type {SpteSettings} */
-	let settings;
-	if (existingSettings) {
-		settings = existingSettings;
-	} else {
-		settings = createDefaultSettings();
-	}
-	settings.spteColorWord = colorWord.value;
-	settings.spteColorQuote = colorQuote.value;
-	settings.spteColorChar = colorChar.value;
-	settings.spteBlackToolTip = blackToolTip.checked ? 'true' : 'false';
-	settings.spteBetterReadability = betterReadability.checked ? 'true' : 'false';
-	settings.spteFrenchFlag = frenchFlag.checked ? 'true' : 'false';
-	settings.spteEnlargeTable = enlargeTable.checked ? 'true' : 'false';
-	settings.spteGpcontentBig = gpcontentBig.checked ? 'true' : 'false';
-	settings.spteActiveGlossary = gpActiveGlossary.checked ? 'true' : 'false';
-	settings.spteStrictNarrowSpace = strictNarrowSpace.checked ? 'true' : 'false';
+	const existingSettings = /** @type {SpteSettings | undefined} */ (data.spteSettings) ?? createDefaultSettings();
+	const settings = formValuesToSettings(existingSettings, {
+		colorWord: colorWord.value,
+		colorQuote: colorQuote.value,
+		colorChar: colorChar.value,
+		blackToolTip: blackToolTip.checked,
+		betterReadability: betterReadability.checked,
+		frenchFlag: frenchFlag.checked,
+		enlargeTable: enlargeTable.checked,
+		gpcontentBig: gpcontentBig.checked,
+		gpActiveGlossary: gpActiveGlossary.checked,
+		strictNarrowSpace: strictNarrowSpace.checked,
+	});
 
 	try {
 		await browser.storage.local.set({ spteSettings: settings });
@@ -63,6 +58,8 @@ async function restoreSettings() {
 	const settings = /** @type {SpteSettings | undefined} */ (data.spteSettings);
 	const fields = getFormFields();
 	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary, strictNarrowSpace } = fields;
+	// Réglages "table rase" utilisés pour la migration ci-dessous : recrée les défauts plutôt que
+	// de fusionner avec l'existant (comportement identique à avant l'extraction dans utils/settings.js).
 	const initSettings = createDefaultSettings();
 	if (settings === undefined) {
 		if (blackToolTip) { blackToolTip.checked = true; }
@@ -77,54 +74,25 @@ async function restoreSettings() {
 	}
 	if (!settings || !hasAllFields(fields)) { return; }
 
-	if (settings.spteColorWord) {
-		colorWord.value = settings.spteColorWord;
-	}
+	const { values, needsFrenchFlagMigration } = settingsToFormValues(settings);
+	if (values.colorWord !== undefined) { colorWord.value = values.colorWord; }
+	if (values.colorQuote !== undefined) { colorQuote.value = values.colorQuote; }
+	if (values.colorChar !== undefined) { colorChar.value = values.colorChar; }
+	if (values.blackToolTip !== undefined) { blackToolTip.checked = values.blackToolTip; }
+	if (values.betterReadability !== undefined) { betterReadability.checked = values.betterReadability; }
+	if (values.gpActiveGlossary !== undefined) { gpActiveGlossary.checked = values.gpActiveGlossary; }
+	frenchFlag.checked = values.frenchFlag;
+	enlargeTable.checked = values.enlargeTable;
+	gpcontentBig.checked = values.gpcontentBig;
+	strictNarrowSpace.checked = values.strictNarrowSpace;
 
-	if (settings.spteColorQuote) {
-		colorQuote.value = settings.spteColorQuote;
-	}
-
-	if (settings.spteColorChar) {
-		colorChar.value = settings.spteColorChar;
-	}
-
-	if (settings.spteBlackToolTip) {
-		blackToolTip.checked = (settings.spteBlackToolTip === 'false') ? false : true;
-	}
-
-	if (settings.spteBetterReadability) {
-		betterReadability.checked = (settings.spteBetterReadability === 'false') ? false : true;
-	}
-
-	if (settings.spteFrenchFlag) {
-		frenchFlag.checked = (settings.spteFrenchFlag === 'false') ? false : true;
-	} else {
-		frenchFlag.checked = true;
+	if (needsFrenchFlagMigration) {
 		try {
 			await browser.storage.local.set({ spteSettings: initSettings });
 		} catch {
 			console.log('Impossible d’enregistrer les paramètres');
 		}
 	}
-
-	if (settings.spteEnlargeTable) {
-		enlargeTable.checked = (settings.spteEnlargeTable === 'false') ? false : true;
-	} else {
-		enlargeTable.checked = true;
-	}
-
-	if (settings.spteGpcontentBig) {
-		gpcontentBig.checked = (settings.spteGpcontentBig === 'false') ? false : true;
-	} else {
-		gpcontentBig.checked = false;
-	}
-
-	if (settings.spteActiveGlossary) {
-		gpActiveGlossary.checked = (settings.spteActiveGlossary === 'false') ? false : true;
-	}
-
-	strictNarrowSpace.checked = settings.spteStrictNarrowSpace === 'true';
 }
 
 document.addEventListener('DOMContentLoaded', restoreSettings);

@@ -14,6 +14,8 @@ Comment ce dépôt est organisé, et pourquoi.
 │   ├── hooks/                   # session-banner.sh, lint-edited.sh
 │   └── settings.json
 ├── entrypoints/                 # Points d'entrée WXT : background.js, spte.content.js, popup/
+├── tests/                       # Tests qui ne peuvent pas être co-localisés dans entrypoints/ (WXT y scanne les fichiers par nom pour trouver les entrypoints — un spte.content.test.js posé à côté de spte.content.js y est détecté à tort comme un second entrypoint "spte")
+│   └── spte.content.test.js     # Tests des fonctions exportées de entrypoints/spte.content.js
 ├── utils/                       # Logique métier (regex de vérification typo, DOM, réglages) + tests co-localisés (*.test.js)
 │   └── fixtures/                # Fixtures HTML utilisées par les tests
 ├── assets/                      # Ressources non buildées (captures d'écran, etc.)
@@ -37,8 +39,10 @@ Comment ce dépôt est organisé, et pourquoi.
 
 ## CI/CD
 
-`.github/workflows/ci.yml`, déclenché sur les PR vers `main` : `npm ci` puis `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run build:firefox` — dans cet ordre, tout doit passer avant merge.
+`.github/workflows/ci.yml`, déclenché sur les PR vers `main` : `npm ci` puis `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run build:firefox`, puis upload du rapport `coverage/` en artefact — dans cet ordre, tout doit passer avant merge.
 
 ## Known pitfalls
 
 - Vérifier sur quelle branche on travaille avant de supposer que `main` reflète l'état courant du code.
+- Ne jamais nommer un fichier de test `entrypoints/<nom>.content.test.js` (ni `.background.test.js`/`.popup.test.js` etc.) : WXT scanne `entrypoints/` par motif de nom de fichier pour découvrir les entrypoints, et le détecterait comme un second entrypoint portant le même nom → `wxt prepare`/`typecheck`/`build` échouent avec « Multiple entrypoints with the same name detected ». Les tests des fichiers d'entrypoints vivent dans `tests/` à la racine.
+- Badges de couverture du README (`istanbul-badges-readme`) : pas régénérés automatiquement en CI (pas d'auto-commit configuré, pour éviter la complexité/risque d'un push depuis un workflow). Les rafraîchir à la main avant une release avec `npm run test:coverage && npx istanbul-badges-readme`.

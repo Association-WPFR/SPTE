@@ -12,12 +12,15 @@
     "zip:firefox": "wxt zip -b firefox",
     "lint": "eslint .",
     "typecheck": "wxt prepare && tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^5.0.1",
     "eslint": "^10.10.0",
     "globals": "^17.12.0",
+    "istanbul-badges-readme": "^1.9.0",
     "jsdom": "^30.0.1",
     "typescript": "^5.9.3",
     "vitest": "^5.0.0",
