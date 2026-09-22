@@ -11,7 +11,7 @@
 <body>
 	<div id="settings-popup">
 		<header>
-			<img id="logo" src="/icons/spte.png" />
+			<img id="logo" src="/icons/spte.png" alt="SPTE" />
 		</header>
 		<form action="#" method="post" id="settings-form">
 
@@ -25,14 +25,14 @@
 				<div class="panels">
 					<div class="panel" id="one-panel">
 						<fieldset class="input-fields settings-color">
-							<legend><span class="whatisthat" title="Par défaut, les erreurs relatives aux mots sont sur fond rouge RGB(255,0,0),  &#013;celles des apostrophes encadrées de rouge RGB(255,0,0),  &#013;et celles des paragraphes encadrées de rose RGB(255,0,255).">🛈 </span>Couleurs des avertissements<button id="reset-color" type="button" class="fieldset-btn-lnk">Réinitialiser</button></legend>
+							<legend><button type="button" class="whatisthat" title="Par défaut, les erreurs relatives aux mots sont sur fond rouge RGB(255,0,0),  &#013;celles des apostrophes encadrées de rouge RGB(255,0,0),  &#013;et celles des paragraphes encadrées de rose RGB(255,0,255)." aria-label="Par défaut, les erreurs relatives aux mots sont sur fond rouge RGB(255,0,0),  &#013;celles des apostrophes encadrées de rouge RGB(255,0,0),  &#013;et celles des paragraphes encadrées de rose RGB(255,0,255).">🛈 </button>Couleurs des avertissements<button id="reset-color" type="button" class="fieldset-btn-lnk">Réinitialiser</button></legend>
 							<label for="settings-color__word" class="settings-color-field">Mots<input id="settings-color__word" class="settings entry" type="color" value="#ff0000" /></label>
 							<label for="settings-color__quote" class="settings-color-field">Apostrophes<input id="settings-color__quote" class="settings entry" type="color" value="#ff0000" /></label>
 							<label for="settings-color__char" class="settings-color-field">Caractères<input id="settings-color__char" class="settings entry" type="color" value="#ff00ff" /></label>
 						</fieldset>
 						<fieldset class="toggle-fields">
 							<div class="toggle-container">
-								<label for="settings-blacktooltip" class="toggle-text"><span href="#" class="whatisthat" title="Activer ou désactiver l’info-bulle noire &#013;apparaissant au survol de la colonne Details, &#013;qui affiche la chaîne traduite sans correction">🛈 </span>Info-bulle sans avertissement</label>
+								<label for="settings-blacktooltip" class="toggle-text"><button type="button" class="whatisthat" title="Activer ou désactiver l’info-bulle noire &#013;apparaissant au survol de la colonne Details, &#013;qui affiche la chaîne traduite sans correction" aria-label="Activer ou désactiver l’info-bulle noire &#013;apparaissant au survol de la colonne Details, &#013;qui affiche la chaîne traduite sans correction">🛈 </button>Info-bulle sans avertissement</label>
 								<input id="settings-blacktooltip" type="checkbox" class="toggle toggle-light">
 								<label for="settings-blacktooltip" class="toggle-btn"></label>
 							</div>
@@ -40,7 +40,7 @@
 						</fieldset>
 						<fieldset class="toggle-fields">
 							<div class="toggle-container">
-								<label for="settings-betterreadability" class="toggle-text"><span href="#" class="whatisthat" title="Affecter aux textes un rapport de contraste &#013;minimum de 4.5:1 dans la mesure du possible &#013;sur les pages de traduction">🛈 </span>Contraste des textes</label>
+								<label for="settings-betterreadability" class="toggle-text"><button type="button" class="whatisthat" title="Affecter aux textes un rapport de contraste &#013;minimum de 4.5:1 dans la mesure du possible &#013;sur les pages de traduction" aria-label="Affecter aux textes un rapport de contraste &#013;minimum de 4.5:1 dans la mesure du possible &#013;sur les pages de traduction">🛈 </button>Contraste des textes</label>
 								<input id="settings-betterreadability" type="checkbox" class="toggle toggle-light">
 								<label for="settings-betterreadability" class="toggle-btn"></label>
 							</div>
@@ -48,7 +48,7 @@
 						</fieldset>
 						<fieldset class="toggle-fields">
 							<div class="toggle-container">
-								<label for="settings-importglossary" class="toggle-text"><span href="#" class="whatisthat" title="Récupère 1 fois par jour les expressions déconseillées par le glossaire officiel et les ajoute à la liste des fautes de frappe embarquée dans SPTE">🛈 </span>Glossaire officiel</label>
+								<label for="settings-importglossary" class="toggle-text"><button type="button" class="whatisthat" title="Récupère 1 fois par jour les expressions déconseillées par le glossaire officiel et les ajoute à la liste des fautes de frappe embarquée dans SPTE" aria-label="Récupère 1 fois par jour les expressions déconseillées par le glossaire officiel et les ajoute à la liste des fautes de frappe embarquée dans SPTE">🛈 </button>Glossaire officiel</label>
 								<input id="settings-importglossary" type="checkbox" class="toggle toggle-light">
 								<label for="settings-importglossary" class="toggle-btn"></label>
 							</div>
@@ -56,7 +56,7 @@
 						</fieldset>
 						<fieldset class="toggle-fields">
 							<div class="toggle-container">
-								<label for="settings-strictnarrowspace" class="toggle-text"><span href="#" class="whatisthat" title="Signale l’espace insécable normale (U+00A0) devant ; ! ? au lieu de l’espace fine insécable (U+202F) recommandée par le guide du traducteur. Désactivé par défaut : les 2 espaces sont acceptées indifféremment.">🛈 </span>Espace fine insécable stricte</label>
+								<label for="settings-strictnarrowspace" class="toggle-text"><button type="button" class="whatisthat" title="Signale l’espace insécable normale (U+00A0) devant ; ! ? au lieu de l’espace fine insécable (U+202F) recommandée par le guide du traducteur. Désactivé par défaut : les 2 espaces sont acceptées indifféremment." aria-label="Signale l’espace insécable normale (U+00A0) devant ; ! ? au lieu de l’espace fine insécable (U+202F) recommandée par le guide du traducteur. Désactivé par défaut : les 2 espaces sont acceptées indifféremment.">🛈 </button>Espace fine insécable stricte</label>
 								<input id="settings-strictnarrowspace" type="checkbox" class="toggle toggle-light">
 								<label for="settings-strictnarrowspace" class="toggle-btn"></label>
 							</div>
@@ -66,7 +66,7 @@
 					<div class="panel" id="two-panel">
 						<fieldset class="toggle-fields">
 							<div class="toggle-container">
-								<label for="settings-frenchflag" class="toggle-text"><span href="#" class="whatisthat" title="Activer ou désactiver les drapeaux français &#013;utilisés sur le site pour repérer la locale française">🛈 </span>Drapeaux français</label>
+								<label for="settings-frenchflag" class="toggle-text"><button type="button" class="whatisthat" title="Activer ou désactiver les drapeaux français &#013;utilisés sur le site pour repérer la locale française" aria-label="Activer ou désactiver les drapeaux français &#013;utilisés sur le site pour repérer la locale française">🛈 </button>Drapeaux français</label>
 								<input id="settings-frenchflag" type="checkbox" class="toggle toggle-light">
 								<label for="settings-frenchflag" class="toggle-btn"></label>
 							</div>
@@ -74,7 +74,7 @@
 						</fieldset>
 						<fieldset class="toggle-fields">
 							<div class="toggle-container">
-								<label for="settings-enlarge-table" class="toggle-text"><span href="#" class="whatisthat" title="Élargit la table de traduction à 85% de la page. Actif par défaut.">🛈 </span>Agrandir les pages de traduction</label>
+								<label for="settings-enlarge-table" class="toggle-text"><button type="button" class="whatisthat" title="Élargit la table de traduction à 85% de la page. Actif par défaut." aria-label="Élargit la table de traduction à 85% de la page. Actif par défaut.">🛈 </button>Agrandir les pages de traduction</label>
 								<input id="settings-enlarge-table" type="checkbox" class="toggle toggle-light" checked>
 								<label for="settings-enlarge-table" class="toggle-btn"></label>
 							</div>
@@ -82,7 +82,7 @@
 						</fieldset>
 						<fieldset class="toggle-fields">
 							<div class="toggle-container">
-								<label for="settings-gpcontent-big" class="toggle-text"><span href="#" class="whatisthat" title="Élargit le reste de GlotPress (hors pages de traduction) à 85% de la page, &#013;pour profiter d’un grand écran au lieu du plafond natif d’environ 1600px.">🛈 </span>Agrandir le reste de GlotPress</label>
+								<label for="settings-gpcontent-big" class="toggle-text"><button type="button" class="whatisthat" title="Élargit le reste de GlotPress (hors pages de traduction) à 85% de la page, &#013;pour profiter d’un grand écran au lieu du plafond natif d’environ 1600px." aria-label="Élargit le reste de GlotPress (hors pages de traduction) à 85% de la page, &#013;pour profiter d’un grand écran au lieu du plafond natif d’environ 1600px.">🛈 </button>Agrandir le reste de GlotPress</label>
 								<input id="settings-gpcontent-big" type="checkbox" class="toggle toggle-light">
 								<label for="settings-gpcontent-big" class="toggle-btn"></label>
 							</div>

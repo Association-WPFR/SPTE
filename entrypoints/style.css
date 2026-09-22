@@ -235,6 +235,9 @@
 	font-size: .85rem;
 	color: #756f79 !important;
 	line-height: 1.6;
+	background: none;
+	border: 0;
+	cursor: pointer;
 }
 
 #sp-results__toggle-caption::before {

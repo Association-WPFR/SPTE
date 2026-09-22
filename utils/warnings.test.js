@@ -5,6 +5,7 @@ import { rules } from './rules';
 const badWordsRule = rules.find((rule) => rule.id === 'badWords');
 const colonRule = rules.find((rule) => rule.id === 'colon');
 const spaceRule = rules.find((rule) => rule.id === 'Space');
+const doubleQuotesRule = rules.find((rule) => rule.id === 'doubleQuotes');
 
 describe('buildWarningSpanHTML', () => {
 	it('ne produit jamais de double espace dans aria-label (régression du 2026-09-14)', () => {
@@ -32,6 +33,18 @@ describe('buildWarningSpanHTML', () => {
 		expect(html).toContain('aria-label="Espace en début ou en fin de chaîne"');
 		expect(html).toContain('data-message="Espace en début ou en fin de chaîne"');
 		expect(html).not.toContain('&#171;');
+	});
+
+	it('échappe le guillemet droit détecté (matchedString) pour ne pas casser data-message (régression sécurité)', () => {
+		// La règle doubleQuotes détecte justement le caractère " — s'il n'est pas échappé,
+		// il ferme l'attribut data-message en plein milieu du balisage généré.
+		const html = buildWarningSpanHTML(doubleQuotesRule, '"');
+		const fragment = document.createRange().createContextualFragment(html);
+		expect(fragment.childNodes).toHaveLength(1);
+		const span = /** @type {Element} */ (fragment.firstChild);
+		expect(span.tagName).toBe('SPAN');
+		expect(span.getAttribute('data-message')).toContain('« " »');
+		expect(span.textContent).toBe('"');
 	});
 
 	it('le HTML généré reste un unique élément valide une fois réinjecté dans le DOM (pas de balise cassée)', () => {

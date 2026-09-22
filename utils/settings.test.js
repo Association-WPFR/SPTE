@@ -7,12 +7,12 @@ describe('createDefaultSettings', () => {
 			spteColorWord: '',
 			spteColorQuote: '',
 			spteColorChar: '',
-			spteBlackToolTip: 'checked',
+			spteBlackToolTip: 'true',
 			spteBetterReadability: '',
-			spteFrenchFlag: 'checked',
-			spteEnlargeTable: 'checked',
+			spteFrenchFlag: 'true',
+			spteEnlargeTable: 'true',
 			spteGpcontentBig: '',
-			spteActiveGlossary: 'checked',
+			spteActiveGlossary: 'true',
 			spteLastUpdateGlossary: '',
 			spteGlossary: '',
 			spteStrictNarrowSpace: '',
@@ -23,6 +23,6 @@ describe('createDefaultSettings', () => {
 		const settings = createDefaultSettings({ spteLastUpdateGlossary: '2026-09-15', spteGlossary: ['plugin'] });
 		expect(settings.spteLastUpdateGlossary).toBe('2026-09-15');
 		expect(settings.spteGlossary).toEqual(['plugin']);
-		expect(settings.spteFrenchFlag).toBe('checked');
+		expect(settings.spteFrenchFlag).toBe('true');
 	});
 });

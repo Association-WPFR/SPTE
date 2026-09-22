@@ -133,7 +133,7 @@ Object.values(getFormFields()).forEach((field) => {
 	field?.addEventListener('change', saveSettings);
 });
 
-document.getElementById('reset-color').addEventListener('click', () => {
+document.getElementById('reset-color')?.addEventListener('click', () => {
 	document.querySelectorAll('#settings-color__word, #settings-color__quote').forEach((element) => {
 		/** @type {HTMLInputElement} */ (element).value = '#ff0000';
 	});

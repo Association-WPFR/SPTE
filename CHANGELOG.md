@@ -24,6 +24,7 @@
 - Firefox aligné en Manifest V3 (alignement sur la version Chrome déjà gérée depuis la 2.0.0), le MV2 est toujours supporté par Firefox, mais autant y passer.
 - Récupération du glossaire officiel par export CSV plutôt que par extraction du HTML de la page
 - Réécriture du README (réorg des contenus, liens mis à jour, mention de la reprise du projet par WPFR.net, remerciements à Loïc)
+- Réorganisation interne de `entrypoints/spte.content.js` : l'état partagé (regex, éléments DOM, réglages) est désormais explicite dans un objet `ctx` plutôt qu'implicite dans la fermeture de la fonction `main()`, sans changement de comportement
 
 ### Removed
 - Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
@@ -72,6 +73,13 @@
 - Le nom du projet en cours de traduction (ex : une extension nommée « Widget ») n'est plus signalé à tort par le glossaire
 - Un point-virgule en toute fin de chaîne n'est plus signalé à tort
 - Un double espace au milieu d'une phrase est désormais détecté (la règle ne couvrait auparavant que le début/fin de ligne)
+- Un guillemet droit détecté par la règle correspondante ne casse plus le balisage HTML de l'avertissement (l'attribut `data-message` n'était pas échappé)
+- La recherche de cohérence d'une chaîne fonctionne de nouveau avec des caractères spéciaux (`&`, `#`, `%`…) dans le champ de recherche, et n'affiche plus une accolade fermante résiduelle sous le tableau de résultats
+- L'icône de l'extension reflète maintenant l'état (actif/inactif) de l'onglet affiché, plutôt qu'un état global partagé entre tous les onglets ouverts
+- Le bouton « Réinitialiser » les couleurs ne plante plus si l'élément est absent du DOM du popup
+- Les icônes d'aide (🛈) du popup de réglages sont maintenant des boutons focusables au clavier et lus par les lecteurs d'écran, au lieu de `<span>` uniquement visibles à la souris
+- Le logo du popup de réglages a un texte alternatif
+- Les liens de la légende (règles typographiques, glossaire) s'ouvrent avec `rel="noopener"` comme le reste du popup
 
 ## [2.0.0] - 01 mai 2023
 
