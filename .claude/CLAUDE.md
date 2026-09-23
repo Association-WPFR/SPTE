@@ -41,4 +41,4 @@ Branche par défaut : `main`. Toujours vérifier si une PR ou une branche couran
 
 - **Toujours chargées** : `.claude/rules/*.md` — checklists bloquantes.
 - **Architecture** : `.claude/ARCHITECTURE.md`.
-- **Skills** (à la demande) : aucune pour l'instant, seront à ajouter dans `.claude/skills/` au fil des besoins.
+- **Skills** (à la demande) : `.claude/skills/pages-de-test.md` (trouver des pages translate.wordpress.org avec du contenu à analyser pour tester SPTE en réel).
