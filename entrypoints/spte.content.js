@@ -40,18 +40,19 @@ export function updateWarningFilterState(ctx) {
 	ctx.showOnlyWarning.disabled = warningCount === 0;
 	if (warningCount === 0) {
 		ctx.showOnlyWarning.checked = false;
+		ctx.lsShowOnlyWarning = false;
 	}
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
 export function rowsDisplay(ctx) {
+	updateWarningFilterState(ctx);
 	const rows = document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)');
 	if (ctx.lsShowOnlyWarning) {
 		hideNonWarningRows(rows, Boolean(ctx.bulkActions));
 	} else {
 		showAllRows(rows);
 	}
-	updateWarningFilterState(ctx);
 }
 
 // Avec le statut « rejeté », on ne fait que décompter, pas de surlignage.

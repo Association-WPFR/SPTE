@@ -140,6 +140,28 @@ describe('rowsDisplay', () => {
 		rowsDisplay(ctx);
 		expect(document.getElementById('warned').style.display).not.toBe('none');
 	});
+
+	it('réaffiche tout si lsShowOnlyWarning est vrai mais qu\'aucune ligne n\'a d\'avertissement sur cette page', () => {
+		document.body.innerHTML = `
+			<input type="checkbox" id="cb"><label id="lbl"></label>
+			<table><tbody>
+				<tr class="preview" id="row1"></tr>
+				<tr class="preview" id="row2"></tr>
+			</tbody></table>
+		`;
+		const ctx = {
+			lsShowOnlyWarning: true,
+			bulkActions: null,
+			showOnlyWarning: document.getElementById('cb'),
+			showOnlyWarningLabel: document.getElementById('lbl'),
+		};
+		ctx.showOnlyWarning.checked = true;
+		rowsDisplay(ctx);
+		expect(document.getElementById('row1').style.display).not.toBe('none');
+		expect(document.getElementById('row2').style.display).not.toBe('none');
+		expect(ctx.showOnlyWarning.checked).toBe(false);
+		expect(ctx.lsShowOnlyWarning).toBe(false);
+	});
 });
 
 describe('checkTranslation', () => {

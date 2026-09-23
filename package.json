@@ -1,6 +1,6 @@
 {
   "name": "spte",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Extension de vérification typographique pour les traductions françaises de WordPress sur translate.wordpress.org.",
   "type": "module",
   "scripts": {
