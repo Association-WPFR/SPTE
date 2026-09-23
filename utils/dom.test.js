@@ -107,7 +107,7 @@ describe('addEditorHighlighter', () => {
 describe('matchTextWrapping', () => {
 	it('copie la largeur, le padding, les bordures et la police du textarea', () => {
 		const textarea = document.createElement('textarea');
-		textarea.setAttribute('style', 'box-sizing: border-box; width: 480px; padding-left: 8px; padding-right: 8px; border-left-width: 1px; border-right-width: 1px; font-family: Arial; font-size: 14px; letter-spacing: 0.5px; word-spacing: 1px;');
+		textarea.setAttribute('style', 'box-sizing: border-box; width: 480px; padding-left: 8px; padding-right: 8px; border-left-style: solid; border-left-width: 1px; border-right-style: solid; border-right-width: 1px; font-family: Arial; font-size: 14px; letter-spacing: 0.5px; word-spacing: 1px;');
 		document.body.append(textarea);
 
 		const el = document.createElement('div');
