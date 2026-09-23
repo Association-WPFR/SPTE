@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - name: Vérifie que le tag correspond à la version de package.json
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF_NAME" != "$PKG_VERSION" ]; then
+            echo "::error::Tag ($GITHUB_REF_NAME) différent de la version de package.json ($PKG_VERSION)"
+            exit 1
+          fi
+      - run: npm run zip
+      - run: npm run zip:firefox
+      - name: Crée la release en brouillon avec les paquets attachés
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --draft \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            .output/spte-*-chrome.zip \
+            .output/spte-*-firefox.zip \
+            .output/spte-*-sources.zip
