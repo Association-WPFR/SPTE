@@ -32,4 +32,8 @@ export default defineConfig({
       },
     },
   },
+
+  zip: {
+    excludeSources: ['coverage/**', 'docs/**'],
+  },
 });
