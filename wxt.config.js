@@ -9,7 +9,7 @@ export default defineConfig({
   manifest: {
     name: 'SPTE',
     description: 'Extension de vérification typographique pour les traductions françaises de WordPress sur translate.wordpress.org.',
-    permissions: ['storage'],
+    permissions: ['storage', 'tabs'],
     icons: {
       16: '/icons/icon16.png',
       48: '/icons/icon48.png',

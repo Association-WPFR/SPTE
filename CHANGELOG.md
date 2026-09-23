@@ -33,7 +33,6 @@
 
 ### Removed
 - Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
-- La permission « tabs » n'est plus demandée à l'installation : l'accès à l'URL de l'onglet actif était déjà couvert par l'autorisation d'accès à translate.wordpress.org, la permission séparée était redondante.
 
 ### Fixed
 - Les réglages s'initialisent maintenant correctement au premier lancement (ils provoquaient un retéléchargement en boucle du glossaire officiel)
