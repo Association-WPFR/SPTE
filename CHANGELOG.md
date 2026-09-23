@@ -40,6 +40,7 @@
 - Les réglages s'enregistrent et se rechargent maintenant correctement sur Firefox
 - Compatibilité rétablie avec la version actuelle de GlotDict (clés de réglages renommées côté GlotDict)
 - Les lignes du tableau sans case à cocher ne provoquent plus de plantage (ex: ligne d'historique de révision)
+- Les mots déconseillés (rouge), apostrophes droites (rouge) et caractères à vérifier (rose) sont de nouveau colorés par défaut au premier lancement — sans réglage personnalisé, la couleur ne s'appliquait pas (bug présent depuis longtemps, pas propre à cette version)
 - Le double espace qui cassait le balisage HTML des avertissements est corrigé
 - Le bandeau de résultats s'affiche maintenant même quand la page ne comporte aucun avertissement (« aucun élément à vérifier »), pour distinguer une vérification effectuée d'une extension qui n'aurait pas tourné
 - Le lien « Masquer la légende » redevient visible (« Afficher la légende ») une fois la légende masquée, au lieu de disparaître entièrement

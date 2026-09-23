@@ -412,7 +412,10 @@ function declareEvents(ctx) {
 	});
 }
 
-function setColors(spteColorWord = '#ff0000', spteColorQuote = '#ff0000', spteColorChar = '#ff00ff') {
+function setColors(spteColorWord, spteColorQuote, spteColorChar) {
+	spteColorWord ||= '#ff0000';
+	spteColorQuote ||= '#ff0000';
+	spteColorChar ||= '#ff00ff';
 	addStyle('.sp-warning--word', `background-color:${spteColorWord};color:white;font-weight:bold;padding:1px;margin:0 1px`);
 	addStyle('.sp-warning--quote', `display:inline-block;line-height:16px;box-shadow:${spteColorQuote} 0px 0px 0px 2px inset;background-color:white;padding:3px 4px`);
 	addStyle('.sp-warning--char', `display:inline-block;line-height:16px;box-shadow:${spteColorChar} 0px 0px 0px 2px inset;background-color:white;padding:3px 4px`);
