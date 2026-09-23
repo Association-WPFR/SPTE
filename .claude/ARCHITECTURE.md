@@ -18,7 +18,7 @@ Comment ce dépôt est organisé, et pourquoi.
 │   └── spte.content.test.js     # Tests des fonctions exportées de entrypoints/spte.content.js
 ├── utils/                       # Logique métier (regex de vérification typo, DOM, réglages) + tests co-localisés (*.test.js)
 │   └── fixtures/                # Fixtures HTML utilisées par les tests
-├── assets/                      # Ressources non buildées (captures d'écran, etc.)
+├── docs/                        # Ressources non buildées (captures d'écran, images du wiki)
 ├── public/                      # Icônes de l'extension, copiées telles quelles dans le build
 ├── .github/workflows/ci.yml     # CI GitHub Actions
 ├── wxt.config.js                # Config WXT (manifest v3, permissions, id Firefox)
