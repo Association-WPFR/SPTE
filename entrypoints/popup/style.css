@@ -1,0 +1,371 @@
+/* ==========================================================================
+   1. Base
+   ========================================================================== */
+
+html {
+    /* Mode sombre natif : le navigateur choisit automatiquement la valeur light-dark()
+       adaptée selon le thème système/navigateur de l'utilisateur (aucun JS nécessaire). */
+    color-scheme: light dark;
+    --bg-page: light-dark(rgb(231 230 239), #1e1e24);
+    --bg-panel: light-dark(#fffffff6, #2a2a33f6);
+    --bg-fieldset: light-dark(rgba(243, 242, 251, .8), rgba(40, 40, 50, .8));
+    --bg-input: light-dark(white, #33333d);
+    --bg-active-tab: light-dark(white, #33333d);
+    --text-color: light-dark(#1a1a1a, #e8e8ec);
+    --text-active-tab: light-dark(#000, #f0f0f4);
+    --text-muted: light-dark(#888, #aaa);
+    --border-color: light-dark(#d6d6d6, #83838f);
+    --text-link: light-dark(#4f4f69, #b3b3d1);
+    --text-link-hover: light-dark(black, white);
+    --transition: all .2s ease;
+
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    background: var(--bg-page);
+    color: var(--text-color);
+}
+
+/* ==========================================================================
+   2. Onglets (Réglages / À propos)
+   ========================================================================== */
+
+label.tab {
+    cursor: pointer;
+    padding: 6px 20px;
+    background: #4f4f69;
+    display: inline-block;
+    color: #fff;
+    border-radius: 3px 3px 0px 0px;
+    font-weight: normal;
+    transition: var(--transition);
+}
+
+.panels {
+    background: var(--bg-panel);
+    width: 100%;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.radio {
+    display: none;
+}
+
+.panel {
+    box-sizing: content-box;
+    display: none;
+    -webkit-animation: fadein 0.8s;
+    animation: fadein 0.8s;
+}
+
+#one:checked~.panels #one-panel,
+#two:checked~.panels #two-panel {
+    display: block;
+}
+
+#one:checked~.tabs #one-tab,
+#two:checked~.tabs #two-tab {
+    background: var(--bg-active-tab);
+    color: var(--text-active-tab);
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   3. Conteneur principal de la popup
+   ========================================================================== */
+
+#settings-popup {
+    width: 365px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    padding: 10px 5px 5px 5px;
+}
+
+fieldset {
+    margin: 10px;
+    border: 0;
+    padding: 4px 10px 4px 20px;
+    background: var(--bg-fieldset);
+}
+
+/* ==========================================================================
+   4. En-tête / logo
+   ========================================================================== */
+
+header {
+    text-align: center;
+    margin: 0 0 15px 0;
+}
+
+header>img {
+    vertical-align: middle;
+}
+
+#logo {
+    height: 32px;
+    width: auto;
+}
+
+h2 {
+    color: var(--text-muted);
+    font-size: 120%;
+    font-weight: 200;
+    margin: 0;
+}
+
+/* ==========================================================================
+   5. Panneau de réglages
+   ========================================================================== */
+
+#extension-settings {
+    overflow: hidden;
+    transition: 2s;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ==========================================================================
+   6. Formulaire
+   ========================================================================== */
+
+form {
+    font-family: 'Public Sans', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+}
+
+label {
+    display: block;
+    margin: 3px 0 0;
+    font-weight: bold;
+}
+
+label.inline {
+    display: inline-block;
+}
+
+span.hint {
+    font-size: 82%;
+    font-style: italic;
+}
+
+.hint.short {
+    display: inline-block;
+    margin-top: 7px;
+}
+
+.settings-color legend {
+    width: 100%;
+    float: left;
+    padding: 0;
+    font-weight: bold;
+    margin: 3px 0 10px 0;
+}
+
+.settings-color-field {
+    float: left;
+    text-align: center;
+    font-size: 13px;
+    margin: 0 16px 8px 0;
+}
+
+.settings-color-field+.settings-color-field+.settings-color-field {
+    margin-right: 0;
+}
+
+input {
+    display: block;
+}
+
+.settings-color-field input {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    margin: 0 0 0 5px;
+    vertical-align: -5px;
+}
+
+.settings-color-field input[type="color"i]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+select {
+    margin-top: 8px;
+    float: right;
+    height: 22px;
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-input);
+    color: var(--text-color);
+}
+
+input[type=text],
+input[type=password] {
+    width: 100%;
+    height: 22px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-input);
+    color: var(--text-color);
+    box-sizing: border-box;
+    margin: 3px 0;
+}
+
+input[type=text].invalid,
+input[type=password].invalid {
+    border-bottom: 1px solid red;
+}
+
+/* ==========================================================================
+   7. Boutons
+   ========================================================================== */
+
+button {
+    margin-top: 12px;
+    width: 100%;
+    height: 28px;
+    color: white;
+    background: #2c2c3c;
+    transition: var(--transition);
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button.fieldset-btn-lnk {
+    display: inline;
+    height: auto;
+    background: transparent;
+    color: var(--text-link);
+    text-decoration: underline;
+    width: auto;
+    margin: 0 0 0 8px;
+    border: 2px solid transparent;
+}
+
+button:hover,
+button:active {
+    background: #46465f;
+}
+
+button.fieldset-btn-lnk:hover,
+button.fieldset-btn-lnk:focus,
+button.fieldset-btn-lnk:active {
+    color: var(--text-link-hover);
+    border-color: currentColor;
+    background: transparent;
+}
+
+input[type=text]:focus {
+    border: 0;
+    border-bottom: 1px solid var(--text-muted);
+    outline: none;
+}
+
+/* ==========================================================================
+   8. Interrupteur (toggle)
+   ========================================================================== */
+
+.toggle {
+    display: none;
+}
+
+.toggle,
+.toggle:after,
+.toggle:before,
+.toggle *,
+.toggle *:after,
+.toggle *:before,
+.toggle+.toggle-btn {
+    box-sizing: border-box;
+}
+
+.toggle::-moz-selection,
+.toggle *::-moz-selection,
+.toggle+.toggle-btn::-moz-selection {
+    background: none;
+}
+
+.toggle+.toggle-btn {
+    outline: 0;
+    display: block;
+    width: 36px;
+    height: 18px;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    float: right;
+}
+
+.toggle+.toggle-btn:after,
+.toggle+.toggle-btn:before {
+    position: relative;
+    display: block;
+    content: "";
+    width: 50%;
+    height: 100%;
+    left: 0;
+}
+
+.toggle+.toggle-btn:before {
+    display: none;
+}
+
+.toggle:checked+.toggle-btn:after {
+    left: 50%;
+}
+
+.toggle-light+.toggle-btn {
+    background: #888;
+    border-radius: 2em;
+    padding: 2px;
+    transition: all .4s ease;
+    margin-top: 3px;
+}
+
+.toggle-light+.toggle-btn:after {
+    border-radius: 50%;
+    background: #fff;
+    transition: all .2s ease;
+}
+
+.toggle-light:checked+.toggle-btn {
+    background: #0080ff;
+}
+
+.toggle-light:hover+.toggle-btn:hover {
+    background: #0080ff;
+    -webkit-filter: brightness(120%);
+    filter: brightness(120%);
+}
+
+.toggle-text {
+    float: left;
+    margin-bottom: 2px;
+}
+
+/* ==========================================================================
+   9. Divers
+   ========================================================================== */
+
+.whatisthat {
+    font-family: arial, Arial, Helvetica, sans-serif;
+    position: absolute;
+    margin: -2px 0 0 -15px;
+    opacity: .5;
+    font-weight: normal;
+    cursor: help;
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: inherit;
+}
+
+.toggle-container {
+    display: inline-block;
+    width: 100%;
+}

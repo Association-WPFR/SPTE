@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:300" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+
+<body>
+	<div id="settings-popup">
+		<header>
+			<img id="logo" src="/icons/spte.png" alt="SPTE" />
+		</header>
+		<form action="#" method="post" id="settings-form">
+
+			<div id="extension-settings">
+				<input class="radio" id="one" name="group" type="radio" checked>
+				<input class="radio" id="two" name="group" type="radio">
+				<div class="tabs">
+					<label class="tab" id="one-tab" for="one">Traductions</label>
+					<label class="tab" id="two-tab" for="two">Global</label>
+				</div>
+				<div class="panels">
+					<div class="panel" id="one-panel">
+						<fieldset class="input-fields settings-color">
+							<legend><button type="button" class="whatisthat" title="Par défaut, les erreurs relatives aux mots sont sur fond rouge RGB(255,0,0),  &#013;celles des apostrophes encadrées de rouge RGB(255,0,0),  &#013;et celles des paragraphes encadrées de rose RGB(255,0,255)." aria-label="Par défaut, les erreurs relatives aux mots sont sur fond rouge RGB(255,0,0),  &#013;celles des apostrophes encadrées de rouge RGB(255,0,0),  &#013;et celles des paragraphes encadrées de rose RGB(255,0,255).">🛈 </button>Couleurs des avertissements<button id="reset-color" type="button" class="fieldset-btn-lnk">Réinitialiser</button></legend>
+							<label for="settings-color__word" class="settings-color-field">Mots<input id="settings-color__word" class="settings entry" type="color" value="#ff0000" /></label>
+							<label for="settings-color__quote" class="settings-color-field">Apostrophes<input id="settings-color__quote" class="settings entry" type="color" value="#ff0000" /></label>
+							<label for="settings-color__char" class="settings-color-field">Caractères<input id="settings-color__char" class="settings entry" type="color" value="#ff00ff" /></label>
+						</fieldset>
+						<fieldset class="toggle-fields">
+							<div class="toggle-container">
+								<label for="settings-blacktooltip" class="toggle-text"><button type="button" class="whatisthat" title="Activer ou désactiver l’info-bulle noire &#013;apparaissant au survol de la colonne Details, &#013;qui affiche la chaîne traduite sans correction" aria-label="Activer ou désactiver l’info-bulle noire &#013;apparaissant au survol de la colonne Details, &#013;qui affiche la chaîne traduite sans correction">🛈 </button>Info-bulle sans avertissement</label>
+								<input id="settings-blacktooltip" type="checkbox" class="toggle toggle-light">
+								<label for="settings-blacktooltip" class="toggle-btn"></label>
+							</div>
+							<span class="hint short">Info-bulle noire au survol de la colonne <strong>Details</strong></span>
+						</fieldset>
+						<fieldset class="toggle-fields">
+							<div class="toggle-container">
+								<label for="settings-betterreadability" class="toggle-text"><button type="button" class="whatisthat" title="Affecter aux textes un rapport de contraste &#013;minimum de 4.5:1 dans la mesure du possible &#013;sur les pages de traduction" aria-label="Affecter aux textes un rapport de contraste &#013;minimum de 4.5:1 dans la mesure du possible &#013;sur les pages de traduction">🛈 </button>Contraste des textes</label>
+								<input id="settings-betterreadability" type="checkbox" class="toggle toggle-light">
+								<label for="settings-betterreadability" class="toggle-btn"></label>
+							</div>
+							<span class="hint short">Améliore la lisibilité des textes sur Translate avec un rapport minimal de contraste de 4.5:1</span>
+						</fieldset>
+						<fieldset class="toggle-fields">
+							<div class="toggle-container">
+								<label for="settings-importglossary" class="toggle-text"><button type="button" class="whatisthat" title="Récupère 1 fois par jour les expressions déconseillées par le glossaire officiel et les ajoute à la liste des fautes de frappe embarquée dans SPTE" aria-label="Récupère 1 fois par jour les expressions déconseillées par le glossaire officiel et les ajoute à la liste des fautes de frappe embarquée dans SPTE">🛈 </button>Glossaire officiel</label>
+								<input id="settings-importglossary" type="checkbox" class="toggle toggle-light">
+								<label for="settings-importglossary" class="toggle-btn"></label>
+							</div>
+							<span class="hint short">Surligne les mots déconseillés par le glossaire officiel en plus des fautes de frappe</span>
+						</fieldset>
+						<fieldset class="toggle-fields">
+							<div class="toggle-container">
+								<label for="settings-strictnarrowspace" class="toggle-text"><button type="button" class="whatisthat" title="Signale l’espace insécable normale (U+00A0) devant ; ! ? au lieu de l’espace fine insécable (U+202F) recommandée par le guide du traducteur. Désactivé par défaut : les 2 espaces sont acceptées indifféremment." aria-label="Signale l’espace insécable normale (U+00A0) devant ; ! ? au lieu de l’espace fine insécable (U+202F) recommandée par le guide du traducteur. Désactivé par défaut : les 2 espaces sont acceptées indifféremment.">🛈 </button>Espace fine insécable stricte</label>
+								<input id="settings-strictnarrowspace" type="checkbox" class="toggle toggle-light">
+								<label for="settings-strictnarrowspace" class="toggle-btn"></label>
+							</div>
+							<span class="hint short">Exige l’espace fine insécable devant <strong>; ! ?</strong> — <a href="https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/" target="_blank" rel="noopener">détails</a></span>
+						</fieldset>
+					</div>
+					<div class="panel" id="two-panel">
+						<fieldset class="toggle-fields">
+							<div class="toggle-container">
+								<label for="settings-frenchflag" class="toggle-text"><button type="button" class="whatisthat" title="Activer ou désactiver les drapeaux français &#013;utilisés sur le site pour repérer la locale française" aria-label="Activer ou désactiver les drapeaux français &#013;utilisés sur le site pour repérer la locale française">🛈 </button>Drapeaux français</label>
+								<input id="settings-frenchflag" type="checkbox" class="toggle toggle-light">
+								<label for="settings-frenchflag" class="toggle-btn"></label>
+							</div>
+							<span class="hint short">Activer ou désactiver les drapeaux français</span>
+						</fieldset>
+						<fieldset class="toggle-fields">
+							<div class="toggle-container">
+								<label for="settings-enlarge-table" class="toggle-text"><button type="button" class="whatisthat" title="Élargit la table de traduction à 85% de la page. Actif par défaut." aria-label="Élargit la table de traduction à 85% de la page. Actif par défaut.">🛈 </button>Agrandir les pages de traduction</label>
+								<input id="settings-enlarge-table" type="checkbox" class="toggle toggle-light" checked>
+								<label for="settings-enlarge-table" class="toggle-btn"></label>
+							</div>
+							<span class="hint short">Actif par défaut, <strong>sur les pages de traduction</strong></span>
+						</fieldset>
+						<fieldset class="toggle-fields">
+							<div class="toggle-container">
+								<label for="settings-gpcontent-big" class="toggle-text"><button type="button" class="whatisthat" title="Élargit le reste de GlotPress (hors pages de traduction) à 85% de la page, &#013;pour profiter d’un grand écran au lieu du plafond natif d’environ 1600px." aria-label="Élargit le reste de GlotPress (hors pages de traduction) à 85% de la page, &#013;pour profiter d’un grand écran au lieu du plafond natif d’environ 1600px.">🛈 </button>Agrandir le reste de GlotPress</label>
+								<input id="settings-gpcontent-big" type="checkbox" class="toggle toggle-light">
+								<label for="settings-gpcontent-big" class="toggle-btn"></label>
+							</div>
+							<span class="hint short">Sur le reste de GlotPress, <strong>hors pages de traduction</strong></span>
+						</fieldset>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<script type="module" src="./main.js"></script>
+</body>
+
+</html>

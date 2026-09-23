@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - name: Interdit chrome.* direct (utiliser browser.* de WXT, compatible Firefox)
+        run: |
+          if grep -rn '\bchrome\.' entrypoints/ utils/ tests/; then
+            echo "::error::Usage direct de chrome.* trouvé — utiliser browser.* (fourni par WXT, marche sur Chrome et Firefox)."
+            exit 1
+          fi
+      - run: npm run typecheck
+      - run: npm run test:coverage
+      - run: npm run build
+      - run: npm run build:firefox
+      - run: npx addons-linter .output/firefox-mv3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14

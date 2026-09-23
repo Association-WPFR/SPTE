@@ -1,0 +1,35 @@
+{
+  "name": "spte",
+  "version": "3.0.0",
+  "description": "Extension de vérification typographique pour les traductions françaises de WordPress sur translate.wordpress.org.",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "lint": "eslint .",
+    "typecheck": "wxt prepare && tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint:amo": "npm run build:firefox && addons-linter .output/firefox-mv3"
+  },
+  "dependencies": {
+    "dompurify": "^3.4.15"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^5.0.1",
+    "addons-linter": "^10.13.0",
+    "eslint": "^10.10.0",
+    "eslint-plugin-no-unsanitized": "^4.1.5",
+    "globals": "^17.12.0",
+    "istanbul-badges-readme": "^1.9.0",
+    "jsdom": "^30.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.0",
+    "wxt": "^0.21.4"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./node_modules/**)",
+      "Edit(./node_modules/**)",
+      "Read(./.output/**)",
+      "Edit(./.output/**)",
+      "Read(./.wxt/**)",
+      "Edit(./.wxt/**)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./.env)",
+      "Edit(./.env.*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-banner.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/lint-edited.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
