@@ -30,6 +30,11 @@ export default defineConfig({
           required: ['none'],
         },
       },
+      // Sans ce bloc, Firefox déduit un plancher Android trop bas pour reconnaître
+      // data_collection_permissions (lu par Firefox pour Android seulement depuis la 142).
+      gecko_android: {
+        strict_min_version: '142.0',
+      },
     },
   },
 
