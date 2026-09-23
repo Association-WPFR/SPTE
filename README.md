@@ -50,32 +50,32 @@ SPTE affiche en haut de page les statistiques des erreurs/éléments qu’il a t
 Il peut donc être utile de définir dans les paramètres de traduction (menu en haut à droite) un nombre de lignes par page assez important si l’on veut juger rapidement si une traduction est acceptable ou non.
 Les erreurs avérées sont en rouge. En rose sont notifiés les éléments à vérifier : il s’agit la plupart du temps d’erreurs relatives au non respect des règles typographiques, mais la couleur rose peut aussi indiquer des faux positifs : beaucoup de spécificités liées à la programmation génèrent des exceptions. Certaines exceptions sont gérées par SPTE mais pas toutes. Il est donc indispensable de contrôler les caractères en rose.
 
-![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/assets/screenshots/screenshot-1.png "Statistiques")
+![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-1.png "Statistiques")
 
 Sur les traductions, la même coloration syntaxique est utilisée :
 * les mots déconseillés (pour des raisons de cohérence) ou mal écrits sont sur fond rouge : l’erreur est certaine, si l’orthographe est correcte alors il faut se référer au glossaire pour trouver le mot à utiliser.
 * les caractères interdits comme les apostrophes droites sont encadrées de rouge sur fond blanc.
 * les caractères ne respectant probablement pas les règles typographiques sont encadrés de rose sur fond blanc.
 
-![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/assets/screenshots/screenshot-2.png "Coloration syntaxique")
+![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-2.png "Coloration syntaxique")
 
 Au survol de chaque élément surligné apparait une info-bulle dans laquelle une explication du problème est décrite.
 
-![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/assets/screenshots/screenshot-3.png "Info-bulle au survol")
+![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-3.png "Info-bulle au survol")
 
 Le survol du lien « Détails » se trouvant en fin de ligne permet de voir la chaîne traduite sans surlignage afin d’aider à la compréhension de l’erreur.
 Le texte est en blanc sur fond noir et sa taille est agrandie afin d’en faciliter la lecture.
 
-![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/assets/screenshots/screenshot-4.png "Info-bulle sans surlignage")
+![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-4.png "Info-bulle sans surlignage")
 
 En modification de traduction, la traduction à corriger est reprise juste au dessus du champ de saisie avec ses informations surlignées pour aider à la correction.
 Elle est sur fond gris pour permettre de voir les espaces insécables qui sont en blanc.
 
-![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/assets/screenshots/screenshot-5.png "Correction de la traduction")
+![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-5.png "Correction de la traduction")
 
 Les espaces (sécables) sont affichées en bleu afin d’être différenciées des espaces insécables : il peut s’agir d’une erreur, mais il peut aussi s’agir d’une espace voulue. Bien réfléchir avant de les supprimer.
 
-![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/assets/screenshots/screenshot-6.png "Espaces sécables en début ou fin de ligne")
+![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-6.png "Espaces sécables en début ou fin de ligne")
 
 <details>
 <summary>uBlock Origin peut bloquer l’extension</summary>
