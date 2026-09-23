@@ -21,7 +21,7 @@ export default defineConfig({
     // Identifiant Firefox obligatoire pour publier/mettre à jour : il doit correspondre exactement à l’identifiant de la fiche SPTE existante.
     browser_specific_settings: {
       gecko: {
-        id: 'contact@wpfr.net',
+        id: '{baaf1485-bb79-407c-83f6-b9e30032f436}',
         // 140.0 = version ESR actuelle, pas un plancher technique : alignée sur data_collection_permissions
         // (clé lue par Firefox seulement à partir de 140) plutôt que sur la fonctionnalité JS/CSS la plus récente.
         strict_min_version: '140.0',
