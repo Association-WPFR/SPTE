@@ -58,8 +58,7 @@ async function restoreSettings() {
 	const settings = /** @type {SpteSettings | undefined} */ (data.spteSettings);
 	const fields = getFormFields();
 	const { colorWord, colorQuote, colorChar, blackToolTip, betterReadability, frenchFlag, enlargeTable, gpcontentBig, gpActiveGlossary, strictNarrowSpace } = fields;
-	// Réglages "table rase" utilisés pour la migration ci-dessous : recrée les défauts plutôt que
-	// de fusionner avec l'existant (comportement identique à avant l'extraction dans utils/settings.js).
+	// Réglages "table rase" utilisés pour la migration ci-dessous : recrée les défauts plutôt que de fusionner avec l'existant.
 	const initSettings = createDefaultSettings();
 	if (settings === undefined) {
 		if (blackToolTip) { blackToolTip.checked = true; }

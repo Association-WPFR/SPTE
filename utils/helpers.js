@@ -24,8 +24,7 @@ export function createElement(tagName = 'DIV', attributes = {}, textContent = ''
 	return element;
 }
 
-// Analyseur CSV minimal (RFC 4180) : gère les champs entre guillemets, les guillemets
-// échappés ("") et les virgules à l'intérieur d'un champ entre guillemets.
+// Analyseur CSV minimal (RFC 4180) : champs entre guillemets, guillemets échappés (""), virgules dans un champ.
 /**
  * @param {string} text
  * @returns {string[][]}
@@ -67,8 +66,7 @@ export function parseCsv(text) {
 	return rows.filter((r) => r.length > 1 || (r.length === 1 && r[0] !== ''));
 }
 
-// Un mot signalé par badWords qui fait partie du nom du projet en cours de traduction (ex: une
-// extension nommée "Widget") n'est pas un anglicisme à corriger. Voir issue #38.
+// Un mot signalé par badWords qui fait partie du nom du projet (ex: une extension "Widget") n'est pas un anglicisme. Voir issue #38.
 /**
  * @param {string} word
  * @param {string} projectName

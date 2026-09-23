@@ -72,8 +72,7 @@ function escapeRegExp(str) {
 }
 
 // Le guide du traducteur WP FR distingue 2 espaces insécables : U+00A0 (normale, devant
-// ":"/"»") et U+202F (fine, devant "; ! ?"). SPTE n'a longtemps reconnu que U+00A0 comme
-// insécable valide, ce qui signalait à tort du texte utilisant correctement U+202F.
+// ":"/"»") et U+202F (fine, devant "; ! ?").
 // https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/
 const NBSP = ' ';
 const NNBSP = ' ';
@@ -152,8 +151,7 @@ export const rgxQuestionMark = buildQuestionMarkRegex(nbspAny);
 export const rgxQuestionMarkStrict = buildQuestionMarkRegex(NNBSP);
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxColon
-// U+00A0 reste la seule espace recommandée devant ":" (pas de variante stricte ici) ;
-// on élargit juste la détection pour ne plus signaler à tort du texte utilisant U+202F.
+// U+00A0 reste la seule espace recommandée devant ":" (pas de variante stricte ici).
 export const rgxColon = new RegExp(`(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?= )|(?<=${nbspAny})${data.colon}(?! |$)|(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?! )`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSemiColon

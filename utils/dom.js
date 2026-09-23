@@ -43,7 +43,7 @@ export function matchTextWrapping(el, textarea) {
 // Ajoute un bouton pour copier le permalien de la traduction, sans passer par le menu contextuel (clic > nouvel onglet > copie manuelle).
 /** @param {Element} brother */
 export function addPermalinkButton(brother) {
-	if (brother.querySelector('.sp-copy-permalink')) { return; } // déjà ajouté
+	if (brother.querySelector('.sp-copy-permalink')) { return; }
 	const nextButton = brother.querySelector('.panel-header-actions__next');
 	if (!nextButton) { return; }
 	const permalink = /** @type {HTMLAnchorElement | undefined} */ ([...brother.querySelectorAll('.button-menu__dropdown a')]
@@ -53,7 +53,7 @@ export function addPermalinkButton(brother) {
 	// SVG inline plutôt qu'un dashicon : même rendu visuel (currentColor, taille similaire) sans dépendre
 	// d'une police que WordPress gèle et remplace progressivement par des icônes SVG (@wordpress/icons) depuis la 7.1.
 	// 16px et non 20px : Feather dessine ses icônes bord à bord, alors que les dashicons voisins ont une marge
-	// intégrée dans la police — à taille égale le SVG paraît plus gros. 16px recrée cette marge (testé en réel, 2026-09-15).
+	// intégrée dans la police — à taille égale le SVG paraît plus gros. 16px recrée cette marge.
 	button.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
 	button.addEventListener('click', () => {
 		navigator.clipboard.writeText(permalink.href);

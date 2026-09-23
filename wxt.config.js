@@ -2,7 +2,6 @@ import { defineConfig } from 'wxt';
 
 // Documentation WXT : https://wxt.dev/api/config.html
 export default defineConfig({
-  // Le dossier "entrypoints" contiendra le background, le content script et le popup.
   srcDir: '.',
 
   manifestVersion: 3,

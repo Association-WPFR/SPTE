@@ -43,7 +43,6 @@ export function updateWarningFilterState(ctx) {
 	}
 }
 
-// Logique testée dans utils/dom.test.js.
 /** @param {ReturnType<typeof buildContext>} ctx */
 export function rowsDisplay(ctx) {
 	const rows = document.querySelectorAll('tr.preview:not(.sp-has-spte-warning)');
@@ -55,7 +54,7 @@ export function rowsDisplay(ctx) {
 	updateWarningFilterState(ctx);
 }
 
-// Vérifie et traite les traductions, surligne les éléments (avec le statut « rejeté » on ne fait que décompter).
+// Avec le statut « rejeté », on ne fait que décompter, pas de surlignage.
 /** @param {ReturnType<typeof buildContext>} ctx */
 export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 	const preview = translation.closest('tr.preview');
@@ -250,11 +249,11 @@ function manageControls(ctx) {
 	});
 }
 
-// Page de présentation d'un projet (liste des locales) uniquement. Logique testée dans utils/dom.test.js.
+// Page de présentation d'un projet (liste des locales) uniquement.
 /** @param {ReturnType<typeof buildContext>} ctx */
 function frenchiesGoFirst(ctx) {
 	moveFrenchRowToFirst(ctx.frenchStatsGlobal, ctx.GDmayBeOnBoard);
-	// Pas de garde GlotDict ici : vérifié en live, GlotDict n'a aucune emprise sur cette page
+	// Pas de garde GlotDict ici : GlotDict n'a aucune emprise sur cette page
 	// (contrairement au tableau des locales d'un projet, où son réordonnancement peut entrer en conflit avec le nôtre).
 	moveFrenchLocaleCardToFirst(ctx.frenchLocaleCard, false);
 }
@@ -542,20 +541,17 @@ function launchProcess(ctx, spteSettings) {
 					console.log('Impossible d’initialiser les paramètres');
 				});
 			} else {
-				// Format CSV inattendu (colonne "en" introuvable) : on ne bloque pas tout, SPTE continue sans le glossaire à jour.
 				console.log('Glossaire officiel : format inattendu, SPTE continue sans le glossaire à jour.');
 				mainProcesses(ctx, spteSettings);
 			}
 		}).catch(() => {
-			// Le téléchargement du glossaire a échoué (réseau, wp.org indisponible...) : sans ce filet,
-			// mainProcesses() n'était jamais appelé et SPTE semblait totalement inactif, sans indice.
+			// Sans ce filet, mainProcesses() n'est jamais appelé et SPTE semble inactif, sans indice.
 			console.log('Glossaire officiel : téléchargement impossible, SPTE continue sans le glossaire à jour.');
 			mainProcesses(ctx, spteSettings);
 		});
 	}
 }
 
-// Construit tout l'état et les éléments DOM partagés entre les fonctions ci-dessus.
 function buildContext() {
 	const rulesById = new Map(rules.map((rule) => [rule.id, rule]));
 	const onTranslateWordPressRoot = (/https:\/\/translate\.wordpress\.org\//).test(window.location.href);
