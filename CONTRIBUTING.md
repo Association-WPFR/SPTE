@@ -4,7 +4,7 @@ Merci de vouloir filer un coup de pouce !
 
 ## Si vous n'êtes pas développeur·euse
 
-Le plus utile : [ouvrir une issue](https://github.com/Association-WPFR/SPTE/issues) en français, avec un exemple concret (l'URL de la traduction concernée, le texte exact qui pose problème, etc) ou proposer des idées.
+Le plus utile : [ouvrir une issue](https://github.com/Association-WPFR/SPTE/issues) avec un exemple concret (l'URL de la traduction concernée, le texte exact qui pose problème, etc) ou proposer des idées.
 
 Plus de détails sur le wiki : [Comment contribuer](https://github.com/Association-WPFR/SPTE/wiki/Comment-contribuer).
 
