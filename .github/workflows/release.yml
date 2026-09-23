@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
@@ -27,6 +29,68 @@ jobs:
           fi
       - run: npm run zip
       - run: npm run zip:firefox
+      - name: Prépare la description de la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PREV_TAG=$(git tag --sort=-v:refname | grep -v "^${GITHUB_REF_NAME}$" | head -1 || true)
+
+          # Section du CHANGELOG.md correspondant à cette version
+          awk -v ver="$GITHUB_REF_NAME" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > /tmp/changelog-section.md
+
+          {
+            echo "## Changelog"
+            echo ""
+            cat /tmp/changelog-section.md
+          } > /tmp/notes.md
+
+          CONTRIBUTORS_FILE=$(mktemp)
+
+          if [ -n "$PREV_TAG" ]; then
+            PREV_DATE=$(git log -1 --format=%cI "$PREV_TAG")
+
+            gh issue list --repo "$GITHUB_REPOSITORY" --state closed --limit 200 \
+              --json number,title,url,closedAt,author \
+              --jq "[.[] | select(.closedAt >= \"$PREV_DATE\")] | sort_by(.closedAt) | reverse" \
+              > /tmp/issues.json
+
+            {
+              echo ""
+              echo "## Issues fermées"
+              echo ""
+              jq -r '.[] | "- [#\(.number)](\(.url)) \(.title)"' /tmp/issues.json
+            } >> /tmp/notes.md
+
+            jq -r '.[].author.login' /tmp/issues.json >> "$CONTRIBUTORS_FILE"
+
+            gh api "repos/$GITHUB_REPOSITORY/compare/$PREV_TAG...$GITHUB_REF_NAME" \
+              --jq '.commits[].author.login | select(. != null)' >> "$CONTRIBUTORS_FILE"
+          else
+            {
+              echo ""
+              echo "## Issues fermées"
+              echo ""
+              echo "_Première release, pas de tag précédent à comparer._"
+            } >> /tmp/notes.md
+          fi
+
+          {
+            echo ""
+            echo "## Contributeurs"
+            echo ""
+            echo "Commits et issues fermées : merci à toutes les personnes ci-dessous."
+            echo ""
+          } >> /tmp/notes.md
+
+          if [ -s "$CONTRIBUTORS_FILE" ]; then
+            sort -u "$CONTRIBUTORS_FILE" | sed 's/^/- @/' >> /tmp/notes.md
+          else
+            echo "_Aucun contributeur identifié._" >> /tmp/notes.md
+          fi
       - name: Crée la release en brouillon avec les paquets attachés
         env:
           GH_TOKEN: ${{ github.token }}
@@ -34,7 +98,7 @@ jobs:
           gh release create "$GITHUB_REF_NAME" \
             --draft \
             --title "$GITHUB_REF_NAME" \
-            --generate-notes \
+            --notes-file /tmp/notes.md \
             .output/spte-*-chrome.zip \
             .output/spte-*-firefox.zip \
             .output/spte-*-sources.zip
