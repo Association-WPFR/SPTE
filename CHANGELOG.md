@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.0.1] - xx septembre 2026
+## [3.0.1] - 23 septembre 2026
 
 ### Fixed
 - Le toggle « Afficher uniquement les avertissements de cette page » pouvait masquer toutes les lignes tout en s'affichant décoché et grisé, sur une page où aucune ligne n'a d'avertissement alors que le réglage était actif depuis une page précédente (remonté par un utilisateur)
