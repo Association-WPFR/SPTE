@@ -15,7 +15,8 @@ export function addForeignToolTip(translation) {
 	}
 	/** @type {HTMLElement} */ (hook).style.position = 'relative';
 	const toolTip = createElement('SPAN', { class: 'sp-foreign-tooltip' });
-	toolTip.innerHTML = translated.innerHTML;
+	// Clone les nœuds existants plutôt qu'un innerHTML = innerHTML : évite de reparser du HTML.
+	toolTip.append(...Array.from(translated.childNodes, (node) => node.cloneNode(true)));
 	hook.append(toolTip);
 }
 

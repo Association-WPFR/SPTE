@@ -13,12 +13,18 @@
     "lint": "eslint .",
     "typecheck": "wxt prepare && tsc --noEmit",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "lint:amo": "npm run build:firefox && addons-linter .output/firefox-mv3"
+  },
+  "dependencies": {
+    "dompurify": "^3.4.15"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@vitest/coverage-v8": "^5.0.1",
+    "addons-linter": "^10.13.0",
     "eslint": "^10.10.0",
+    "eslint-plugin-no-unsanitized": "^4.1.5",
     "globals": "^17.12.0",
     "istanbul-badges-readme": "^1.9.0",
     "jsdom": "^30.0.1",

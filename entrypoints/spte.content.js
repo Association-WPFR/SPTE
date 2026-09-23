@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { rules, charTitle, charClass, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
 import { addStyle, createElement, parseCsv, isPartOfProjectName } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
@@ -116,7 +117,10 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 			return string;
 		});
 	}
-	const node = document.createRange().createContextualFragment(text);
+	// Assainissement défensif : text mélange le HTML déjà rendu par GlotPress (translation.innerHTML)
+	// et nos propres <span> de surlignage — DOMPurify neutralise tout contenu exécutable résiduel
+	// sans toucher aux attributs qu'on utilise réellement (class, data-*, aria-*, tabindex).
+	const node = document.createRange().createContextualFragment(DOMPurify.sanitize(text));
 	const newTranslation = translation.cloneNode(false);
 	newTranslation.append(node);
 	translation.replaceWith(newTranslation);
@@ -352,7 +356,8 @@ function checkConsistency(ctx) {
 	fetch(URL).then((response) => response.text()).then((data) => {
 		const table = data.replace(/(\r\n|\n|\r)/gm, '').match(/(?<=consistency-table">)(.*?)(?=<\/table>)/gmi);
 		if (table && table[0]) {
-			ctx.spPopup.innerHTML = `<table class="consistency">${table[0]}</table>`;
+			// table[0] vient d'une réponse réseau (translate.wordpress.org) : jamais injecté tel quel.
+			ctx.spPopup.innerHTML = DOMPurify.sanitize(`<table class="consistency">${table[0]}</table>`);
 		} else {
 			ctx.spPopup.innerHTML = '<h1 style="text-align:center;margin:2em auto;">Aucun résultat</h1>';
 		}
@@ -606,9 +611,11 @@ function buildContext() {
 	const caption = createElement('P', { class: 'sp-results__caption' });
 	caption.innerHTML = 'Les avertissements en rouge sont à <strong class="sp-info" title="Quelques rares exceptions subsistent, par exemple lorsque le mot fait partie du nom de l’extension">très forte probabilité</strong>. Ceux en rose sont à <strong class="sp-info" title="Les exceptions sont fréquentes lorsque du code est intégré aux traductions (fonctions, paramètres…)">forte probabilité</strong> mais à vérifier car ils peuvent compter des faux positifs.';
 	const typographyLink = createElement('P', { class: 'sp-results__caption sp-results__caption--link' });
-	typographyLink.innerHTML = `Consultez <a class="sp-caption-link sp-caption-link--typography" target="_blank" rel="noopener" href="${typographyURL}">les règles typographiques</a> à respecter pour les caractères.`;
+	const typographyAnchor = createElement('A', { class: 'sp-caption-link sp-caption-link--typography', target: '_blank', rel: 'noopener', href: typographyURL }, 'les règles typographiques');
+	typographyLink.append('Consultez ', typographyAnchor, ' à respecter pour les caractères.');
 	const glossaryLink = createElement('P', { class: 'sp-results__caption sp-results__caption--link' });
-	glossaryLink.innerHTML = `Consultez <a class="sp-caption-link sp-caption-link--glossary" target="_blank" rel="noopener" href="${glossaryURL}">le glossaire officiel</a> à respecter pour les mots.`;
+	const glossaryAnchor = createElement('A', { class: 'sp-caption-link sp-caption-link--glossary', target: '_blank', rel: 'noopener', href: glossaryURL }, 'le glossaire officiel');
+	glossaryLink.append('Consultez ', glossaryAnchor, ' à respecter pour les mots.');
 	const hideCaption = createElement('BUTTON', { type: 'button', id: 'sp-results__toggle-caption', title: 'Légende' });
 	const spFilters = createElement('DIV', { class: 'sp-controls__filters' });
 	const showOnlyWarning = /** @type {HTMLInputElement} */ (createElement('INPUT', { type: 'checkbox', id: 'sp-show-only-warnings', name: 'showOnlyWarning', value: 'showOnlyWarning' }));

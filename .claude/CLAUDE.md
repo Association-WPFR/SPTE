@@ -22,6 +22,7 @@ npm run typecheck      # wxt prepare && tsc --noEmit
 npm test               # vitest run
 npm run test:coverage  # vitest run --coverage ; suivi de npx istanbul-badges-readme pour rafraîchir les badges du README
 npm run zip            # paquet prêt à l'upload
+npm run lint:amo       # build Firefox + addons-linter (même check qu'à la soumission AMO)
 ```
 
 ## Architecture
