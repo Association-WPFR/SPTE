@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.0.0] - xx septembre 2026
+## [3.0.0] - 23 septembre 2026
 
 ### Added
 - Nouvelle règle détectant les guillemets doubles droits (`"`), à remplacer par les guillemets français « »
