@@ -92,11 +92,15 @@ Elle n’apporte pas d’aide lors de la saisie d’une traduction puisque GlotD
 > [!NOTE]
 > SPTE travaille en profondeur sur la colonne des traductions et force par compatibilité certains paramètres internes de GlotDict. GlotDict évoluant de son côté, cette compatibilité peut nécessiter une mise à jour ponctuelle de SPTE — se référer au [wiki](https://github.com/Association-WPFR/SPTE/wiki) pour le détail technique à jour.
 
+## Architecture
+
+Extension WebExtension bâtie avec [WXT](https://wxt.dev/) : points d'entrée (`background`, `spte.content`, `popup`) dans `entrypoints/`, logique métier et manipulation DOM dans `utils/` (testée avec Vitest). Détail complet et contraintes de design : [`.claude/ARCHITECTURE.md`](.claude/ARCHITECTURE.md).
+
 ## Remerciements
 
 Merci à Loïc Antignac ([webaxones](https://github.com/webaxones)), auteur initial de SPTE et à l’origine du projet.
 
-Fin 2025, le projet SPTE a été repris par l’Association WordPress Francophone ([WPFR.net](https://wpfr.net)) afin d’en assurer la maintenance suite à l’envie de Loïc de passer la main. Si vous souhaitez contribuer à SPTE, [lisez le wiki](https://github.com/Association-WPFR/SPTE/wiki).
+Fin 2025, le projet SPTE a été repris par l’Association WordPress Francophone ([WPFR.net](https://wpfr.net)), propriétaire et hébergeur du projet, afin d’en assurer la maintenance suite à l’envie de Loïc de passer la main. Mainteneur actuel : Jason Rouet ([jaz-on](https://github.com/jaz-on)). Si vous souhaitez contribuer à SPTE, [lisez le wiki](https://github.com/Association-WPFR/SPTE/wiki).
 
 ## Contact
 Privilégier les issues Github ou le slack communautaire WordPressFR (en dernier recours contact@wpfr.net).
