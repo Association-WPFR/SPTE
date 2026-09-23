@@ -23,7 +23,9 @@ export default defineConfig({
     browser_specific_settings: {
       gecko: {
         id: 'contact@wpfr.net',
-        strict_min_version: '120.0',
+        // 140.0 = version ESR actuelle, pas un plancher technique : alignée sur data_collection_permissions
+        // (clé lue par Firefox seulement à partir de 140) plutôt que sur la fonctionnalité JS/CSS la plus récente.
+        strict_min_version: '140.0',
         // Obligatoire pour Mozilla même si SPTE ne collecte rien.
         data_collection_permissions: {
           required: ['none'],

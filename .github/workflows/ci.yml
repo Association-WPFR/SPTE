@@ -19,6 +19,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      - name: Interdit chrome.* direct (utiliser browser.* de WXT, compatible Firefox)
+        run: |
+          if grep -rn '\bchrome\.' entrypoints/ utils/ tests/; then
+            echo "::error::Usage direct de chrome.* trouvé — utiliser browser.* (fourni par WXT, marche sur Chrome et Firefox)."
+            exit 1
+          fi
       - run: npm run typecheck
       - run: npm run test:coverage
       - run: npm run build

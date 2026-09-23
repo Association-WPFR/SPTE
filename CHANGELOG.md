@@ -29,6 +29,7 @@
 - Extraction de la logique de conversion réglages ↔ champs de formulaire du popup (`entrypoints/popup/main.js`) vers `utils/settings.js` (`settingsToFormValues`/`formValuesToSettings`), testée unitairement ; sans changement de comportement (migration `spteFrenchFlag` manquant comprise)
 - Ajout de la couverture de tests (`@vitest/coverage-v8`, `npm run test:coverage`), de badges de couverture dans le README (`istanbul-badges-readme`, à régénérer manuellement, pas d'auto-commit CI) et du plugin `wxt/testing/vitest-plugin` dans `vitest.config.js` (nécessaire pour tester les fonctions exportées des entrypoints, qui utilisent les globales WXT comme `defineContentScript`)
 - Ajout d’`eslint-plugin-no-unsanitized` (détecte une insertion HTML non assainie dès le lint) et d’`addons-linter` (même vérification que la soumission AMO, intégrée en CI via `npm run lint:amo`)
+- Plancher de compatibilité Firefox remonté à la version 140 (`strict_min_version`), alignée sur la clé `data_collection_permissions` que Firefox ne sait lire qu’à partir de cette version
 
 ### Removed
 - Le réglage « Locales supplémentaires » (fr-be, fr-ca, etc) a été retiré. Trop peu testé, introduit une complexité inutile car aucun usage n'est connu à ce jour. Ça pourra toujours être réintroduit plus tard.
