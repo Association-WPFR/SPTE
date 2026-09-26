@@ -447,7 +447,8 @@ export function getGlossaryRegex(ctx, glossary) {
 	// On duplique chaque mot avec un s final pour pouvoir traiter les pluriels.
 	const glossaryWithPlurals = glossary.reduce((a, i) => a.concat(i, `${i}s`), []);
 	const glossaryRegexPattern = `${glossaryWithPlurals.join('(?=[\\s,:;"\']|$)|(?<=[\\s,:;"\']|^)(?<!«\\s)')}(?=[\\s,.:;"']|$)`;
-	const newRgxBadWords = new RegExp(`${badWordsRegexPattern}|${glossaryRegexPattern}`, 'gm');
+	// Flag « i » indispensable : les termes du glossaire sont en minuscules (et rgxBadWords l'a déjà), sinon un mot capitalisé n'est pas repéré.
+	const newRgxBadWords = new RegExp(`${badWordsRegexPattern}|${glossaryRegexPattern}`, 'gmi');
 	ctx.rulesById.get('badWords').regex = newRgxBadWords;
 }
 
