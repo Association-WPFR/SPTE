@@ -68,6 +68,12 @@ describe('stripHighlightTags', () => {
 	it('retire le surlignage jaune de GlotDict autour d\'une apostrophe courbe', () => {
 		expect(stripHighlightTags('l<span style="background-color:yellow">’</span>auteur')).toBe('l’auteur');
 	});
+	it('retire un surlignage GlotDict même avec des guillemets simples ou une casse différente', () => {
+		expect(stripHighlightTags('Super<span style=\'background-color:YELLOW\'>&nbsp;</span>!')).toBe('Super&nbsp;!');
+	});
+	it('ne fait aucun travail regex si le texte ne contient aucun <span', () => {
+		expect(stripHighlightTags('Simple texte : « ok »')).toBe('Simple texte : « ok »');
+	});
 	it('retire un surlignage SPTE déjà posé (second passage)', () => {
 		const rule = { id: 'quotes', name: 'apostrophe droite', message: 'Message', cssClass: 'sp-warning--quote' };
 		const highlighted = `l${buildWarningSpanHTML(/** @type {any} */ (rule), '\'')}auteur`;

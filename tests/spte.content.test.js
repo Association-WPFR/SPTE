@@ -83,6 +83,14 @@ describe('getUnambiguousGlossaryTerms', () => {
 		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
 	});
 
+	it('exclut un terme polysémique quelle que soit l\'ordre des lignes dans le CSV', () => {
+		const entries = [
+			['note', 'noter'],
+			['note', 'note'],
+		];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
+	});
+
 	it('ignore les lignes avec un champ vide', () => {
 		const entries = [['', 'extension'], ['plugin', '']];
 		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);

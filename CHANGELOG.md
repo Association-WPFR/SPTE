@@ -5,6 +5,9 @@
 ### Added
 - L'apostrophe courbe inversée (‘) est maintenant signalée comme telle, avec son propre message et son propre compteur, au lieu d'être présentée comme une apostrophe droite
 
+### Changed
+- GlotDict affiche désormais aussi son propre avertissement natif pour les apostrophes droites, en plus de celui de SPTE (effet de bord du réglage qui éteint son surlignage jaune, cf. #80) : redondant mais inoffensif
+
 ### Fixed
 - Une traduction avec plusieurs erreurs typo (ex. un mot déconseillé et un guillemet droit) n'affiche plus de balisage HTML cassé et visible à l'écran : un rule ne signale plus à tort le contenu des attributs d'un `<span>` déjà posé par un rule précédent dans la même passe
 - Un terme du glossaire officiel polysémique (nom identique EN/FR, verbe différent, ex. « note »/« noter ») n'est plus signalé à tort quand il est utilisé comme nom (#63)

@@ -17,6 +17,11 @@ import './style.css';
 // GlotDict plante s'il s'exécute après SPTE et trouve des balises qu'il n'attend pas : on force ses réglages pour les désactiver en amont.
 // Les clés sont celles que lit gd_get_setting() dans GlotDict (préfixe gd_) : gd_curly_apostrophe_warning et gd_no_non_breaking_space.
 // Issue #80 : sans elles, GlotDict surligne les traductions avant ou après SPTE et en déforme le texte.
+// Effet de bord assumé : gd_curly_apostrophe_warning ne fait pas qu'éteindre le surlignage, il active aussi
+// l'avertissement natif de GlotDict "straight single quote" (doublon avec la règle « apostrophe droite » de
+// SPTE), et l'utilisateur ne peut pas le désactiver dans GlotDict puisque SPTE réécrit ce réglage à chaque
+// chargement de page. Inoffensif (même diagnostic que SPTE), mais non demandé : aucun autre réglage GlotDict
+// ne permet d'éteindre le seul surlignage sans ce doublon.
 export function preventGlotDictTags() {
 	localStorage.setItem('gd_curly_apostrophe_warning', 'true');
 	localStorage.setItem('gd_no_non_breaking_space', 'true');
@@ -468,19 +473,20 @@ export function gpContentMaxWidth(ctx, spteEnlargeTable, spteGpcontentBig) {
  * @returns {string[]}
  */
 export function getUnambiguousGlossaryTerms(entries, enIndex, frIndex) {
-	const termsWithDifferentTranslation = new Set();
-	const termsWithMatchingTranslation = new Set();
+	// true : au moins une entrée avec une traduction différente. false : toutes les entrées vues jusqu'ici
+	// ont une traduction identique (terme ambigu dès qu'une seule diffère, cf. commentaire ci-dessus).
+	const termTranslationDiffers = new Map();
 	entries.forEach((row) => {
 		const en = (row[enIndex] || '').trim().toLowerCase();
 		const fr = (row[frIndex] || '').trim().toLowerCase();
 		if (en === '' || fr === '') { return; }
 		if (en === fr) {
-			termsWithMatchingTranslation.add(en);
-		} else {
-			termsWithDifferentTranslation.add(en);
+			termTranslationDiffers.set(en, false);
+		} else if (!termTranslationDiffers.has(en)) {
+			termTranslationDiffers.set(en, true);
 		}
 	});
-	return [...termsWithDifferentTranslation].filter((term) => !termsWithMatchingTranslation.has(term));
+	return [...termTranslationDiffers].filter(([, differs]) => differs).map(([term]) => term);
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
