@@ -2,6 +2,9 @@
 
 ## [3.0.2] - xx septembre 2026
 
+### Added
+- L'apostrophe courbe inversée (‘) est maintenant signalée comme telle, avec son propre message et son propre compteur, au lieu d'être présentée comme une apostrophe droite
+
 ### Fixed
 - Les mots du glossaire officiel sont maintenant repérés quelle que soit leur casse (majuscule initiale, tout en majuscules…)
 - Les espaces insécables sont de nouveau reconnues comme telles par les règles de ponctuation (« : », « ; », « ! », « ? », « » »), au lieu d'être signalées manquantes à tort (régression de la 3.0.0, remonté par mikejpr, #79)
