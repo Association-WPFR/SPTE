@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.1.0] - xx septembre 2026
+## [3.1.0] - 27 septembre 2026
 
 ### Added
 - L'apostrophe courbe inversée (‘) est maintenant signalée comme telle, avec son propre message et son propre compteur, au lieu d'être présentée comme une apostrophe droite
