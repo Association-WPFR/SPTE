@@ -33,7 +33,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          PREV_TAG=$(git tag --sort=-v:refname | grep -v "^${GITHUB_REF_NAME}$" | head -1 || true)
+          PREV_TAG=$(git for-each-ref --sort=-creatordate --format='%(refname:short)' refs/tags | grep -v "^${GITHUB_REF_NAME}$" | head -1 || true)
 
           # Section du CHANGELOG.md correspondant à cette version
           awk -v ver="$GITHUB_REF_NAME" '
