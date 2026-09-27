@@ -194,6 +194,27 @@ describe('checkTranslation', () => {
 		expect(translated.innerHTML).toBe('Un mot "cité"');
 	});
 
+	// Issue #79 : innerHTML sérialise l'espace insécable en &nbsp; ; elle doit rester insécable pour les regex.
+	it('ne signale pas une espace insécable devant les deux points', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Note\u00a0: fermez cette fenêtre';
+		const colon = rules.find((rule) => rule.id === 'colon');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(colon.counter).toBe(0);
+	});
+
+	it('signale une espace normale devant les deux points', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Note : fermez cette fenêtre';
+		const colon = rules.find((rule) => rule.id === 'colon');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(colon.counter).toBe(1);
+	});
+
 	it('ignore un mot déconseillé qui fait partie du nom du projet en cours (issue #38)', () => {
 		const translated = document.querySelector('#preview-1-1 .translation-text');
 		const badWords = rules.find((rule) => rule.id === 'badWords');

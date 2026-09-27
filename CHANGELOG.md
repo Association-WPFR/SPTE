@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.0.2] - xx septembre 2026
+
+### Fixed
+- Les espaces insécables sont de nouveau reconnues comme telles par les règles de ponctuation (« : », « ; », « ! », « ? », « » »), au lieu d'être signalées manquantes à tort (régression de la 3.0.0, remonté par mikejpr, #79)
+
 ## [3.0.1] - 23 septembre 2026
 
 ### Fixed
