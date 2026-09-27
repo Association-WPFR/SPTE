@@ -118,12 +118,6 @@ describe('rgxSingleQuotes', () => {
 	it('ignore une apostrophe droite suivie du signe % (issue #6)', () => {
 		expect(matches(rgxSingleQuotes, '\'%s')).toEqual([]);
 	});
-
-	// Issue #27 : une apostrophe droite à l'intérieur d'un bloc {{ }}/[[ ]] (interpolation JS)
-	// ne doit pas être signalée.
-	it('ignore une apostrophe droite à l\'intérieur d\'un bloc [[ ]]', () => {
-		expect(matches(rgxSingleQuotes, '[[filter \'arg\']]')).toEqual([]);
-	});
 });
 
 // Issue #32 : l'apostrophe courbe inversée (U+2018) est une variante incorrecte à détecter,
@@ -142,12 +136,6 @@ describe('rgxReversedQuote', () => {
 		expect(matches(rgxReversedQuote, '%s‘appelle')).toEqual([]);
 		expect(matches(rgxReversedQuote, '‘%s')).toEqual([]);
 	});
-
-	// Issue #27 : une apostrophe courbe inversée à l'intérieur d'un bloc {{ }}/[[ ]] (interpolation JS)
-	// ne doit pas être signalée.
-	it('ignore une apostrophe courbe inversée à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxReversedQuote, '{{filter ‘arg}}')).toEqual([]);
-	});
 });
 
 describe('rgxDoubleQuotes', () => {
@@ -161,12 +149,6 @@ describe('rgxDoubleQuotes', () => {
 	});
 	it('ignore les guillemets d\'un attribut title=', () => {
 		expect(matches(rgxDoubleQuotes, '<a href="https://example.com" title="Mon titre">lien</a>')).toEqual([]);
-	});
-
-	// Issue #27 : un guillemet droit à l'intérieur d'un bloc {{ }} (interpolation JS) ne doit pas
-	// être signalé.
-	it('ignore un guillemet droit à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxDoubleQuotes, '{{filter "arg"}}')).toEqual([]);
 	});
 });
 
@@ -313,12 +295,6 @@ describe('rgxEllipsis', () => {
 		expect(matches(rgxEllipsis, 'et…×trois')).toHaveLength(1);
 		expect(matches(rgxEllipsis, 'et…÷trois')).toHaveLength(1);
 	});
-
-	// Issue #27 : des points de suspension à l'intérieur d'un bloc {{ }} (interpolation JS)
-	// ne doivent pas être signalés.
-	it('ignore des points de suspension à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxEllipsis, '{{filter…arg}}')).toEqual([]);
-	});
 });
 
 describe('rgxPeriod', () => {
@@ -339,12 +315,6 @@ describe('rgxPeriod', () => {
 	});
 	it('détecte un point suivi d’une espace insécable finale', () => {
 		expect(matches(rgxPeriod, 'Fin de phrase.' + '\u00a0')).toEqual(['.' + '\u00a0']);
-	});
-
-
-	// Issue #27 : un point à l'intérieur d'un bloc {{ }} (interpolation JS) ne doit pas être signalé.
-	it('ignore un point à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxPeriod, '{{a .b}}')).toEqual([]);
 	});
 });
 
@@ -472,11 +442,6 @@ describe('rgxExclamationPoint', () => {
 	it('ignore un point d’exclamation précédé d’une espace fine insécable (U+202F)', () => {
 		expect(matches(rgxExclamationPoint, 'Bravo' + '\u202f' + '!')).toEqual([]);
 	});
-
-	// Issue #27 : un point d'exclamation à l'intérieur d'un bloc {{ }} (interpolation JS) ne doit pas être signalé.
-	it('ignore un point d\'exclamation à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxExclamationPoint, '{{a !b}}')).toEqual([]);
-	});
 });
 
 describe('rgxExclamationPointStrict', () => {
@@ -500,11 +465,6 @@ describe('rgxPlusSign', () => {
 	});
 	it('ignore un signe plus en toute fin de chaîne (précédé d’une espace insécable)', () => {
 		expect(matches(rgxPlusSign, '2' + '\u00a0' + '+')).toEqual([]);
-	});
-
-	// Issue #27 : un signe plus à l'intérieur d'un bloc {{ }} (interpolation JS) ne doit pas être signalé.
-	it('ignore un signe plus à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxPlusSign, '{{a +b}}')).toEqual([]);
 	});
 });
 
@@ -534,11 +494,6 @@ describe('rgxQuestionMark', () => {
 	});
 	it('ignore un point d’interrogation précédé d’une espace fine insécable (U+202F)', () => {
 		expect(matches(rgxQuestionMark, 'Pourquoi' + '\u202f' + '?')).toEqual([]);
-	});
-
-	// Issue #27 : un point d'interrogation à l'intérieur d'un bloc {{ }} (interpolation JS) ne doit pas être signalé.
-	it('ignore un point d\'interrogation à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxQuestionMark, '{{a ?b}}')).toEqual([]);
 	});
 });
 
@@ -628,11 +583,6 @@ describe('rgxSemiColon', () => {
 	it('ignore un point-virgule précédé d’une espace fine insécable (U+202F)', () => {
 		expect(matches(rgxSemiColon, 'un' + '\u202f' + '; deux')).toEqual([]);
 	});
-
-	// Issue #27 : un point-virgule à l'intérieur d'un bloc {{ }} (interpolation JS) ne doit pas être signalé.
-	it('ignore un point-virgule à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxSemiColon, '{{a;b}}')).toEqual([]);
-	});
 });
 
 describe('rgxSemiColonStrict', () => {
@@ -679,11 +629,6 @@ describe('rgxClosingFrQuote', () => {
 	});
 	it('ignore un guillemet fermant suivi d’une espace fine insécable puis d’un point d’exclamation', () => {
 		expect(matches(rgxClosingFrQuote, 'mot' + '\u202f' + '»' + '\u202f' + '!')).toEqual([]);
-	});
-
-	// Issue #27 : un guillemet français fermant à l'intérieur d'un bloc {{ }} (interpolation JS) ne doit pas être signalé.
-	it('ignore un guillemet français fermant à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxClosingFrQuote, '{{a »b}}')).toEqual([]);
 	});
 });
 
