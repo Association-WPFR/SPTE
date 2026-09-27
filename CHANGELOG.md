@@ -3,7 +3,6 @@
 ## [3.1.0] - xx septembre 2026
 
 ### Added
-- SPTE signale maintenant les erreurs typo sur la page « Cohérence des traductions » (`/consistency/`), pas seulement dans l'éditeur de traduction classique (#75)
 - L'apostrophe courbe inversée (‘) est maintenant signalée comme telle, avec son propre message et son propre compteur, au lieu d'être présentée comme une apostrophe droite
 
 ### Fixed
