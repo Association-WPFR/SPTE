@@ -9,6 +9,7 @@ import {
 	gpContentMaxWidth,
 	getGlossaryRegex,
 	applyStrictNarrowSpace,
+	preventGlotDictTags,
 } from '../entrypoints/spte.content';
 import { rules } from '../utils/rules';
 import { createElement } from '../utils/helpers';
@@ -57,6 +58,18 @@ describe('getGlossaryRegex', () => {
 		const ctx = { rulesById: new Map([['badWords', badWords]]) };
 		getGlossaryRegex(ctx, ['notice']);
 		expect('Une Notice ici').toMatch(badWords.regex);
+	});
+});
+
+describe('preventGlotDictTags', () => {
+	// Issue #80 : ces clés doivent être celles que GlotDict lit (gd_get_setting préfixe « gd_ »), sinon il surligne quand même.
+	it('désactive le surlignage des apostrophes courbes et des espaces insécables dans GlotDict', () => {
+		localStorage.clear();
+
+		preventGlotDictTags();
+
+		expect(localStorage.getItem('gd_curly_apostrophe_warning')).toBe('true');
+		expect(localStorage.getItem('gd_no_non_breaking_space')).toBe('true');
 	});
 });
 
@@ -204,6 +217,35 @@ describe('checkTranslation', () => {
 		expect(warning).not.toBeNull();
 		expect(warning.getAttribute('aria-label')).toContain('apostrophe courbe inversée');
 		expect(document.querySelector('#preview-1-1').classList.contains('sp-has-spte-error')).toBe(true);
+	});
+
+	// Issue #80 : GlotDict surligne les espaces insécables avec un <span style="background-color:yellow">
+	// avant SPTE ; les règles ne doivent pas s'appliquer dans les attributs de cette balise.
+	it('ne signale pas le balisage de surlignage de GlotDict et laisse le texte intact', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Vous êtes inscrit<span style="background-color:yellow">\u00a0</span>!';
+		const doubleQuotes = rules.find((rule) => rule.id === 'doubleQuotes');
+		const colon = rules.find((rule) => rule.id === 'colon');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(doubleQuotes.counter).toBe(0);
+		expect(colon.counter).toBe(0);
+		const visibleText = document.querySelector('#preview-1-1 .translation-text').textContent;
+		expect(visibleText).not.toContain('background-color');
+		expect(visibleText.replace(/\u00a0/g, ' ')).toBe('Vous êtes inscrit !');
+	});
+
+	it('laisse le texte identique quand SPTE traite deux fois la même ligne', () => {
+		const first = document.querySelector('#preview-1-1 .translation-text');
+		first.innerHTML = 'Échec de l\'enregistrement des données';
+		checkTranslation({ projectName: '' }, first, 'untranslated', 'current');
+		const second = document.querySelector('#preview-1-1 .translation-text');
+		const textAfterFirstPass = second.textContent;
+
+		checkTranslation({ projectName: '' }, second, 'untranslated', 'current');
+
+		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe(textAfterFirstPass);
 	});
 
 	it('ignore une ancienne traduction déjà rejetée (sauf si on vient tout juste de la rejeter)', () => {

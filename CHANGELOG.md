@@ -8,6 +8,8 @@
 ### Fixed
 - Les mots du glossaire officiel sont maintenant repérés quelle que soit leur casse (majuscule initiale, tout en majuscules…)
 - Les espaces insécables sont de nouveau reconnues comme telles par les règles de ponctuation (« : », « ; », « ! », « ? », « » »), au lieu d'être signalées manquantes à tort (régression de la 3.0.0, remonté par mikejpr, #79)
+- Les surlignages de GlotDict sur les espaces insécables et les apostrophes courbes sont de nouveau désactivés par SPTE, comme avant la 3.0.0 (les réglages utilisés n'étaient pas les bons, ce qui déformait le texte des traductions, remonté par mikejpr, #80)
+- Le texte des traductions n'est plus déformé (ex: `"background-color:yellow">` affiché à côté des espaces insécables) quand GlotDict ou SPTE a déjà surligné la ligne
 
 ## [3.0.1] - 23 septembre 2026
 
