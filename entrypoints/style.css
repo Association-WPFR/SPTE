@@ -569,7 +569,8 @@
 		background-color: #ec130e;
 	}
 
-	.gp-content .sp-warning--quote {
+	.gp-content .sp-warning--quote,
+	.gp-content .sp-warning--reversed-quote {
 		box-shadow: #ec130e 0px 0px 0px 2px inset;
 	}
 

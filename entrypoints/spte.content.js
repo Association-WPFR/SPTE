@@ -27,7 +27,7 @@ function tagTRTranslations(preview) {
 	if (hasTranslation && spWarning) {
 		preview.classList.add('sp-has-spte-warning');
 	}
-	if (hasTranslation && (trad.querySelector('.sp-warning--word') || trad.querySelector('.sp-warning--quote'))) {
+	if (hasTranslation && (trad.querySelector('.sp-warning--word') || trad.querySelector('.sp-warning--quote') || trad.querySelector('.sp-warning--reversed-quote'))) {
 		preview.classList.add('sp-has-spte-error');
 	}
 }
@@ -224,6 +224,10 @@ function displayResults(ctx) {
 	if (ctx.rulesById.get('quotes').counter === 0 && ctx.rulesById.get('doubleQuotes').counter === 0 && quotes?.parentElement) {
 		quotes.parentElement.remove();
 	}
+	const reversedQuotes = document.querySelector('.sp-warning-title.sp-warning--reversed-quote');
+	if (ctx.rulesById.get('reversedQuote').counter === 0 && reversedQuotes?.parentElement) {
+		reversedQuotes.parentElement.remove();
+	}
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
@@ -418,7 +422,7 @@ function setColors(spteColorWord, spteColorQuote, spteColorChar) {
 	spteColorQuote ||= '#ff0000';
 	spteColorChar ||= '#ff00ff';
 	addStyle('.sp-warning--word', `background-color:${spteColorWord};color:white;font-weight:bold;padding:1px;margin:0 1px`);
-	addStyle('.sp-warning--quote', `display:inline-block;line-height:16px;box-shadow:${spteColorQuote} 0px 0px 0px 2px inset;background-color:white;padding:3px 4px`);
+	addStyle('.sp-warning--quote, .sp-warning--reversed-quote', `display:inline-block;line-height:16px;box-shadow:${spteColorQuote} 0px 0px 0px 2px inset;background-color:white;padding:3px 4px`);
 	addStyle('.sp-warning--char', `display:inline-block;line-height:16px;box-shadow:${spteColorChar} 0px 0px 0px 2px inset;background-color:white;padding:3px 4px`);
 	addStyle('.sp-spaces--showing', 'display:inline-block;line-height:16px;background-color:deepskyblue;border:2px solid deepskyblue');
 	addStyle('.sp-nbkspaces--showing', 'display:inline-block;line-height:16px;background-color:white;border:2px solid white');

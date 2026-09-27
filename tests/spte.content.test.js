@@ -182,6 +182,22 @@ describe('checkTranslation', () => {
 		expect(warning).not.toBeNull();
 	});
 
+	it('signale une apostrophe courbe inversée avec sa propre règle, pas comme une apostrophe droite', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Impossible d‘importer les widgets';
+		const quotes = rules.find((rule) => rule.id === 'quotes');
+		const reversedQuote = rules.find((rule) => rule.id === 'reversedQuote');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(quotes.counter).toBe(0);
+		expect(reversedQuote.counter).toBe(1);
+		const warning = document.querySelector('#preview-1-1 .sp-warning--reversed-quote');
+		expect(warning).not.toBeNull();
+		expect(warning.getAttribute('aria-label')).toContain('apostrophe courbe inversée');
+		expect(document.querySelector('#preview-1-1').classList.contains('sp-has-spte-error')).toBe(true);
+	});
+
 	it('ignore une ancienne traduction déjà rejetée (sauf si on vient tout juste de la rejeter)', () => {
 		const translated = document.querySelector('#preview-2-2 .translation-text');
 		document.querySelector('#preview-2-2').classList.add('status-rejected');

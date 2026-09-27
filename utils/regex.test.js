@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	rgxBadWords,
 	rgxSingleQuotes,
+	rgxReversedQuote,
 	rgxDoubleQuotes,
 	rgxSlash,
 	rgxOpenHook,
@@ -106,10 +107,8 @@ describe('rgxSingleQuotes', () => {
 	it('ignore l\'apostrophe dans un placeholder printf (%s)', () => {
 		expect(matches(rgxSingleQuotes, '%s\'appelle')).toEqual([]);
 	});
-	// Issue #32 : l'apostrophe courbe inversée (U+2018) est une variante incorrecte à détecter,
-	// au même titre que l'apostrophe droite.
-	it('détecte une apostrophe courbe inversée (U+2018)', () => {
-		expect(matches(rgxSingleQuotes, 'l‘extension')).toEqual(['‘']);
+	it('ne détecte pas l\'apostrophe courbe inversée (U+2018), traitée par rgxReversedQuote', () => {
+		expect(matches(rgxSingleQuotes, 'l‘extension')).toEqual([]);
 	});
 	it('ne détecte jamais la bonne apostrophe courbe (U+2019)', () => {
 		expect(matches(rgxSingleQuotes, 'l’extension')).toEqual([]);
@@ -118,6 +117,24 @@ describe('rgxSingleQuotes', () => {
 	// immédiatement de "%lettre" (ex: l'apostrophe ouvrante de '%s').
 	it('ignore une apostrophe droite suivie du signe % (issue #6)', () => {
 		expect(matches(rgxSingleQuotes, '\'%s')).toEqual([]);
+	});
+});
+
+// Issue #32 : l'apostrophe courbe inversée (U+2018) est une variante incorrecte à détecter,
+// signalée à part de l'apostrophe droite pour que l'infobulle et le compteur la nomment correctement.
+describe('rgxReversedQuote', () => {
+	it('détecte une apostrophe courbe inversée (U+2018)', () => {
+		expect(matches(rgxReversedQuote, 'l‘extension')).toEqual(['‘']);
+	});
+	it('ne détecte jamais la bonne apostrophe courbe (U+2019)', () => {
+		expect(matches(rgxReversedQuote, 'l’extension')).toEqual([]);
+	});
+	it('ne détecte pas l\'apostrophe droite, traitée par rgxSingleQuotes', () => {
+		expect(matches(rgxReversedQuote, 'l\'extension')).toEqual([]);
+	});
+	it('ignore l\'apostrophe dans un placeholder printf (%s)', () => {
+		expect(matches(rgxReversedQuote, '%s‘appelle')).toEqual([]);
+		expect(matches(rgxReversedQuote, '‘%s')).toEqual([]);
 	});
 });
 
