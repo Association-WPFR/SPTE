@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag } from './helpers';
+import { parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag, isInsideDoubleBracketBlock } from './helpers';
 import { buildWarningSpanHTML } from './warnings';
 
 describe('parseCsv', () => {
@@ -102,5 +102,46 @@ describe('isInsideHtmlTag', () => {
 	it('ignore une position avant toute balise', () => {
 		const text = '"cité"';
 		expect(isInsideHtmlTag(text, 0)).toBe(false);
+	});
+});
+
+describe('isInsideDoubleBracketBlock', () => {
+	it('détecte une position à l\'intérieur d\'un bloc {{ }} simple', () => {
+		const text = '{{foo:bar}}';
+		expect(isInsideDoubleBracketBlock(text, text.indexOf(':'))).toBe(true);
+	});
+
+	it('détecte une position à l\'intérieur d\'un bloc [[ ]] simple', () => {
+		const text = '[[a,b]]';
+		expect(isInsideDoubleBracketBlock(text, text.indexOf(','))).toBe(true);
+	});
+
+	// Issue #27 : un <span> déjà injecté par un rule précédent (ex: openBrace) entre les deux
+	// accolades du délimiteur ne doit pas casser la détection.
+	it('ignore un <span> déjà injecté entre les deux caractères du délimiteur', () => {
+		const text = 'Le {<span tabindex="0" aria-label="x">{</span> foo:bar }} ici';
+		expect(isInsideDoubleBracketBlock(text, text.indexOf(':'))).toBe(true);
+	});
+
+	// Exemple ICU MessageFormat du CHANGELOG : une paire d'accolades simples imbriquée par branche.
+	it('détecte une position à l\'intérieur d\'une accolade simple imbriquée dans le bloc', () => {
+		const text = '{{count, plural, one{...} other{...}}}';
+		expect(isInsideDoubleBracketBlock(text, text.indexOf('...'))).toBe(true);
+		expect(isInsideDoubleBracketBlock(text, text.lastIndexOf('...'))).toBe(true);
+	});
+
+	it('ignore un simple crochet ou une simple accolade (pas de double délimiteur)', () => {
+		expect(isInsideDoubleBracketBlock('[a,b]', 1)).toBe(false);
+		expect(isInsideDoubleBracketBlock('{a:b}', 1)).toBe(false);
+	});
+
+	it('ne signale pas à tort un contenu situé après un bloc déjà refermé', () => {
+		const text = '{{a}} : après';
+		expect(isInsideDoubleBracketBlock(text, text.indexOf(':'))).toBe(false);
+	});
+
+	it('ne signale pas à tort un contenu situé entre deux blocs distincts', () => {
+		const text = '{{a}} : {{b}}';
+		expect(isInsideDoubleBracketBlock(text, text.indexOf(':'))).toBe(false);
 	});
 });

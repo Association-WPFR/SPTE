@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { rules, charTitle, charClass, NBSP, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
-import { addStyle, createElement, parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag } from '../utils/helpers';
+import { addStyle, createElement, parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag, isInsideDoubleBracketBlock } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
 import { createDefaultSettings } from '../utils/settings';
 import {
@@ -84,6 +84,11 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 				return string;
 			}
 
+			// Contenu d'un bloc d'interpolation JS {{ }}/[[ ]] : pas du texte français à vérifier. Voir issue #27.
+			if (isInsideDoubleBracketBlock(fullString, offset)) {
+				return string;
+			}
+
 			// Un match absent de textWithoutTags est à l'intérieur d'une balise, à ignorer. Suppose que
 			// l'ordre de ce replace() et du textWithoutTags.replace(string, '') qui suit reste identique.
 			if (!textWithoutTags.match(rule.regex)) {
@@ -152,7 +157,13 @@ export function checkConsistencyTranslation(ctx, translation) {
 	text = text.replaceAll(/&nbsp;/gmi, NBSP);
 	let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
 	for (const rule of rules) {
-		text = text.replace(rule.regex, (string) => {
+		text = text.replace(rule.regex, (string, offset, fullString) => {
+			if (isInsideHtmlTag(fullString, offset)) {
+				return string;
+			}
+			if (isInsideDoubleBracketBlock(fullString, offset)) {
+				return string;
+			}
 			if (!textWithoutTags.match(rule.regex)) {
 				return string;
 			}

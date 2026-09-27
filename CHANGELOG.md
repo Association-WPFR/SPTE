@@ -1,18 +1,12 @@
 # Changelog
 
-## [3.1.0] - xx septembre 2026
+## [3.1.1] - xx septembre 2026
 
 ### Added
 - SPTE signale maintenant les erreurs typo sur la page « Cohérence des traductions » (`/consistency/`), pas seulement dans l'éditeur de traduction classique (#75)
-- L'apostrophe courbe inversée (‘) est maintenant signalée comme telle, avec son propre message et son propre compteur, au lieu d'être présentée comme une apostrophe droite
 
 ### Fixed
-- Une traduction avec plusieurs erreurs typo (ex. un mot déconseillé et un guillemet droit) n'affiche plus de balisage HTML cassé et visible à l'écran : un rule ne signale plus à tort le contenu des attributs d'un `<span>` déjà posé par un rule précédent dans la même passe
-- Un terme du glossaire officiel polysémique (nom identique EN/FR, verbe différent, ex. « note »/« noter ») n'est plus signalé à tort quand il est utilisé comme nom (#63)
-- Les mots du glossaire officiel sont maintenant repérés quelle que soit leur casse (majuscule initiale, tout en majuscules…)
-- Les espaces insécables sont de nouveau reconnues comme telles par les règles de ponctuation (« : », « ; », « ! », « ? », « » »), au lieu d'être signalées manquantes à tort (régression de la 3.0.0, remonté par mikejpr, #79)
-- Les surlignages de GlotDict sur les espaces insécables et les apostrophes courbes sont de nouveau désactivés par SPTE, comme avant la 3.0.0 (les réglages utilisés n'étaient pas les bons, ce qui déformait le texte des traductions, remonté par mikejpr, #80)
-- Le texte des traductions n'est plus déformé (ex: `"background-color:yellow">` affiché à côté des espaces insécables) quand GlotDict ou SPTE a déjà surligné la ligne
+- Les caractères de ponctuation à l'intérieur d'un bloc d'interpolation `{{ }}`/`[[ ]]` (ex. `{{count, plural, one{...} other{...}}}`) ne sont plus signalés à tort, quelle que soit la règle concernée (#27)
 
 ## [3.0.1] - 23 septembre 2026
 

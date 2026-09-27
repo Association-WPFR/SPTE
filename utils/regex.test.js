@@ -325,11 +325,6 @@ describe('rgxComma', () => {
 	it('ignore une virgule suivie d\'une espace', () => {
 		expect(matches(rgxComma, 'un, deux')).toEqual([]);
 	});
-	// Issue #27 (partiel) : une virgule à l'intérieur d'un bloc [[ ]] (interpolation JS) ne doit
-	// pas être signalée, au même titre que le slash déjà exclu dans ce genre de bloc.
-	it('ignore une virgule à l\'intérieur d\'un bloc [[ ]]', () => {
-		expect(matches(rgxComma, '[[a,b]]')).toEqual([]);
-	});
 	it('détecte toujours une virgule dans un simple crochet [ ]', () => {
 		expect(matches(rgxComma, '[a,b]')).toHaveLength(1);
 	});
@@ -520,11 +515,6 @@ describe('rgxColon', () => {
 	// déclencher la règle, au même titre que hh/mm/aaaa déjà exclus.
 	it('ignore les deux-points d\'un format de date PHP (Y/m/d g:s:i A)', () => {
 		expect(matches(rgxColon, 'Y/m/d g:s:i A')).toEqual([]);
-	});
-	// Issue #27 (partiel) : un deux-points à l'intérieur d'un bloc {{ }} (interpolation JS) ne
-	// doit pas être signalé, au même titre que le slash déjà exclu dans ce genre de bloc.
-	it('ignore un deux-points à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxColon, '{{foo:bar}}')).toEqual([]);
 	});
 	it('détecte toujours un deux-points dans une simple accolade { }', () => {
 		expect(matches(rgxColon, '{foo:bar}')).toHaveLength(1);
