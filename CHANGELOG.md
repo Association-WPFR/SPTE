@@ -4,6 +4,7 @@
 
 ### Fixed
 - Les mots du glossaire officiel sont maintenant repérés quelle que soit leur casse (majuscule initiale, tout en majuscules…)
+- Les espaces insécables sont de nouveau reconnues comme telles par les règles de ponctuation (« : », « ; », « ! », « ? », « » »), au lieu d'être signalées manquantes à tort (régression de la 3.0.0, remonté par mikejpr, #79)
 
 ## [3.0.1] - 23 septembre 2026
 

@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import { rules, charTitle, charClass, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
+import { rules, charTitle, charClass, NBSP, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
 import { addStyle, createElement, parseCsv, isPartOfProjectName } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
 import { createDefaultSettings } from '../utils/settings';
@@ -67,8 +67,9 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 
 	let text = translation.innerHTML;
 
-	// Pour la compatibilité des regex, on remplace les entités HTML d’espace insécable par le vrai caractère.
-	text = text.replaceAll(/&nbsp;/gmi, ' ');
+	// Pour la compatibilité des regex, on remplace les entités HTML d’espace insécable par le vrai caractère. NBSP est écrit avec
+	// un échappement (\u00a0) : un caractère littéral se confond avec une espace normale et peut être normalisé sans que ça se voie (issue #79).
+	text = text.replaceAll(/&nbsp;/gmi, NBSP);
 
 	let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
 	for (const rule of rules) {

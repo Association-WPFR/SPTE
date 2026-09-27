@@ -74,8 +74,8 @@ function escapeRegExp(str) {
 // Le guide du traducteur WP FR distingue 2 espaces insécables : U+00A0 (normale, devant
 // ":"/"»") et U+202F (fine, devant "; ! ?").
 // https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/
-const NBSP = ' ';
-const NNBSP = ' ';
+export const NBSP = '\u00a0';
+const NNBSP = '\u202f';
 const nbspAny = `(?:${NBSP}|${NNBSP})`;
 
 const fileExtensions = data.fileExtensions.join('|');
