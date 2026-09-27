@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseCsv, isPartOfProjectName, stripHighlightTags } from './helpers';
+import { parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag } from './helpers';
 import { buildWarningSpanHTML } from './warnings';
 
 describe('parseCsv', () => {
@@ -83,5 +83,24 @@ describe('stripHighlightTags', () => {
 	});
 	it('ne fait rien sur un texte sans balise', () => {
 		expect(stripHighlightTags('Simple texte : « ok »')).toBe('Simple texte : « ok »');
+	});
+});
+
+describe('isInsideHtmlTag', () => {
+	it('détecte une position à l\'intérieur d\'un attribut entre guillemets doubles', () => {
+		const text = 'Un <span tabindex="0" aria-label="x">"</span>cité"';
+		const offset = text.indexOf('0');
+		expect(isInsideHtmlTag(text, offset)).toBe(true);
+	});
+
+	it('ignore une position dans le texte visible, hors balise', () => {
+		const text = 'Un <span tabindex="0">mot</span> "cité"';
+		const offset = text.indexOf('"cité"');
+		expect(isInsideHtmlTag(text, offset)).toBe(false);
+	});
+
+	it('ignore une position avant toute balise', () => {
+		const text = '"cité"';
+		expect(isInsideHtmlTag(text, 0)).toBe(false);
 	});
 });
