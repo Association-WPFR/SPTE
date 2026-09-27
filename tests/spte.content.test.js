@@ -8,6 +8,7 @@ import {
 	frenchFlag,
 	gpContentMaxWidth,
 	getGlossaryRegex,
+	getUnambiguousGlossaryTerms,
 	applyStrictNarrowSpace,
 	preventGlotDictTags,
 } from '../entrypoints/spte.content';
@@ -58,6 +59,33 @@ describe('getGlossaryRegex', () => {
 		const ctx = { rulesById: new Map([['badWords', badWords]]) };
 		getGlossaryRegex(ctx, ['notice']);
 		expect('Une Notice ici').toMatch(badWords.regex);
+	});
+});
+
+describe('getUnambiguousGlossaryTerms', () => {
+	it('garde un terme dont la traduction diffère toujours', () => {
+		const entries = [['plugin', 'extension']];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual(['plugin']);
+	});
+
+	it('exclut un terme dont la traduction est identique (mot commun EN/FR)', () => {
+		const entries = [['plugin', 'plugin']];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
+	});
+
+	// Issue #63 : « note » (nom, non traduit) et « note »/« noter » (verbe, traduit) sont 2 entrées
+	// glossaire distinctes pour le même terme anglais « note ». Le terme est ambigu, jamais signalé.
+	it('exclut un terme polysémique qui a à la fois une entrée identique et une entrée différente', () => {
+		const entries = [
+			['note', 'note'],
+			['note', 'noter'],
+		];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
+	});
+
+	it('ignore les lignes avec un champ vide', () => {
+		const entries = [['', 'extension'], ['plugin', '']];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
 	});
 });
 

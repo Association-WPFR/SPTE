@@ -449,6 +449,33 @@ export function gpContentMaxWidth(ctx, spteEnlargeTable, spteGpcontentBig) {
 	}
 }
 
+/**
+ * Termes du glossaire officiel dont la traduction française diffère systématiquement du terme anglais
+ * (donc à signaler s'ils apparaissent tels quels, non traduits, dans une traduction). Un terme polysémique
+ * (ex. « note » nom / « noter » verbe) a 2 entrées glossaire pour le même « en » : si l'une des deux a une
+ * traduction identique, le terme est ambigu et n'est jamais signalé, plutôt que de risquer un faux positif.
+ * Voir issue #63.
+ * @param {string[][]} entries lignes du CSV glossaire (hors en-tête), déjà filtrées des lignes SPTE/[np]
+ * @param {number} enIndex
+ * @param {number} frIndex
+ * @returns {string[]}
+ */
+export function getUnambiguousGlossaryTerms(entries, enIndex, frIndex) {
+	const termsWithDifferentTranslation = new Set();
+	const termsWithMatchingTranslation = new Set();
+	entries.forEach((row) => {
+		const en = (row[enIndex] || '').trim().toLowerCase();
+		const fr = (row[frIndex] || '').trim().toLowerCase();
+		if (en === '' || fr === '') { return; }
+		if (en === fr) {
+			termsWithMatchingTranslation.add(en);
+		} else {
+			termsWithDifferentTranslation.add(en);
+		}
+	});
+	return [...termsWithDifferentTranslation].filter((term) => !termsWithMatchingTranslation.has(term));
+}
+
 /** @param {ReturnType<typeof buildContext>} ctx */
 export function getGlossaryRegex(ctx, glossary) {
 	const badWordsRegexPattern = ctx.rulesById.get('badWords').regex.source;
@@ -521,17 +548,7 @@ function launchProcess(ctx, spteSettings) {
 				const entries = rows.slice(1)
 					.filter((row) => !row.some((field) => field.toLowerCase().includes('spte') || field.toLowerCase().includes('[np]')));
 
-				// Ne garde un terme que si sa traduction officielle diffère (sinon un mot identique FR/EN,
-				// ex. « plugin », serait signalé à tort). Limite connue : un terme polysémique (ex. « support » nom/verbe) reste signalé dans tous les cas.
-				const termsWithDifferentTranslation = new Set();
-				entries.forEach((row) => {
-					const en = (row[enIndex] || '').trim().toLowerCase();
-					const fr = (row[frIndex] || '').trim().toLowerCase();
-					if (en !== '' && fr !== '' && en !== fr) {
-						termsWithDifferentTranslation.add(en);
-					}
-				});
-				const difference = [...termsWithDifferentTranslation];
+				const difference = getUnambiguousGlossaryTerms(entries, enIndex, frIndex);
 
 				getGlossaryRegex(ctx, difference);
 
