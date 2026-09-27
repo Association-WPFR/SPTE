@@ -6,6 +6,7 @@
 - L'apostrophe courbe inversée (‘) est maintenant signalée comme telle, avec son propre message et son propre compteur, au lieu d'être présentée comme une apostrophe droite
 
 ### Fixed
+- Les caractères de ponctuation à l'intérieur d'un bloc d'interpolation `{{ }}`/`[[ ]]` (ex. `{{count, plural, one{...} other{...}}}`) ne sont plus signalés à tort par les règles de virgule, deux-points, point-virgule, point, points de suspension, signe plus, apostrophes et guillemets (#27)
 - Un terme du glossaire officiel polysémique (nom identique EN/FR, verbe différent, ex. « note »/« noter ») n'est plus signalé à tort quand il est utilisé comme nom (#63)
 - Les mots du glossaire officiel sont maintenant repérés quelle que soit leur casse (majuscule initiale, tout en majuscules…)
 - Les espaces insécables sont de nouveau reconnues comme telles par les règles de ponctuation (« : », « ; », « ! », « ? », « » »), au lieu d'être signalées manquantes à tort (régression de la 3.0.0, remonté par mikejpr, #79)
