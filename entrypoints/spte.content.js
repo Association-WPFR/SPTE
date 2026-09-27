@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { rules, charTitle, charClass, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
-import { addStyle, createElement, parseCsv, isPartOfProjectName } from '../utils/helpers';
+import { addStyle, createElement, parseCsv, isPartOfProjectName, stripHighlightTags } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
 import { createDefaultSettings } from '../utils/settings';
 import {
@@ -15,9 +15,11 @@ import {
 import './style.css';
 
 // GlotDict plante s'il s'exécute après SPTE et trouve des balises qu'il n'attend pas : on force ses réglages pour les désactiver en amont.
-function preventGlotDictTags() {
-	localStorage.setItem('gd_curly_apostrophe_highlight', 'true');
-	localStorage.setItem('gd_non_breaking_space_highlight', 'true');
+// Les clés sont celles que lit gd_get_setting() dans GlotDict (préfixe gd_) : gd_curly_apostrophe_warning et gd_no_non_breaking_space.
+// Issue #80 : sans elles, GlotDict surligne les traductions avant ou après SPTE et en déforme le texte.
+export function preventGlotDictTags() {
+	localStorage.setItem('gd_curly_apostrophe_warning', 'true');
+	localStorage.setItem('gd_no_non_breaking_space', 'true');
 }
 
 function tagTRTranslations(preview) {
@@ -65,7 +67,8 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 	// Inutile de traiter les anciennes traductions rejetées, sauf celle qu’on vient de rejeter, et uniquement pour les compteurs.
 	if (!preview || (preview.classList.contains('status-rejected') && newStatus !== 'rejected')) { return; }
 
-	let text = translation.innerHTML;
+	// GlotDict peut avoir déjà surligné la traduction (et SPTE lui-même en cas de second passage) : on repart du texte seul. Voir issue #80.
+	let text = stripHighlightTags(translation.innerHTML);
 
 	// Pour la compatibilité des regex, on remplace les entités HTML d’espace insécable par le vrai caractère.
 	text = text.replaceAll(/&nbsp;/gmi, ' ');

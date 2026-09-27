@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { parseCsv, isPartOfProjectName } from './helpers';
+import { parseCsv, isPartOfProjectName, stripHighlightTags } from './helpers';
+import { buildWarningSpanHTML } from './warnings';
 
 describe('parseCsv', () => {
 	it('découpe des lignes CSV simples', () => {
@@ -56,5 +57,31 @@ describe('isPartOfProjectName', () => {
 
 	it('retourne false si le nom du projet est vide (breadcrumb absent/non lu)', () => {
 		expect(isPartOfProjectName('widget', '')).toBe(false);
+	});
+});
+
+describe('stripHighlightTags', () => {
+	// Balisage inséré par GlotDict (glotdict-functions.js) autour des espaces insécables et des apostrophes courbes.
+	it('retire le surlignage jaune de GlotDict autour d\'une espace insécable', () => {
+		expect(stripHighlightTags('Super<span style="background-color:yellow">&nbsp;</span>!')).toBe('Super&nbsp;!');
+	});
+	it('retire le surlignage jaune de GlotDict autour d\'une apostrophe courbe', () => {
+		expect(stripHighlightTags('l<span style="background-color:yellow">’</span>auteur')).toBe('l’auteur');
+	});
+	it('retire un surlignage SPTE déjà posé (second passage)', () => {
+		const rule = { id: 'quotes', name: 'apostrophe droite', message: 'Message', cssClass: 'sp-warning--quote' };
+		const highlighted = `l${buildWarningSpanHTML(/** @type {any} */ (rule), '\'')}auteur`;
+		expect(stripHighlightTags(highlighted)).toBe('l\'auteur');
+	});
+	it('retire aussi les surlignages des espaces (sécables et insécables) de SPTE', () => {
+		expect(stripHighlightTags('a<span tabindex="0" class="sp-nbkspaces--showing">&nbsp;</span>b')).toBe('a&nbsp;b');
+		expect(stripHighlightTags('a<span tabindex="0" class="sp-spaces--showing"> </span>b')).toBe('a b');
+	});
+	it('conserve les autres balises, y compris un span sans lien avec ces surlignages', () => {
+		const html = 'Un <strong>mot</strong> et <span class="autre">un span</span> et <a href="#">un lien</a>';
+		expect(stripHighlightTags(html)).toBe(html);
+	});
+	it('ne fait rien sur un texte sans balise', () => {
+		expect(stripHighlightTags('Simple texte : « ok »')).toBe('Simple texte : « ok »');
 	});
 });

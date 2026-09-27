@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.0.2] - xx septembre 2026
+
+### Fixed
+- Les surlignages de GlotDict sur les espaces insécables et les apostrophes courbes sont de nouveau désactivés par SPTE, comme avant la 3.0.0 (les réglages utilisés n'étaient pas les bons, ce qui déformait le texte des traductions, remonté par mikejpr, #80)
+- Le texte des traductions n'est plus déformé (ex: `"background-color:yellow">` affiché à côté des espaces insécables) quand GlotDict ou SPTE a déjà surligné la ligne
+
 ## [3.0.1] - 23 septembre 2026
 
 ### Fixed
