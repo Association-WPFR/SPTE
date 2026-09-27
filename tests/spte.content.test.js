@@ -11,6 +11,8 @@ import {
 	getUnambiguousGlossaryTerms,
 	applyStrictNarrowSpace,
 	preventGlotDictTags,
+	checkConsistencyTranslation,
+	checkConsistencyTranslations,
 } from '../entrypoints/spte.content';
 import { rules } from '../utils/rules';
 import { createElement } from '../utils/helpers';
@@ -210,6 +212,34 @@ describe('rowsDisplay', () => {
 		expect(document.getElementById('row2').style.display).not.toBe('none');
 		expect(ctx.showOnlyWarning.checked).toBe(false);
 		expect(ctx.lsShowOnlyWarning).toBe(false);
+	});
+});
+
+// Issue #75 : page /consistency/, structure sans tr.preview/.translation-text (voir checkTranslation ci-dessous).
+describe('checkConsistencyTranslation(s)', () => {
+	beforeEach(() => {
+		document.body.innerHTML = '<table><tbody>'
+			+ '<tr class="new-translation" id="t-1"><th colspan="2"><strong>Un mot "cité" entre guillemets droits</strong></th></tr>'
+			+ '<tr class="new-translation" id="t-2"><th colspan="2"><strong>Rien à signaler ici</strong></th></tr>'
+			+ '</tbody></table>';
+		rules.forEach((rule) => { rule.counter = 0; });
+	});
+
+	it('surligne une erreur typo dans le <strong> canonique, sans toucher aux compteurs', () => {
+		const translation = document.querySelector('#t-1 strong');
+		const doubleQuotes = rules.find((rule) => rule.id === 'doubleQuotes');
+
+		checkConsistencyTranslation({ projectName: '' }, translation);
+
+		expect(document.querySelector('#t-1 .sp-warning--quote')).not.toBeNull();
+		expect(doubleQuotes.counter).toBe(0);
+	});
+
+	it('parcourt tous les tr.new-translation th strong de la page', () => {
+		checkConsistencyTranslations({ projectName: '' });
+
+		expect(document.querySelector('#t-1 .sp-warning--quote')).not.toBeNull();
+		expect(document.querySelector('#t-2 .sp-warning--quote')).toBeNull();
 	});
 });
 

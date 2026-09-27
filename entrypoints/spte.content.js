@@ -132,6 +132,41 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 	tagTRTranslations(preview);
 }
 
+// La page /consistency/ (issue #75) n'a ni tr.preview ni statut de traduction (untranslated/current/…) :
+// c'est une liste de lecture, pas l'éditeur. Fonction dédiée, plus simple que checkTranslation(),
+// qui se contente de surligner les erreurs typo sans toucher aux compteurs/à la légende/au popup
+// (UI accept/reject de l'éditeur, absente ici).
+/**
+ * @param {ReturnType<typeof buildContext>} ctx
+ * @param {Element} translation
+ */
+export function checkConsistencyTranslation(ctx, translation) {
+	let text = stripHighlightTags(translation.innerHTML);
+	text = text.replaceAll(/&nbsp;/gmi, NBSP);
+	let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
+	for (const rule of rules) {
+		text = text.replace(rule.regex, (string) => {
+			if (!textWithoutTags.match(rule.regex)) {
+				return string;
+			}
+			if (rule.id === 'badWords' && isPartOfProjectName(string, ctx.projectName)) {
+				return string;
+			}
+			textWithoutTags = textWithoutTags.replace(string, '');
+			return buildWarningSpanHTML(rule, string);
+		});
+	}
+	const node = document.createRange().createContextualFragment(DOMPurify.sanitize(text));
+	const newTranslation = /** @type {Element} */ (translation.cloneNode(false));
+	newTranslation.append(node);
+	translation.replaceWith(newTranslation);
+}
+
+/** @param {ReturnType<typeof buildContext>} ctx */
+export function checkConsistencyTranslations(ctx) {
+	document.querySelectorAll('tr.new-translation th strong').forEach((translation) => checkConsistencyTranslation(ctx, translation));
+}
+
 /** @param {ReturnType<typeof buildContext>} ctx */
 function toggleCaption(ctx, e) {
 	ctx.lsHideCaption = ctx.lsHideCaption !== true;
@@ -520,6 +555,12 @@ function mainProcesses(ctx, spteSettings) {
 		declareEvents(ctx);
 	}
 
+	// Page /consistency/ (issue #75) : pas de tr.preview/tableTranslations, gate séparé de celui de l'éditeur ci-dessus.
+	if (ctx.consistencyIsFrench) {
+		setColors(spteSettings.spteColorWord, spteSettings.spteColorQuote, spteSettings.spteColorChar);
+		checkConsistencyTranslations(ctx);
+	}
+
 	if (ctx.onTranslateWordPressRoot && (ctx.frenchStatsGlobal || ctx.frenchLocaleCard)) {
 		frenchiesGoFirst(ctx);
 	}
@@ -585,6 +626,10 @@ function launchProcess(ctx, spteSettings) {
 function buildContext() {
 	const rulesById = new Map(rules.map((rule) => [rule.id, rule]));
 	const onTranslateWordPressRoot = (/https:\/\/translate\.wordpress\.org\//).test(window.location.href);
+
+	// Page /consistency/ (issue #75) : locale choisie via ?set=fr/default (query string, jamais /fr/ dans le path).
+	const onConsistencyPage = (/\/consistency\//).test(window.location.pathname);
+	const consistencyIsFrench = onConsistencyPage && new URLSearchParams(window.location.search).get('set') === 'fr/default';
 
 	// Slug de locale dérivé de l'URL (validé par pattern pour éviter un segment sans rapport, ex: 'wp-plugins'), repli sur 'fr' sinon.
 	let currentProjectLocaleSlug = '';
@@ -663,6 +708,7 @@ function buildContext() {
 	return {
 		rulesById,
 		onTranslateWordPressRoot,
+		consistencyIsFrench,
 		currentProjectLocaleSlug,
 		popupTriggerElement: /** @type {HTMLElement | null} */ (null),
 		typographyURL,
