@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.0.2] - xx septembre 2026
+
+### Fixed
+- Les mots du glossaire officiel sont maintenant repérés quelle que soit leur casse (majuscule initiale, tout en majuscules…)
+
 ## [3.0.1] - 23 septembre 2026
 
 ### Fixed

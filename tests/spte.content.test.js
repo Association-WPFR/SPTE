@@ -50,6 +50,14 @@ describe('getGlossaryRegex', () => {
 		getGlossaryRegex(ctx, ['widget']);
 		expect('Un widget et des widgets').toMatch(badWords.regex);
 	});
+
+	// SPTE met les termes du glossaire en minuscules : la regex doit rester insensible à la casse pour repérer un mot capitalisé.
+	it('repère aussi les termes du glossaire capitalisés', () => {
+		const badWords = { regex: /^original$/gm };
+		const ctx = { rulesById: new Map([['badWords', badWords]]) };
+		getGlossaryRegex(ctx, ['notice']);
+		expect('Une Notice ici').toMatch(badWords.regex);
+	});
 });
 
 describe('gpContentMaxWidth', () => {
