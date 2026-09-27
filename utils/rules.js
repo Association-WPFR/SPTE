@@ -80,13 +80,8 @@ const nbspAny = `(?:${NBSP}|${NNBSP})`;
 
 const fileExtensions = data.fileExtensions.join('|');
 
-// Contexte partagé par les règles de ponctuation qui peuvent apparaître à l'intérieur d'un bloc
-// `{{ }}`/`[[ ]]` (interpolation JS, ex: {{foo:bar}}, {{filter, 'arg'}}) : exclut n'importe quel
-// caractère de ponctuation tant qu'il reste entre les délimiteurs doublés, sans supposer lesquels
-// peuvent y apparaître. Voir issue #27. rgxOpenHook/rgxCloseHook/rgxOpenBrace/rgxCloseBrace/
-// rgxOpenParenthesis/rgxCloseParenthesis/rgxSlash ont leur propre exclusion dédiée aux délimiteurs
-// eux-mêmes et n'ont pas besoin de ce guard.
-const doubleBracketGuard = '(?:(?<=\\{\\{[^{}]*)(?=[^{}]*\\}\\})|(?<=\\[\\[[^\\][]*)(?=[^\\][]*\\]\\]))';
+// Contexte partagé par rgxColon/rgxComma : exclut un caractère entouré d'un bloc `{{ }}`/`[[ ]]` (interpolation JS, ex: {{foo:bar}}). Voir issue #27.
+const doubleBracketGuard = '(?:(?<=\\{\\{[a-zA-Z0-9:,]*)(?=[a-zA-Z0-9:,]*\\}\\})|(?<=\\[\\[[a-zA-Z0-9:,]*)(?=[a-zA-Z0-9:,]*\\]\\]))';
 
 // Contexte partagé par rgxOpenParenthesis/rgxCloseParenthesis : exclut un appel de fonction façon WPCS
 // (ex: registerBlockType( name, settings );), reconnu à sa parenthèse fermante suivie d'un point-virgule. Voir issue #8.
@@ -101,7 +96,7 @@ export const rgxBadWords = new RegExp(`(?<=[\\s,:;"']|^)(?<!«\\s)${data.badWord
  * @returns {RegExp}
  */
 function buildQuoteRegex(quote) {
-	return new RegExp(`(?<!href\\=|href\\='[a-z0-9.]*?|%[a-z])${quote}(?!%[a-z]|${doubleBracketGuard})`, 'gm');
+	return new RegExp(`(?<!href\\=|href\\='[a-z0-9.]*?|%[a-z])${quote}(?!%[a-z])`, 'gm');
 }
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSingleQuotes
@@ -112,7 +107,7 @@ export const rgxReversedQuote = buildQuoteRegex('\u2018');
 
 // Exclut les guillemets d'un attribut HTML (href="...", title="..."), puisque le texte traité
 // peut contenir du HTML inline. https://github.com/Association-WPFR/SPTE/wiki/rgxDoubleQuotes
-export const rgxDoubleQuotes = new RegExp(`(?<!href\\=|href\\="[^"]*?|title\\=|title\\="[^"]*?)"(?!${doubleBracketGuard})`, 'gm');
+export const rgxDoubleQuotes = new RegExp('(?<!href\\=|href\\="[^"]*?|title\\=|title\\="[^"]*?)"', 'gm');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSlash
 export const rgxSlash = new RegExp(`(?<= |\u00a0)\\${data.slash}(?!\\${data.slash}|\\&gt\\;|\\}{2}|\\]{2})|(?<!\\${data.slash})\\${data.slash}(?= |\u00a0)`, 'gmi');
@@ -127,12 +122,12 @@ export const rgxOpenParenthesis = new RegExp(`(?<![ ]|^|<br>|<br/>|<br />)\\${da
 export const rgxOpenBrace = new RegExp(`(?<! |\\${data.openBrace}|^)\\${data.openBrace}(?!\\${data.openBrace})|\\${data.openBrace}(?=[ |\u00a0])(?![ \u00a0][a-zA-Z0-9]+\\${data.closeBrace})`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxEllipsis
-export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}(?!${doubleBracketGuard})|\\${data.ellipsis}(?!${doubleBracketGuard})(?=[a-zÀ-ú0-9]| $|\u00a0$)|\\.\\.\\.(?!${doubleBracketGuard})`, 'gmi');
+export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)|\\.\\.\\.`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxPeriod
 // La 2e alternative (point collé entre 2 mots, ex: "mot.mot") ne se déclenche jamais : son lookbehind
 // négatif matche toujours une chaîne vide. Comportement conservé tel quel, ne pas "corriger" sans test dédié.
-export const rgxPeriod = new RegExp(`(?<= |\u00a0)\\${data.period}(?!${fileExtensions}|${doubleBracketGuard})|(?<![a-zÀ-ú0-9\\${data.period}]*?)\\${data.period}(?=[a-zÀ-ú0-9])|\\${data.period}(?!${doubleBracketGuard})( $|\u00a0$)`, 'gmi');
+export const rgxPeriod = new RegExp(`(?<= |\u00a0)\\${data.period}(?!${fileExtensions})|(?<![a-zÀ-ú0-9\\${data.period}]*?)\\${data.period}(?=[a-zÀ-ú0-9])|\\${data.period}( $|\u00a0$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxComma
 export const rgxComma = new RegExp(`(?<=[ |\u00a0])\\${data.comma}(?!${doubleBracketGuard})|\\${data.comma}(?!${doubleBracketGuard})(?=[a-zÀ-ú]| $|\u00a0$)`, 'gmi');
@@ -151,17 +146,17 @@ export const rgxCloseBrace = new RegExp(`(?<=[ |\u00a0])\\${data.closeBrace}|(?<
 // (setting "espace fine insécable stricte") n'accepte que U+202F, la seule recommandée
 // par le guide du traducteur pour "! ? ;".
 function buildExclamationPointRegex(requiredNbsp) {
-	return new RegExp(`(?<!${requiredNbsp}|^)\\${data.exclamationPoint}(?!important|${doubleBracketGuard})|\\${data.exclamationPoint}(?!important|${doubleBracketGuard})(?! |$|\\))`, 'gmi');
+	return new RegExp(`(?<!${requiredNbsp}|^)\\${data.exclamationPoint}(?!important)|\\${data.exclamationPoint}(?!important)(?! |$|\\))`, 'gmi');
 }
 export const rgxExclamationPoint = buildExclamationPointRegex(nbspAny);
 export const rgxExclamationPointStrict = buildExclamationPointRegex(NNBSP);
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxPlusSign
-export const rgxPlusSign = new RegExp(`(?<!\u00a0|google|^)\\${data.plusSign}(?!${doubleBracketGuard})|\\${data.plusSign}(?!${doubleBracketGuard})(?! |$)`, 'gmi');
+export const rgxPlusSign = new RegExp(`(?<!\u00a0|google|^)\\${data.plusSign}|\\${data.plusSign}(?! |$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxQuestionMark
 function buildQuestionMarkRegex(requiredNbsp) {
-	return new RegExp(`(?<!${requiredNbsp}|\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}(?!${doubleBracketGuard})|(?<!\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}(?!${doubleBracketGuard})(?! |$|\\))`, 'gmi');
+	return new RegExp(`(?<!${requiredNbsp}|\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}|(?<!\\/|\\.php|\\/[a-z0-9\\-\\#\\.\\_]*?|^)\\${data.questionMark}(?! |$|\\))`, 'gmi');
 }
 export const rgxQuestionMark = buildQuestionMarkRegex(nbspAny);
 export const rgxQuestionMarkStrict = buildQuestionMarkRegex(NNBSP);
@@ -172,17 +167,17 @@ export const rgxColon = new RegExp(`(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSemiColon
 function buildSemiColonRegex(requiredNbsp) {
-	return new RegExp(`(?<!${requiredNbsp}|:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?!$|${doubleBracketGuard})|(?<!:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?!${doubleBracketGuard})(?! |$)`, 'gmi');
+	return new RegExp(`(?<!${requiredNbsp}|:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?!$)|(?<!:[a-z0-9.]*?|&[${data.semiColon}a-z0-9#]*?)${data.semiColon}(?! |$)`, 'gmi');
 }
 export const rgxSemiColon = buildSemiColonRegex(nbspAny);
 export const rgxSemiColonStrict = buildSemiColonRegex(NNBSP);
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxClosingFrQuote
 // U+00A0 reste la seule espace recommandée devant "»" (pas de variante stricte ici).
-export const rgxClosingFrQuote = new RegExp(`(?<!${nbspAny})${data.closingFrQuote}(?!${doubleBracketGuard})|${data.closingFrQuote}(?!${doubleBracketGuard})(?! |\\.|\\,|${nbspAny}\\?|${nbspAny}\\!|${nbspAny}\\:|${nbspAny}\\;|&lt;|$)`, 'gmi');
+export const rgxClosingFrQuote = new RegExp(`(?<!${nbspAny})${data.closingFrQuote}|${data.closingFrQuote}(?! |\\.|\\,|${nbspAny}\\?|${nbspAny}\\!|${nbspAny}\\:|${nbspAny}\\;|&lt;|$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxOpenFrQuote
-export const rgxOpenFrQuote = new RegExp(`(?<! |^|&gt;)${data.openFrQuote}(?!${doubleBracketGuard})|${data.openFrQuote}(?!${doubleBracketGuard})(?!\u00a0|$)`, 'gmi');
+export const rgxOpenFrQuote = new RegExp(`(?<! |^|&gt;)${data.openFrQuote}|${data.openFrQuote}(?!\u00a0|$)`, 'gmi');
 
 // Détecte un caractère de substitution (point, tiret, astérisque) à la place du vrai point
 // médian U+00B7 (·) en écriture épicène. Valide uniquement le caractère utilisé quand
