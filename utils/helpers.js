@@ -96,3 +96,18 @@ export function stripHighlightTags(html) {
 		return span.slice(span.indexOf('>') + 1, span.lastIndexOf('</span>'));
 	});
 }
+
+/**
+ * Un rule antérieur dans checkTranslation() peut déjà avoir injecté un <span ...> (attributs
+ * tabindex/aria-label/data-message/class, tous entre guillemets doubles) : un rule suivant, dans
+ * la même passe, ne doit jamais matcher à l'intérieur de ce balisage déjà posé, sous peine de le
+ * corrompre en y insérant un second <span> (ex: un deuxième rule qui détecte les guillemets droits
+ * matcherait aussi ceux de tabindex="0"). Cherche le dernier « < » et le dernier « > » avant offset :
+ * si le « < » est plus récent, offset est à l'intérieur d'une balise non refermée.
+ * @param {string} text
+ * @param {number} offset
+ * @returns {boolean}
+ */
+export function isInsideHtmlTag(text, offset) {
+	return text.lastIndexOf('<', offset - 1) > text.lastIndexOf('>', offset - 1);
+}

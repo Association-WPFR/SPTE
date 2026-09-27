@@ -231,6 +231,27 @@ describe('checkTranslation', () => {
 		expect(warning).not.toBeNull();
 	});
 
+	// Bug trouvé en revue de la 3.1 (préexistant, identique sur main) : le <span> injecté par un rule a des
+	// attributs entre guillemets doubles (tabindex="0", aria-label="…") ; sans garde, le rule doubleQuotes qui
+	// tourne ensuite dans la même passe matche AUSSI ces guillemets d'attributs et corrompt le balisage déjà posé.
+	it('ne corrompt pas un <span> déjà injecté par un rule précédent dans la même passe', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Un plug-in "cité"';
+		const badWords = rules.find((rule) => rule.id === 'badWords');
+		const doubleQuotes = rules.find((rule) => rule.id === 'doubleQuotes');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(badWords.counter).toBe(1);
+		expect(doubleQuotes.counter).toBe(2);
+		const spans = document.querySelectorAll('#preview-1-1 .translation-text > span');
+		expect(spans).toHaveLength(3);
+		spans.forEach((span) => {
+			expect(span.getAttribute('tabindex')).toBe('0');
+		});
+		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe('Un plug-in "cité"');
+	});
+
 	it('signale une apostrophe courbe inversée avec sa propre règle, pas comme une apostrophe droite', () => {
 		const translated = document.querySelector('#preview-1-1 .translation-text');
 		translated.innerHTML = 'Impossible d‘importer les widgets';
