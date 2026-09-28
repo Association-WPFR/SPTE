@@ -5,13 +5,11 @@ name: Publie vers les stores
 # reste un clic manuel sur chaque dashboard, comme fait à la main pour la 3.1.0.
 #
 # Secrets requis (Settings > Secrets and variables > Actions) :
-#   CHROME_EXTENSION_ID, CHROME_CLIENT_ID, CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN
-#     (OAuth installé via Google Cloud Console, cf. https://wxt.dev/guide/essentials/publishing.html)
-#   FIREFOX_EXTENSION_ID, FIREFOX_JWT_ISSUER, FIREFOX_JWT_SECRET
+#   CHROME_EXTENSION_ID (iemhkjiajghnamjfdhaejclbffnfhhkh, fiche validée par Google), CHROME_CLIENT_ID,
+#   CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN (OAuth installé via Google Cloud Console, cf.
+#   https://wxt.dev/guide/essentials/publishing.html)
+#   FIREFOX_EXTENSION_ID, FIREFOX_JWT_ISSUER, FIREFOX_JWT_SECRET (déjà configurés)
 #     (clé API générée sur https://addons.mozilla.org/developers/addon/api/key/)
-#
-# Ne pas déclencher tant que la fiche Chrome (nouvelle, resoumise après fermeture de l'ancienne)
-# n'est pas validée par Google — voir issue #70.
 
 on:
   workflow_dispatch:

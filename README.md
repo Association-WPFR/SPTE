@@ -19,7 +19,7 @@
     <img src="https://img.shields.io/badge/Firefox-Ajouter_à_Firefox-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white" alt="Ajouter à Firefox" />
   </a>
   &nbsp;&nbsp;
-  <a href="https://chrome.google.com/webstore/detail/spte/phoglaigilljgehnhjfomdhkgokelgnk">
+  <a href="https://chromewebstore.google.com/detail/spte/iemhkjiajghnamjfdhaejclbffnfhhkh">
     <img src="https://img.shields.io/badge/Chrome_Web_Store-Ajouter_à_Chrome-4285F4?style=for-the-badge&logo=chromewebstore&logoColor=white" alt="Ajouter à Chrome" />
   </a>
 </p>
