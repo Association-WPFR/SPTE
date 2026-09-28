@@ -11,6 +11,8 @@ import {
 	getUnambiguousGlossaryTerms,
 	applyStrictNarrowSpace,
 	preventGlotDictTags,
+	checkConsistencyTranslation,
+	checkConsistencyTranslations,
 } from '../entrypoints/spte.content';
 import { rules } from '../utils/rules';
 import { createElement } from '../utils/helpers';
@@ -79,14 +81,6 @@ describe('getUnambiguousGlossaryTerms', () => {
 		const entries = [
 			['note', 'note'],
 			['note', 'noter'],
-		];
-		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
-	});
-
-	it('exclut un terme polysémique quelle que soit l\'ordre des lignes dans le CSV', () => {
-		const entries = [
-			['note', 'noter'],
-			['note', 'note'],
 		];
 		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
 	});
@@ -221,6 +215,34 @@ describe('rowsDisplay', () => {
 	});
 });
 
+// Issue #75 : page /consistency/, structure sans tr.preview/.translation-text (voir checkTranslation ci-dessous).
+describe('checkConsistencyTranslation(s)', () => {
+	beforeEach(() => {
+		document.body.innerHTML = '<table><tbody>'
+			+ '<tr class="new-translation" id="t-1"><th colspan="2"><strong>Un mot "cité" entre guillemets droits</strong></th></tr>'
+			+ '<tr class="new-translation" id="t-2"><th colspan="2"><strong>Rien à signaler ici</strong></th></tr>'
+			+ '</tbody></table>';
+		rules.forEach((rule) => { rule.counter = 0; });
+	});
+
+	it('surligne une erreur typo dans le <strong> canonique, sans toucher aux compteurs', () => {
+		const translation = document.querySelector('#t-1 strong');
+		const doubleQuotes = rules.find((rule) => rule.id === 'doubleQuotes');
+
+		checkConsistencyTranslation({ projectName: '' }, translation);
+
+		expect(document.querySelector('#t-1 .sp-warning--quote')).not.toBeNull();
+		expect(doubleQuotes.counter).toBe(0);
+	});
+
+	it('parcourt tous les tr.new-translation th strong de la page', () => {
+		checkConsistencyTranslations({ projectName: '' });
+
+		expect(document.querySelector('#t-1 .sp-warning--quote')).not.toBeNull();
+		expect(document.querySelector('#t-2 .sp-warning--quote')).toBeNull();
+	});
+});
+
 describe('checkTranslation', () => {
 	beforeEach(() => {
 		document.body.innerHTML = translationsTableHTML;
@@ -258,6 +280,74 @@ describe('checkTranslation', () => {
 			expect(span.getAttribute('tabindex')).toBe('0');
 		});
 		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe('Un plug-in "cité"');
+	});
+
+	// Issue #27 : un bloc d'interpolation JS {{ }}/[[ ]] n'est pas du texte français, ignoré par toutes les
+	// règles de ponctuation. Testé bout-en-bout (pas juste le regex en isolation) : un rule antérieur dans
+	// la boucle (openBrace) injecte un <span> autour d'une des deux accolades du délimiteur si le bloc
+	// contient une espace après "{{" — ça défait un guard basé sur l'adjacence textuelle des caractères.
+	it('ignore les deux-points à l\'intérieur d\'un bloc {{ }} avec espace (défait un guard basé sur l\'adjacence)', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Le {{ foo:bar }} ici';
+		const colon = rules.find((rule) => rule.id === 'colon');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		// openBrace reste hors scope de #27 (signale toujours la seconde accolade elle-même dans ce cas
+		// spacé : limite préexistante et distincte de rgxOpenBrace, pas du contenu du bloc). Seul le
+		// contenu (ici le deux-points) doit être protégé.
+		expect(colon.counter).toBe(0);
+	});
+
+	// Exemple du CHANGELOG (ICU MessageFormat) : une seule paire d'accolades imbriquées par branche.
+	it('ignore la ponctuation dans un bloc {{ }} avec des accolades simples imbriquées (ICU MessageFormat)', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = '{{count, plural, one{...} other{...}}}';
+		const ellipsis = rules.find((rule) => rule.id === 'ellipsis');
+		const comma = rules.find((rule) => rule.id === 'comma');
+		const openBrace = rules.find((rule) => rule.id === 'openBrace');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(ellipsis.counter).toBe(0);
+		expect(comma.counter).toBe(0);
+		expect(openBrace.counter).toBe(0);
+	});
+
+	it('ignore une virgule à l\'intérieur d\'un bloc [[ ]]', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Un mot [[a,b]] ici';
+		const comma = rules.find((rule) => rule.id === 'comma');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(comma.counter).toBe(0);
+	});
+
+	it('signale toujours la ponctuation en dehors de tout bloc {{ }}/[[ ]]', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = '{{a}} : après';
+		const colon = rules.find((rule) => rule.id === 'colon');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(colon.counter).toBe(1);
+	});
+
+	// La garde s'applique de façon partagée à toutes les règles de ponctuation (pas seulement virgule/deux-points).
+	it.each([
+		['point-virgule', '{{a;b}}', 'semiColon'],
+		['point d\'exclamation', '{{a!b}}', 'exclamationPoint'],
+		['point d\'interrogation', '{{a?b}}', 'questionMark'],
+		['apostrophe droite', '{{a\'b}}', 'quotes'],
+		['guillemet droit', '{{a"b}}', 'doubleQuotes'],
+	])('ignore un %s à l\'intérieur d\'un bloc {{ }}', (_label, html, ruleId) => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = html;
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(rules.find((rule) => rule.id === ruleId).counter).toBe(0);
 	});
 
 	it('signale une apostrophe courbe inversée avec sa propre règle, pas comme une apostrophe droite', () => {

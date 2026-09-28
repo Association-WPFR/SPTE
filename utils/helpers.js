@@ -81,9 +81,7 @@ export function isPartOfProjectName(word, projectName) {
 // ceux de SPTE (classes sp-warning--*, sp-spaces--*, sp-nbkspaces--*) et ceux de GlotDict
 // (<span style="background-color:yellow"> autour des espaces insécables et des apostrophes courbes).
 const HIGHLIGHT_SPAN_REGEX = /<span\b(?:[^>"]|"[^"]*")*>[^<]*<\/span>/g;
-// Guillemets simples ou doubles, casse indifférente : GlotDict ou une extension tierce peut générer
-// l'un ou l'autre.
-const HIGHLIGHT_MARKER_REGEX = /class=["']sp-(?:warning--|spaces--|nbkspaces--)[^"']*["']|style=["'][^"']*background-color:\s*yellow/i;
+const HIGHLIGHT_MARKER_REGEX = /class="sp-(?:warning--|spaces--|nbkspaces--)[^"]*"|style="[^"]*background-color:\s*yellow/;
 
 /**
  * Retire les surlignages déjà posés (par SPTE ou par GlotDict) pour ne garder que le texte de la
@@ -93,7 +91,6 @@ const HIGHLIGHT_MARKER_REGEX = /class=["']sp-(?:warning--|spaces--|nbkspaces--)[
  * @returns {string}
  */
 export function stripHighlightTags(html) {
-	if (!html.includes('<span')) { return html; }
 	return html.replace(HIGHLIGHT_SPAN_REGEX, (span) => {
 		if (!HIGHLIGHT_MARKER_REGEX.test(span)) { return span; }
 		return span.slice(span.indexOf('>') + 1, span.lastIndexOf('</span>'));
@@ -113,4 +110,36 @@ export function stripHighlightTags(html) {
  */
 export function isInsideHtmlTag(text, offset) {
 	return text.lastIndexOf('<', offset - 1) > text.lastIndexOf('>', offset - 1);
+}
+
+const HTML_TAG_REGEX = /<[^>]*>/g;
+// Contenu entre les délimiteurs doublés, avec tolérance à UN niveau de paire { }/[ ] imbriquée
+// (ex: ICU MessageFormat "{{count, plural, one{...} other{...}}}"). Un niveau de plus n'est pas
+// supporté (cas non rencontré en pratique à ce jour).
+const CURLY_INNER = '(?:[^{}]|\\{[^{}]*\\})*';
+const SQUARE_INNER = '(?:[^\\][]|\\[[^\\][]*\\])*';
+// « before » peut se terminer au milieu d'une paire imbriquée non refermée (ex: juste après "one{") ;
+// « after » peut symétriquement commencer par la fin de cette même paire (ex: "...}").
+const CURLY_OPEN_AT_END = new RegExp(`\\{\\{${CURLY_INNER}(?:\\{[^{}]*)?$`);
+const CURLY_CLOSE_AT_START = new RegExp(`^(?:[^{}]*\\})?${CURLY_INNER}\\}\\}`);
+const SQUARE_OPEN_AT_END = new RegExp(`\\[\\[${SQUARE_INNER}(?:\\[[^\\][]*)?$`);
+const SQUARE_CLOSE_AT_START = new RegExp(`^(?:[^\\][]*\\])?${SQUARE_INNER}\\]\\]`);
+
+/**
+ * Un bloc d'interpolation JS `{{ }}`/`[[ ]]` (ex: {{foo:bar}}, {{count, plural, one{...} other{...}}})
+ * n'est pas du texte français à vérifier : ignorer tout caractère de ponctuation à l'intérieur. Voir
+ * issue #27. Les balises HTML réelles (un <span> déjà injecté par un rule précédent dans la même passe,
+ * cf. isInsideHtmlTag) sont retirées avant de tester l'adjacence, sinon un rule antérieur qui a inséré
+ * un <span> autour d'un des deux caractères du délimiteur (ex: `{<span ...>{</span>`) casse cette
+ * adjacence textuelle et défait la détection.
+ * @param {string} text
+ * @param {number} offset
+ * @returns {boolean}
+ */
+export function isInsideDoubleBracketBlock(text, offset) {
+	const before = text.slice(0, offset).replace(HTML_TAG_REGEX, '');
+	const after = text.slice(offset).replace(HTML_TAG_REGEX, '');
+	const insideCurly = CURLY_OPEN_AT_END.test(before) && CURLY_CLOSE_AT_START.test(after);
+	const insideSquare = SQUARE_OPEN_AT_END.test(before) && SQUARE_CLOSE_AT_START.test(after);
+	return insideCurly || insideSquare;
 }

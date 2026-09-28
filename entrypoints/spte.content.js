@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { rules, charTitle, charClass, NBSP, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
-import { addStyle, createElement, parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag } from '../utils/helpers';
+import { addStyle, createElement, parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag, isInsideDoubleBracketBlock } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
 import { createDefaultSettings } from '../utils/settings';
 import {
@@ -17,11 +17,6 @@ import './style.css';
 // GlotDict plante s'il s'exécute après SPTE et trouve des balises qu'il n'attend pas : on force ses réglages pour les désactiver en amont.
 // Les clés sont celles que lit gd_get_setting() dans GlotDict (préfixe gd_) : gd_curly_apostrophe_warning et gd_no_non_breaking_space.
 // Issue #80 : sans elles, GlotDict surligne les traductions avant ou après SPTE et en déforme le texte.
-// Effet de bord assumé : gd_curly_apostrophe_warning ne fait pas qu'éteindre le surlignage, il active aussi
-// l'avertissement natif de GlotDict "straight single quote" (doublon avec la règle « apostrophe droite » de
-// SPTE), et l'utilisateur ne peut pas le désactiver dans GlotDict puisque SPTE réécrit ce réglage à chaque
-// chargement de page. Inoffensif (même diagnostic que SPTE), mais non demandé : aucun autre réglage GlotDict
-// ne permet d'éteindre le seul surlignage sans ce doublon.
 export function preventGlotDictTags() {
 	localStorage.setItem('gd_curly_apostrophe_warning', 'true');
 	localStorage.setItem('gd_no_non_breaking_space', 'true');
@@ -89,6 +84,11 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 				return string;
 			}
 
+			// Contenu d'un bloc d'interpolation JS {{ }}/[[ ]] : pas du texte français à vérifier. Voir issue #27.
+			if (isInsideDoubleBracketBlock(fullString, offset)) {
+				return string;
+			}
+
 			// Un match absent de textWithoutTags est à l'intérieur d'une balise, à ignorer. Suppose que
 			// l'ordre de ce replace() et du textWithoutTags.replace(string, '') qui suit reste identique.
 			if (!textWithoutTags.match(rule.regex)) {
@@ -142,6 +142,47 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 	translation.replaceWith(newTranslation);
 	addEditorHighlighter(preview);
 	tagTRTranslations(preview);
+}
+
+// La page /consistency/ (issue #75) n'a ni tr.preview ni statut de traduction (untranslated/current/…) :
+// c'est une liste de lecture, pas l'éditeur. Fonction dédiée, plus simple que checkTranslation(),
+// qui se contente de surligner les erreurs typo sans toucher aux compteurs/à la légende/au popup
+// (UI accept/reject de l'éditeur, absente ici).
+/**
+ * @param {ReturnType<typeof buildContext>} ctx
+ * @param {Element} translation
+ */
+export function checkConsistencyTranslation(ctx, translation) {
+	let text = stripHighlightTags(translation.innerHTML);
+	text = text.replaceAll(/&nbsp;/gmi, NBSP);
+	let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
+	for (const rule of rules) {
+		text = text.replace(rule.regex, (string, offset, fullString) => {
+			if (isInsideHtmlTag(fullString, offset)) {
+				return string;
+			}
+			if (isInsideDoubleBracketBlock(fullString, offset)) {
+				return string;
+			}
+			if (!textWithoutTags.match(rule.regex)) {
+				return string;
+			}
+			if (rule.id === 'badWords' && isPartOfProjectName(string, ctx.projectName)) {
+				return string;
+			}
+			textWithoutTags = textWithoutTags.replace(string, '');
+			return buildWarningSpanHTML(rule, string);
+		});
+	}
+	const node = document.createRange().createContextualFragment(DOMPurify.sanitize(text));
+	const newTranslation = /** @type {Element} */ (translation.cloneNode(false));
+	newTranslation.append(node);
+	translation.replaceWith(newTranslation);
+}
+
+/** @param {ReturnType<typeof buildContext>} ctx */
+export function checkConsistencyTranslations(ctx) {
+	document.querySelectorAll('tr.new-translation th strong').forEach((translation) => checkConsistencyTranslation(ctx, translation));
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
@@ -473,20 +514,19 @@ export function gpContentMaxWidth(ctx, spteEnlargeTable, spteGpcontentBig) {
  * @returns {string[]}
  */
 export function getUnambiguousGlossaryTerms(entries, enIndex, frIndex) {
-	// true : au moins une entrée avec une traduction différente. false : toutes les entrées vues jusqu'ici
-	// ont une traduction identique (terme ambigu dès qu'une seule diffère, cf. commentaire ci-dessus).
-	const termTranslationDiffers = new Map();
+	const termsWithDifferentTranslation = new Set();
+	const termsWithMatchingTranslation = new Set();
 	entries.forEach((row) => {
 		const en = (row[enIndex] || '').trim().toLowerCase();
 		const fr = (row[frIndex] || '').trim().toLowerCase();
 		if (en === '' || fr === '') { return; }
 		if (en === fr) {
-			termTranslationDiffers.set(en, false);
-		} else if (!termTranslationDiffers.has(en)) {
-			termTranslationDiffers.set(en, true);
+			termsWithMatchingTranslation.add(en);
+		} else {
+			termsWithDifferentTranslation.add(en);
 		}
 	});
-	return [...termTranslationDiffers].filter(([, differs]) => differs).map(([term]) => term);
+	return [...termsWithDifferentTranslation].filter((term) => !termsWithMatchingTranslation.has(term));
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
@@ -531,6 +571,12 @@ function mainProcesses(ctx, spteSettings) {
 			observeMutations(ctx);
 		}
 		declareEvents(ctx);
+	}
+
+	// Page /consistency/ (issue #75) : pas de tr.preview/tableTranslations, gate séparé de celui de l'éditeur ci-dessus.
+	if (ctx.consistencyIsFrench) {
+		setColors(spteSettings.spteColorWord, spteSettings.spteColorQuote, spteSettings.spteColorChar);
+		checkConsistencyTranslations(ctx);
 	}
 
 	if (ctx.onTranslateWordPressRoot && (ctx.frenchStatsGlobal || ctx.frenchLocaleCard)) {
@@ -598,6 +644,10 @@ function launchProcess(ctx, spteSettings) {
 function buildContext() {
 	const rulesById = new Map(rules.map((rule) => [rule.id, rule]));
 	const onTranslateWordPressRoot = (/https:\/\/translate\.wordpress\.org\//).test(window.location.href);
+
+	// Page /consistency/ (issue #75) : locale choisie via ?set=fr/default (query string, jamais /fr/ dans le path).
+	const onConsistencyPage = (/\/consistency\//).test(window.location.pathname);
+	const consistencyIsFrench = onConsistencyPage && new URLSearchParams(window.location.search).get('set') === 'fr/default';
 
 	// Slug de locale dérivé de l'URL (validé par pattern pour éviter un segment sans rapport, ex: 'wp-plugins'), repli sur 'fr' sinon.
 	let currentProjectLocaleSlug = '';
@@ -676,6 +726,7 @@ function buildContext() {
 	return {
 		rulesById,
 		onTranslateWordPressRoot,
+		consistencyIsFrench,
 		currentProjectLocaleSlug,
 		popupTriggerElement: /** @type {HTMLElement | null} */ (null),
 		typographyURL,
