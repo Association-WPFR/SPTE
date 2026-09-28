@@ -21,6 +21,8 @@ Comment ce dépôt est organisé, et pourquoi.
 ├── docs/                        # Ressources non buildées (captures d'écran, images du wiki)
 ├── public/                      # Icônes de l'extension, copiées telles quelles dans le build
 ├── .github/workflows/ci.yml     # CI GitHub Actions
+├── .github/workflows/release.yml         # Sur push d'un tag X.Y.Z : build les zips, crée une release GitHub en brouillon
+├── .github/workflows/publish-stores.yml  # Déclenchement manuel : upload (sans soumission review) vers Chrome Web Store et Firefox AMO
 ├── wxt.config.js                # Config WXT (manifest v3, permissions, id Firefox)
 ├── eslint.config.js             # Config ESLint (flat config)
 ├── tsconfig.json                # checkJs seul — pas de TypeScript, juste du typage JSDoc sur du JS
@@ -41,6 +43,10 @@ Comment ce dépôt est organisé, et pourquoi.
 ## CI/CD
 
 `.github/workflows/ci.yml`, déclenché sur les PR vers `main` : `npm ci` puis `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run build:firefox`, puis upload du rapport `coverage/` en artefact — dans cet ordre, tout doit passer avant merge.
+
+`.github/workflows/release.yml`, déclenché sur push d'un tag `X.Y.Z` (doit matcher `package.json`) : build les zips (Chrome, Firefox, sources), génère les notes (CHANGELOG + issues fermées + contributeurs) et crée une release GitHub en **brouillon** (jamais publiée automatiquement).
+
+`.github/workflows/publish-stores.yml`, déclenchement **manuel** uniquement (`workflow_dispatch`, tag en entrée) : upload les paquets en brouillon sur Chrome Web Store et Firefox AMO via `wxt submit`, sans soumission automatique en review (`--*-skip-submit-review`) — l'envoi en review reste un clic manuel sur chaque dashboard. Nécessite des secrets GitHub Actions (détail en commentaire dans le fichier). Voir issue #70.
 
 ## Known pitfalls
 
