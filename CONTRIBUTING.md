@@ -27,9 +27,13 @@ Le moteur des règles typographiques vit dans `utils/rules.js` (c'est le tableau
 
 Avant de modifier une règle existante, lancez `npm test` pour vérifier l'état actuel. Les tests sont obligatoires.
 
-## Tags de version
+## Changelog, nouvelle version et convention
 
-Format `X.X.X`, sans `v` devant (ex: `3.0.0`, pas `v3.0.0`) — convention en place depuis la 2.0.0.
+Merci de ne PAS toucher au CHANGELOG.md, vous pouvez pré-macher le travail du mainteneur en ajoutant quelques lignes dans la description de votre PR en vous inspirant du format du CHANGELOG.md. Mais ne modifiez pas le versionning des fichiers, ne pré-supposez pas de la future version.
+
+Les PRs proposez sont systématiquement merge dans une nouvelle PR qui portera le numéro de la prochaine version. Exemple pour [la version 3.1](https://github.com/Association-WPFR/SPTE/pull/86) qui embarque plusieurs propositions de PRs.
+
+Format `X.X.X`, sans `v` devant (ex: `3.0.0`, pas `v3.0.0`), convention introduite par Loïc depuis la 2.0.0.
 
 ## Workflow git
 
