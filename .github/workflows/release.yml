@@ -82,7 +82,7 @@ jobs:
             echo ""
             echo "## Contributeurs"
             echo ""
-            echo "Commits et issues fermées : merci à toutes les personnes ci-dessous."
+            echo "Merci à toutes les personnes ci-dessous qui ont participées aux issues et commits liées à cette nouvelle version."
             echo ""
           } >> /tmp/notes.md
 
