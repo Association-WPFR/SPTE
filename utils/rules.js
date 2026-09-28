@@ -74,8 +74,8 @@ function escapeRegExp(str) {
 // Le guide du traducteur WP FR distingue 2 espaces insécables : U+00A0 (normale, devant
 // ":"/"»") et U+202F (fine, devant "; ! ?").
 // https://fr.wordpress.org/team/handbook/guide-du-traducteur/les-regles-typographiques-utilisees-pour-la-traduction-de-wp-en-francais/
-const NBSP = ' ';
-const NNBSP = ' ';
+export const NBSP = '\u00a0';
+const NNBSP = '\u202f';
 const nbspAny = `(?:${NBSP}|${NNBSP})`;
 
 const fileExtensions = data.fileExtensions.join('|');
@@ -90,9 +90,20 @@ const wpcsFunctionCallGuard = '[^()]*\\)\\s*;';
 // https://github.com/Association-WPFR/SPTE/wiki/rgxBadWords
 export const rgxBadWords = new RegExp(`(?<=[\\s,:;"']|^)(?<!«\\s)${data.badWord.map(escapeRegExp).join('(?=[\\s,.:;"\']|$)|(?<=[\\s,:;"\']|^)(?<!«\\s)')}(?=[\\s,.:;"']|$)`, 'gmi');
 
-// Inclut l'apostrophe courbe inversée (U+2018), à ne pas confondre avec U+2019 (la bonne, jamais signalée).
+// Mêmes exceptions pour l'apostrophe droite (U+0027) et l'apostrophe courbe inversée (U+2018) : attribut href, placeholder printf (%s).
+/**
+ * @param {string} quote
+ * @returns {RegExp}
+ */
+function buildQuoteRegex(quote) {
+	return new RegExp(`(?<!href\\=|href\\='[a-z0-9.]*?|%[a-z])${quote}(?!%[a-z])`, 'gm');
+}
+
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSingleQuotes
-export const rgxSingleQuotes = new RegExp('(?<!href\\=|href\\=\'[a-z0-9.]*?|%[a-z])[\u0027\u2018](?!%[a-z])', 'gm');
+export const rgxSingleQuotes = buildQuoteRegex('\u0027');
+
+// L'apostrophe courbe inversée (U+2018) est à ne pas confondre avec U+2019 (la bonne, jamais signalée).
+export const rgxReversedQuote = buildQuoteRegex('\u2018');
 
 // Exclut les guillemets d'un attribut HTML (href="...", title="..."), puisque le texte traité
 // peut contenir du HTML inline. https://github.com/Association-WPFR/SPTE/wiki/rgxDoubleQuotes
@@ -218,6 +229,16 @@ export const rules = [
 		cssClass: 'sp-warning--quote',
 		counter: 0,
 		regex: rgxSingleQuotes,
+	},
+	{
+		id: 'reversedQuote',
+		name: 'apostrophe courbe inversée',
+		title: 'Apostrophes courbes inversées : ',
+		message: 'Apostrophe courbe inversée au lieu d’une apostrophe courbe',
+		severity: 'certain',
+		cssClass: 'sp-warning--reversed-quote',
+		counter: 0,
+		regex: rgxReversedQuote,
 	},
 	{
 		id: 'doubleQuotes',

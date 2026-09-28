@@ -8,7 +8,9 @@ import {
 	frenchFlag,
 	gpContentMaxWidth,
 	getGlossaryRegex,
+	getUnambiguousGlossaryTerms,
 	applyStrictNarrowSpace,
+	preventGlotDictTags,
 } from '../entrypoints/spte.content';
 import { rules } from '../utils/rules';
 import { createElement } from '../utils/helpers';
@@ -49,6 +51,61 @@ describe('getGlossaryRegex', () => {
 		const ctx = { rulesById: new Map([['badWords', badWords]]) };
 		getGlossaryRegex(ctx, ['widget']);
 		expect('Un widget et des widgets').toMatch(badWords.regex);
+	});
+
+	// SPTE met les termes du glossaire en minuscules : la regex doit rester insensible à la casse pour repérer un mot capitalisé.
+	it('repère aussi les termes du glossaire capitalisés', () => {
+		const badWords = { regex: /^original$/gm };
+		const ctx = { rulesById: new Map([['badWords', badWords]]) };
+		getGlossaryRegex(ctx, ['notice']);
+		expect('Une Notice ici').toMatch(badWords.regex);
+	});
+});
+
+describe('getUnambiguousGlossaryTerms', () => {
+	it('garde un terme dont la traduction diffère toujours', () => {
+		const entries = [['plugin', 'extension']];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual(['plugin']);
+	});
+
+	it('exclut un terme dont la traduction est identique (mot commun EN/FR)', () => {
+		const entries = [['plugin', 'plugin']];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
+	});
+
+	// Issue #63 : « note » (nom, non traduit) et « note »/« noter » (verbe, traduit) sont 2 entrées
+	// glossaire distinctes pour le même terme anglais « note ». Le terme est ambigu, jamais signalé.
+	it('exclut un terme polysémique qui a à la fois une entrée identique et une entrée différente', () => {
+		const entries = [
+			['note', 'note'],
+			['note', 'noter'],
+		];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
+	});
+
+	it('exclut un terme polysémique quelle que soit l\'ordre des lignes dans le CSV', () => {
+		const entries = [
+			['note', 'noter'],
+			['note', 'note'],
+		];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
+	});
+
+	it('ignore les lignes avec un champ vide', () => {
+		const entries = [['', 'extension'], ['plugin', '']];
+		expect(getUnambiguousGlossaryTerms(entries, 0, 1)).toEqual([]);
+	});
+});
+
+describe('preventGlotDictTags', () => {
+	// Issue #80 : ces clés doivent être celles que GlotDict lit (gd_get_setting préfixe « gd_ »), sinon il surligne quand même.
+	it('désactive le surlignage des apostrophes courbes et des espaces insécables dans GlotDict', () => {
+		localStorage.clear();
+
+		preventGlotDictTags();
+
+		expect(localStorage.getItem('gd_curly_apostrophe_warning')).toBe('true');
+		expect(localStorage.getItem('gd_no_non_breaking_space')).toBe('true');
 	});
 });
 
@@ -182,6 +239,72 @@ describe('checkTranslation', () => {
 		expect(warning).not.toBeNull();
 	});
 
+	// Bug trouvé en revue de la 3.1 (préexistant, identique sur main) : le <span> injecté par un rule a des
+	// attributs entre guillemets doubles (tabindex="0", aria-label="…") ; sans garde, le rule doubleQuotes qui
+	// tourne ensuite dans la même passe matche AUSSI ces guillemets d'attributs et corrompt le balisage déjà posé.
+	it('ne corrompt pas un <span> déjà injecté par un rule précédent dans la même passe', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Un plug-in "cité"';
+		const badWords = rules.find((rule) => rule.id === 'badWords');
+		const doubleQuotes = rules.find((rule) => rule.id === 'doubleQuotes');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(badWords.counter).toBe(1);
+		expect(doubleQuotes.counter).toBe(2);
+		const spans = document.querySelectorAll('#preview-1-1 .translation-text > span');
+		expect(spans).toHaveLength(3);
+		spans.forEach((span) => {
+			expect(span.getAttribute('tabindex')).toBe('0');
+		});
+		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe('Un plug-in "cité"');
+	});
+
+	it('signale une apostrophe courbe inversée avec sa propre règle, pas comme une apostrophe droite', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Impossible d‘importer les widgets';
+		const quotes = rules.find((rule) => rule.id === 'quotes');
+		const reversedQuote = rules.find((rule) => rule.id === 'reversedQuote');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(quotes.counter).toBe(0);
+		expect(reversedQuote.counter).toBe(1);
+		const warning = document.querySelector('#preview-1-1 .sp-warning--reversed-quote');
+		expect(warning).not.toBeNull();
+		expect(warning.getAttribute('aria-label')).toContain('apostrophe courbe inversée');
+		expect(document.querySelector('#preview-1-1').classList.contains('sp-has-spte-error')).toBe(true);
+	});
+
+	// Issue #80 : GlotDict surligne les espaces insécables avec un <span style="background-color:yellow">
+	// avant SPTE ; les règles ne doivent pas s'appliquer dans les attributs de cette balise.
+	it('ne signale pas le balisage de surlignage de GlotDict et laisse le texte intact', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Vous êtes inscrit<span style="background-color:yellow">\u00a0</span>!';
+		const doubleQuotes = rules.find((rule) => rule.id === 'doubleQuotes');
+		const colon = rules.find((rule) => rule.id === 'colon');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(doubleQuotes.counter).toBe(0);
+		expect(colon.counter).toBe(0);
+		const visibleText = document.querySelector('#preview-1-1 .translation-text').textContent;
+		expect(visibleText).not.toContain('background-color');
+		expect(visibleText.replace(/\u00a0/g, ' ')).toBe('Vous êtes inscrit !');
+	});
+
+	it('laisse le texte identique quand SPTE traite deux fois la même ligne', () => {
+		const first = document.querySelector('#preview-1-1 .translation-text');
+		first.innerHTML = 'Échec de l\'enregistrement des données';
+		checkTranslation({ projectName: '' }, first, 'untranslated', 'current');
+		const second = document.querySelector('#preview-1-1 .translation-text');
+		const textAfterFirstPass = second.textContent;
+
+		checkTranslation({ projectName: '' }, second, 'untranslated', 'current');
+
+		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe(textAfterFirstPass);
+	});
+
 	it('ignore une ancienne traduction déjà rejetée (sauf si on vient tout juste de la rejeter)', () => {
 		const translated = document.querySelector('#preview-2-2 .translation-text');
 		document.querySelector('#preview-2-2').classList.add('status-rejected');
@@ -192,6 +315,27 @@ describe('checkTranslation', () => {
 
 		expect(doubleQuotes.counter).toBe(0);
 		expect(translated.innerHTML).toBe('Un mot "cité"');
+	});
+
+	// Issue #79 : innerHTML sérialise l'espace insécable en &nbsp; ; elle doit rester insécable pour les regex.
+	it('ne signale pas une espace insécable devant les deux points', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Note\u00a0: fermez cette fenêtre';
+		const colon = rules.find((rule) => rule.id === 'colon');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(colon.counter).toBe(0);
+	});
+
+	it('signale une espace normale devant les deux points', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Note : fermez cette fenêtre';
+		const colon = rules.find((rule) => rule.id === 'colon');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(colon.counter).toBe(1);
 	});
 
 	it('ignore un mot déconseillé qui fait partie du nom du projet en cours (issue #38)', () => {

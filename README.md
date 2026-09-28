@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[![Version 3.0.0](https://img.shields.io/badge/version-3.0.0-blue?style=flat-square)](CHANGELOG.md) [![Licence GPL v2+](https://img.shields.io/badge/licence-GPL%20v2%2B-276749?style=flat-square)](LICENSE) [![Tests : Vitest](https://img.shields.io/badge/tests-vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://github.com/Association-WPFR/SPTE/actions/workflows/ci.yml) [![Lines](https://img.shields.io/badge/lines-45.61%25-red.svg?style=flat)](https://github.com/Association-WPFR/SPTE/actions/workflows/ci.yml)
+[![Version 3.1.0](https://img.shields.io/badge/version-3.1.0-blue?style=flat-square)](CHANGELOG.md) [![Licence GPL v2+](https://img.shields.io/badge/licence-GPL%20v2%2B-276749?style=flat-square)](LICENSE) [![Tests : Vitest](https://img.shields.io/badge/tests-vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://github.com/Association-WPFR/SPTE/actions/workflows/ci.yml) [![Lines](https://img.shields.io/badge/lines-47.99%25-red.svg?style=flat)](https://github.com/Association-WPFR/SPTE/actions/workflows/ci.yml)
 
 </div>
 

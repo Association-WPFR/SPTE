@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
-import { rules, charTitle, charClass, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
-import { addStyle, createElement, parseCsv, isPartOfProjectName } from '../utils/helpers';
+import { rules, charTitle, charClass, NBSP, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
+import { addStyle, createElement, parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
 import { createDefaultSettings } from '../utils/settings';
 import {
@@ -15,9 +15,16 @@ import {
 import './style.css';
 
 // GlotDict plante s'il s'exécute après SPTE et trouve des balises qu'il n'attend pas : on force ses réglages pour les désactiver en amont.
-function preventGlotDictTags() {
-	localStorage.setItem('gd_curly_apostrophe_highlight', 'true');
-	localStorage.setItem('gd_non_breaking_space_highlight', 'true');
+// Les clés sont celles que lit gd_get_setting() dans GlotDict (préfixe gd_) : gd_curly_apostrophe_warning et gd_no_non_breaking_space.
+// Issue #80 : sans elles, GlotDict surligne les traductions avant ou après SPTE et en déforme le texte.
+// Effet de bord assumé : gd_curly_apostrophe_warning ne fait pas qu'éteindre le surlignage, il active aussi
+// l'avertissement natif de GlotDict "straight single quote" (doublon avec la règle « apostrophe droite » de
+// SPTE), et l'utilisateur ne peut pas le désactiver dans GlotDict puisque SPTE réécrit ce réglage à chaque
+// chargement de page. Inoffensif (même diagnostic que SPTE), mais non demandé : aucun autre réglage GlotDict
+// ne permet d'éteindre le seul surlignage sans ce doublon.
+export function preventGlotDictTags() {
+	localStorage.setItem('gd_curly_apostrophe_warning', 'true');
+	localStorage.setItem('gd_no_non_breaking_space', 'true');
 }
 
 function tagTRTranslations(preview) {
@@ -27,7 +34,7 @@ function tagTRTranslations(preview) {
 	if (hasTranslation && spWarning) {
 		preview.classList.add('sp-has-spte-warning');
 	}
-	if (hasTranslation && (trad.querySelector('.sp-warning--word') || trad.querySelector('.sp-warning--quote'))) {
+	if (hasTranslation && (trad.querySelector('.sp-warning--word') || trad.querySelector('.sp-warning--quote') || trad.querySelector('.sp-warning--reversed-quote'))) {
 		preview.classList.add('sp-has-spte-error');
 	}
 }
@@ -65,14 +72,23 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 	// Inutile de traiter les anciennes traductions rejetées, sauf celle qu’on vient de rejeter, et uniquement pour les compteurs.
 	if (!preview || (preview.classList.contains('status-rejected') && newStatus !== 'rejected')) { return; }
 
-	let text = translation.innerHTML;
+	// GlotDict peut avoir déjà surligné la traduction (et SPTE lui-même en cas de second passage) : on repart du texte seul. Voir issue #80.
+	let text = stripHighlightTags(translation.innerHTML);
 
-	// Pour la compatibilité des regex, on remplace les entités HTML d’espace insécable par le vrai caractère.
-	text = text.replaceAll(/&nbsp;/gmi, ' ');
+	// Pour la compatibilité des regex, on remplace les entités HTML d’espace insécable par le vrai caractère. NBSP est écrit avec
+	// un échappement (\u00a0) : un caractère littéral se confond avec une espace normale et peut être normalisé sans que ça se voie (issue #79).
+	text = text.replaceAll(/&nbsp;/gmi, NBSP);
 
 	let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
 	for (const rule of rules) {
-		text = text.replace(rule.regex, (string) => {
+		text = text.replace(rule.regex, (string, offset, fullString) => {
+			// Un rule précédent dans cette même passe peut avoir injecté un <span ...> (attributs entre
+			// guillemets doubles) : ignorer tout match à l'intérieur de ce balisage déjà posé, sinon il est
+			// corrompu par un second <span> imbriqué dans ses propres attributs.
+			if (isInsideHtmlTag(fullString, offset)) {
+				return string;
+			}
+
 			// Un match absent de textWithoutTags est à l'intérieur d'une balise, à ignorer. Suppose que
 			// l'ordre de ce replace() et du textWithoutTags.replace(string, '') qui suit reste identique.
 			if (!textWithoutTags.match(rule.regex)) {
@@ -223,6 +239,10 @@ function displayResults(ctx) {
 	const quotes = document.querySelector('.sp-warning-title.sp-warning--quote');
 	if (ctx.rulesById.get('quotes').counter === 0 && ctx.rulesById.get('doubleQuotes').counter === 0 && quotes?.parentElement) {
 		quotes.parentElement.remove();
+	}
+	const reversedQuotes = document.querySelector('.sp-warning-title.sp-warning--reversed-quote');
+	if (ctx.rulesById.get('reversedQuote').counter === 0 && reversedQuotes?.parentElement) {
+		reversedQuotes.parentElement.remove();
 	}
 }
 
@@ -418,7 +438,7 @@ function setColors(spteColorWord, spteColorQuote, spteColorChar) {
 	spteColorQuote ||= '#ff0000';
 	spteColorChar ||= '#ff00ff';
 	addStyle('.sp-warning--word', `background-color:${spteColorWord};color:white;font-weight:bold;padding:1px;margin:0 1px`);
-	addStyle('.sp-warning--quote', `display:inline-block;line-height:16px;box-shadow:${spteColorQuote} 0px 0px 0px 2px inset;background-color:white;padding:3px 4px`);
+	addStyle('.sp-warning--quote, .sp-warning--reversed-quote', `display:inline-block;line-height:16px;box-shadow:${spteColorQuote} 0px 0px 0px 2px inset;background-color:white;padding:3px 4px`);
 	addStyle('.sp-warning--char', `display:inline-block;line-height:16px;box-shadow:${spteColorChar} 0px 0px 0px 2px inset;background-color:white;padding:3px 4px`);
 	addStyle('.sp-spaces--showing', 'display:inline-block;line-height:16px;background-color:deepskyblue;border:2px solid deepskyblue');
 	addStyle('.sp-nbkspaces--showing', 'display:inline-block;line-height:16px;background-color:white;border:2px solid white');
@@ -441,13 +461,42 @@ export function gpContentMaxWidth(ctx, spteEnlargeTable, spteGpcontentBig) {
 	}
 }
 
+/**
+ * Termes du glossaire officiel dont la traduction française diffère systématiquement du terme anglais
+ * (donc à signaler s'ils apparaissent tels quels, non traduits, dans une traduction). Un terme polysémique
+ * (ex. « note » nom / « noter » verbe) a 2 entrées glossaire pour le même « en » : si l'une des deux a une
+ * traduction identique, le terme est ambigu et n'est jamais signalé, plutôt que de risquer un faux positif.
+ * Voir issue #63.
+ * @param {string[][]} entries lignes du CSV glossaire (hors en-tête), déjà filtrées des lignes SPTE/[np]
+ * @param {number} enIndex
+ * @param {number} frIndex
+ * @returns {string[]}
+ */
+export function getUnambiguousGlossaryTerms(entries, enIndex, frIndex) {
+	// true : au moins une entrée avec une traduction différente. false : toutes les entrées vues jusqu'ici
+	// ont une traduction identique (terme ambigu dès qu'une seule diffère, cf. commentaire ci-dessus).
+	const termTranslationDiffers = new Map();
+	entries.forEach((row) => {
+		const en = (row[enIndex] || '').trim().toLowerCase();
+		const fr = (row[frIndex] || '').trim().toLowerCase();
+		if (en === '' || fr === '') { return; }
+		if (en === fr) {
+			termTranslationDiffers.set(en, false);
+		} else if (!termTranslationDiffers.has(en)) {
+			termTranslationDiffers.set(en, true);
+		}
+	});
+	return [...termTranslationDiffers].filter(([, differs]) => differs).map(([term]) => term);
+}
+
 /** @param {ReturnType<typeof buildContext>} ctx */
 export function getGlossaryRegex(ctx, glossary) {
 	const badWordsRegexPattern = ctx.rulesById.get('badWords').regex.source;
 	// On duplique chaque mot avec un s final pour pouvoir traiter les pluriels.
 	const glossaryWithPlurals = glossary.reduce((a, i) => a.concat(i, `${i}s`), []);
 	const glossaryRegexPattern = `${glossaryWithPlurals.join('(?=[\\s,:;"\']|$)|(?<=[\\s,:;"\']|^)(?<!«\\s)')}(?=[\\s,.:;"']|$)`;
-	const newRgxBadWords = new RegExp(`${badWordsRegexPattern}|${glossaryRegexPattern}`, 'gm');
+	// Flag « i » indispensable : les termes du glossaire sont en minuscules (et rgxBadWords l'a déjà), sinon un mot capitalisé n'est pas repéré.
+	const newRgxBadWords = new RegExp(`${badWordsRegexPattern}|${glossaryRegexPattern}`, 'gmi');
 	ctx.rulesById.get('badWords').regex = newRgxBadWords;
 }
 
@@ -512,17 +561,7 @@ function launchProcess(ctx, spteSettings) {
 				const entries = rows.slice(1)
 					.filter((row) => !row.some((field) => field.toLowerCase().includes('spte') || field.toLowerCase().includes('[np]')));
 
-				// Ne garde un terme que si sa traduction officielle diffère (sinon un mot identique FR/EN,
-				// ex. « plugin », serait signalé à tort). Limite connue : un terme polysémique (ex. « support » nom/verbe) reste signalé dans tous les cas.
-				const termsWithDifferentTranslation = new Set();
-				entries.forEach((row) => {
-					const en = (row[enIndex] || '').trim().toLowerCase();
-					const fr = (row[frIndex] || '').trim().toLowerCase();
-					if (en !== '' && fr !== '' && en !== fr) {
-						termsWithDifferentTranslation.add(en);
-					}
-				});
-				const difference = [...termsWithDifferentTranslation];
+				const difference = getUnambiguousGlossaryTerms(entries, enIndex, frIndex);
 
 				getGlossaryRegex(ctx, difference);
 
