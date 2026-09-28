@@ -43,20 +43,37 @@ describe('parseCsv', () => {
 // Issue #38 : un mot du glossaire qui fait partie du nom de l'extension en cours de traduction
 // (ex: "Widget") n'est pas un anglicisme à corriger.
 describe('isPartOfProjectName', () => {
-	it('détecte un mot contenu dans le nom du projet', () => {
-		expect(isPartOfProjectName('Widget', 'Super Widget – Blocks & More')).toBe(true);
+	it('détecte le nom du projet cité littéralement dans la traduction', () => {
+		const text = 'Super Widget – Blocks & More';
+		const offset = text.indexOf('Widget');
+		expect(isPartOfProjectName(text, offset, 'Widget'.length, 'Super Widget – Blocks & More')).toBe(true);
 	});
 
 	it('ignore la casse', () => {
-		expect(isPartOfProjectName('widget', 'Super Widget')).toBe(true);
+		const text = 'super widget';
+		expect(isPartOfProjectName(text, 6, 'widget'.length, 'Super Widget')).toBe(true);
 	});
 
-	it('retourne false si le mot n’est pas dans le nom du projet', () => {
-		expect(isPartOfProjectName('plugin', 'Super Widget')).toBe(false);
+	// Issue #95 : un projet nommé "GeoDirectory - Plugin" ne doit exempter "plugin" que lorsque le nom
+	// du projet est littéralement cité dans la traduction, pas dans n'importe quelle phrase du projet.
+	it('ne signale pas la coïncidence d\'un mot ailleurs dans une phrase normale', () => {
+		const text = 'lorsque le plugin est supprimé';
+		const offset = text.indexOf('plugin');
+		expect(isPartOfProjectName(text, offset, 'plugin'.length, 'GeoDirectory - Plugin')).toBe(false);
+	});
+
+	it('détecte bien le mot quand il fait partie du nom du projet cité tel quel', () => {
+		const text = 'GeoDirectory - Plugin';
+		const offset = text.toLowerCase().indexOf('plugin');
+		expect(isPartOfProjectName(text, offset, 'Plugin'.length, 'GeoDirectory - Plugin')).toBe(true);
+	});
+
+	it('retourne false si le nom du projet n’apparaît pas dans le texte', () => {
+		expect(isPartOfProjectName('une phrase quelconque', 0, 6, 'Super Widget')).toBe(false);
 	});
 
 	it('retourne false si le nom du projet est vide (breadcrumb absent/non lu)', () => {
-		expect(isPartOfProjectName('widget', '')).toBe(false);
+		expect(isPartOfProjectName('widget', 0, 6, '')).toBe(false);
 	});
 });
 

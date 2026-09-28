@@ -7,6 +7,8 @@
 
 ### Fixed
 - Les caractères de ponctuation à l'intérieur d'un bloc d'interpolation `{{ }}`/`[[ ]]` (ex. `{{count, plural, one{...} other{...}}}`) ne sont plus signalés à tort, quelle que soit la règle concernée (#27)
+- « entête » (sans trait d'union), la forme validée par le glossaire officiel, n'est plus signalée à tort : c'est désormais « en-tête » (avec trait d'union) qui est déconseillée (#93)
+- Un mot déconseillé n'est plus exempté à tort dans toutes les traductions d'un projet dont le nom contient ce mot (ex. « plugin » dans un projet nommé « GeoDirectory - Plugin ») : l'exemption ne s'applique désormais que si le nom du projet est cité tel quel dans la traduction (#95)
 
 ## [3.0.1] - 23 septembre 2026
 

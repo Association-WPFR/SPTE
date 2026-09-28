@@ -52,7 +52,7 @@ describe('rgxBadWords', () => {
 		'plugin', 'greffon', 'uploader', 'downloader', 'customiser', 'updater', 'mr',
 		'sidebar', 'shortcode', 'tooltip', 'breadcrumb', 'changelog', 'thumbnail',
 		'addon', 'add-on', 'back-end', 'front-end', 'capabilities',
-		'entête', 'et/ou', 'customizer', 'template', 'templates', 'add-ons', 'événement',
+		'en-tête', 'et/ou', 'customizer', 'template', 'templates', 'add-ons', 'événement',
 	])('détecte l’anglicisme "%s"', (word) => {
 		expect(matches(rgxBadWords, `Un mot ici : ${word} et la suite.`)).toEqual([word]);
 	});
@@ -61,6 +61,13 @@ describe('rgxBadWords', () => {
 	// "événement" (accent aigu, forme désormais déconseillée).
 	it('ignore la forme correcte "évènement" (accent grave)', () => {
 		expect(matches(rgxBadWords, 'Un évènement important arrive.')).toEqual([]);
+	});
+
+	// Issue #93 : "entête" (sans trait d'union) est la forme validée par le glossaire officiel
+	// WordPress FR ("header") — ne doit jamais être signalée, contrairement à "en-tête" (avec
+	// trait d'union), désormais la forme déconseillée.
+	it('ignore la forme correcte "entête" (sans trait d\'union)', () => {
+		expect(matches(rgxBadWords, 'Cliquez sur l\'entête du tableau.')).toEqual([]);
 	});
 
 	// Tests transposés depuis le wiki (rgxBadWords.md) : le mot doit être détecté quand il est

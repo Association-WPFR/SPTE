@@ -435,4 +435,14 @@ describe('checkTranslation', () => {
 		checkTranslation({ projectName: 'Plugin' }, translated, 'untranslated', 'current');
 		expect(badWords.counter).toBe(0);
 	});
+
+	// Issue #95 : un projet nommé "GeoDirectory - Plugin" contient "Plugin" dans son propre nom, mais ça
+	// ne doit exempter "plugin" que quand le nom du projet est cité tel quel, pas dans une phrase normale.
+	it('signale toujours un mot déconseillé utilisé normalement, même si le nom du projet le contient aussi', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		const badWords = rules.find((rule) => rule.id === 'badWords');
+		translated.innerHTML = 'lorsque le plugin est supprimé';
+		checkTranslation({ projectName: 'GeoDirectory - Plugin' }, translated, 'untranslated', 'current');
+		expect(badWords.counter).toBe(1);
+	});
 });

@@ -67,14 +67,22 @@ export function parseCsv(text) {
 }
 
 // Un mot signalé par badWords qui fait partie du nom du projet (ex: une extension "Widget") n'est pas un anglicisme. Voir issue #38.
+// Vérifie que CETTE occurrence précise est bien le nom du projet cité dans la traduction (le nom du
+// projet apparaît littéralement dans le texte, à cette position), pas juste que le mot matché est une
+// sous-chaîne du nom du projet : sinon un projet nommé "GeoDirectory - Plugin" exempterait "plugin"
+// dans toutes ses traductions, même utilisé comme mot normal. Voir issue #95.
 /**
- * @param {string} word
+ * @param {string} text texte complet de la traduction où le mot a été trouvé
+ * @param {number} offset position du mot trouvé dans text
+ * @param {number} matchedLength longueur du mot trouvé
  * @param {string} projectName
  * @returns {boolean}
  */
-export function isPartOfProjectName(word, projectName) {
+export function isPartOfProjectName(text, offset, matchedLength, projectName) {
 	if (!projectName) { return false; }
-	return projectName.toLowerCase().includes(word.toLowerCase());
+	const projectNameIndex = text.toLowerCase().indexOf(projectName.toLowerCase());
+	if (projectNameIndex === -1) { return false; }
+	return offset >= projectNameIndex && offset + matchedLength <= projectNameIndex + projectName.length;
 }
 
 // Surlignages qu'on sait poser dans une traduction et qui ne font pas partie de son contenu :

@@ -96,7 +96,7 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 			}
 
 			// Le mot fait partie du nom du projet (ex: une extension nommée "Widget") : pas un anglicisme à corriger. Voir issue #38.
-			if (rule.id === 'badWords' && isPartOfProjectName(string, ctx.projectName)) {
+			if (rule.id === 'badWords' && isPartOfProjectName(fullString, offset, string.length, ctx.projectName)) {
 				return string;
 			}
 
@@ -167,7 +167,7 @@ export function checkConsistencyTranslation(ctx, translation) {
 			if (!textWithoutTags.match(rule.regex)) {
 				return string;
 			}
-			if (rule.id === 'badWords' && isPartOfProjectName(string, ctx.projectName)) {
+			if (rule.id === 'badWords' && isPartOfProjectName(fullString, offset, string.length, ctx.projectName)) {
 				return string;
 			}
 			textWithoutTags = textWithoutTags.replace(string, '');

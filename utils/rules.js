@@ -28,7 +28,7 @@ const data = {
 		'back-end',
 		'front-end',
 		'capabilities',
-		'entête',
+		'en-tête',
 		'et/ou',
 		'customizer',
 		'template',
