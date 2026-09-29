@@ -26,6 +26,8 @@
 
 ## Fonctionnement
 
+SPTE surligne les erreurs de typographie française et les mots déconseillés dans les traductions du logiciel WordPress, sur translate.wordpress.org.
+
 ![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-1.png "Statistiques")
 ![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-2.png "Coloration syntaxique")
 
