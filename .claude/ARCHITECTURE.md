@@ -2,6 +2,28 @@
 
 Comment ce dépôt est organisé, et pourquoi.
 
+## Stack & philosophie
+
+| | |
+|---|---|
+| **Langage** | JavaScript, pas de TypeScript (`checkJs` seul, typage via JSDoc) |
+| **Framework** | [WXT](https://wxt.dev/) — build manifest v3 Chrome + Firefox depuis la même base |
+| **Tests** | Vitest, co-localisés (`*.test.js` à côté du code testé) |
+| **Lint** | ESLint (flat config) + `addons-linter` (soumission AMO) |
+| **Cible** | Un seul site (translate.wordpress.org), pas d'API serveur, pas de build backend |
+| **Philosophie** | Extension minimale et ciblée : un correcteur typographique, rien d'autre. Pas d'abstraction pour des besoins hypothétiques, pas de dépendance ajoutée sans raison précise. Le code lit les traductions dans le DOM, les compare à des règles (regex + glossaire officiel), affiche des avertissements — aucune donnée envoyée à un tiers. |
+
+## Dossier `.claude/`
+
+Contexte et garde-fous pour les sessions Claude Code sur ce dépôt :
+
+- **`CLAUDE.md`** — point d'entrée, toujours chargé : stack, commandes, pointeurs vers le reste.
+- **`ARCHITECTURE.md`** — ce fichier : structure du dépôt, contraintes de design, CI/CD, pièges connus.
+- **`rules/`** — checklists **bloquantes**, chargées à chaque session (ex: tenir `CHANGELOG.md` à jour, cohérence de version à chaque bump).
+- **`skills/`** — procédures chargées à la demande seulement (ex: trouver des pages de test réelles sur translate.wordpress.org).
+- **`hooks/`** — scripts déclenchés automatiquement (bannière de session, lint des fichiers édités).
+- **`settings.json`** — configuration Claude Code propre à ce dépôt.
+
 ## Repository layout
 
 ```text
