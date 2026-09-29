@@ -6,7 +6,7 @@ Comment ce dépôt est organisé, et pourquoi.
 
 | | |
 |---|---|
-| **Langage** | JavaScript, pas de TypeScript |
+| **Langage** | JavaScript, typé par JSDoc (vérifié par `tsc`) |
 | **Framework** | [WXT](https://wxt.dev/) (un seul code source pour Chrome et Firefox) |
 | **Tests** | Vitest, à côté du code testé |
 | **Lint** | ESLint + `addons-linter` |
