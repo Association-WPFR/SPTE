@@ -7,7 +7,7 @@ Comment ce dépôt est organisé, et pourquoi.
 | | |
 |---|---|
 | **Langage** | JavaScript, pas de TypeScript |
-| **Framework** | [WXT](https://wxt.dev/) — un seul code source pour Chrome et Firefox |
+| **Framework** | [WXT](https://wxt.dev/) (un seul code source pour Chrome et Firefox) |
 | **Tests** | Vitest, à côté du code testé |
 | **Lint** | ESLint + `addons-linter` (soumission AMO) |
 | **Cible** | translate.wordpress.org uniquement, pas de serveur |
@@ -17,12 +17,12 @@ Comment ce dépôt est organisé, et pourquoi.
 
 Contexte donné aux sessions Claude Code sur ce dépôt :
 
-- **`CLAUDE.md`** — point d’entrée, toujours chargé.
-- **`ARCHITECTURE.md`** — ce fichier.
-- **`rules/`** — checklists bloquantes, chargées à chaque session.
-- **`skills/`** — procédures chargées à la demande.
-- **`hooks/`** — scripts automatiques (bannière de session, lint des fichiers édités).
-- **`settings.json`** — configuration Claude Code du dépôt.
+- **`CLAUDE.md`** : point d’entrée, toujours chargé.
+- **`ARCHITECTURE.md`** : ce fichier.
+- **`rules/`** : checklists bloquantes, chargées à chaque session.
+- **`skills/`** : procédures chargées à la demande.
+- **`hooks/`** : scripts automatiques (bannière de session, lint des fichiers édités).
+- **`settings.json`** : configuration Claude Code du dépôt.
 
 ## Repository layout
 
