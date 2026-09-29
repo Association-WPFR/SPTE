@@ -9,7 +9,7 @@ Comment ce dépôt est organisé, et pourquoi.
 | **Langage** | JavaScript, pas de TypeScript |
 | **Framework** | [WXT](https://wxt.dev/) (un seul code source pour Chrome et Firefox) |
 | **Tests** | Vitest, à côté du code testé |
-| **Lint** | ESLint + `addons-linter` (soumission AMO) |
+| **Lint** | ESLint + `addons-linter` |
 | **Cible** | translate.wordpress.org uniquement, pas de serveur |
 | **Philosophie** | Un correcteur typographique, rien de plus : pas d’abstraction inutile, pas de dépendance sans raison, aucune donnée envoyée à un tiers. |
 
