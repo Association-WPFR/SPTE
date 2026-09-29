@@ -6,23 +6,23 @@ Comment ce dépôt est organisé, et pourquoi.
 
 | | |
 |---|---|
-| **Langage** | JavaScript, pas de TypeScript (`checkJs` seul, typage via JSDoc) |
-| **Framework** | [WXT](https://wxt.dev/) — build manifest v3 Chrome + Firefox depuis la même base |
-| **Tests** | Vitest, co-localisés (`*.test.js` à côté du code testé) |
-| **Lint** | ESLint (flat config) + `addons-linter` (soumission AMO) |
-| **Cible** | Un seul site (translate.wordpress.org), pas d'API serveur, pas de build backend |
-| **Philosophie** | Extension minimale et ciblée : un correcteur typographique, rien d'autre. Pas d'abstraction pour des besoins hypothétiques, pas de dépendance ajoutée sans raison précise. Le code lit les traductions dans le DOM, les compare à des règles (regex + glossaire officiel), affiche des avertissements — aucune donnée envoyée à un tiers. |
+| **Langage** | JavaScript, pas de TypeScript |
+| **Framework** | [WXT](https://wxt.dev/) — un seul code source pour Chrome et Firefox |
+| **Tests** | Vitest, à côté du code testé |
+| **Lint** | ESLint + `addons-linter` (soumission AMO) |
+| **Cible** | translate.wordpress.org uniquement, pas de serveur |
+| **Philosophie** | Un correcteur typographique, rien de plus : pas d’abstraction inutile, pas de dépendance sans raison, aucune donnée envoyée à un tiers. |
 
 ## Dossier `.claude/`
 
-Contexte et garde-fous pour les sessions Claude Code sur ce dépôt :
+Contexte donné aux sessions Claude Code sur ce dépôt :
 
-- **`CLAUDE.md`** — point d'entrée, toujours chargé : stack, commandes, pointeurs vers le reste.
-- **`ARCHITECTURE.md`** — ce fichier : structure du dépôt, contraintes de design, CI/CD, pièges connus.
-- **`rules/`** — checklists **bloquantes**, chargées à chaque session (ex: tenir `CHANGELOG.md` à jour, cohérence de version à chaque bump).
-- **`skills/`** — procédures chargées à la demande seulement (ex: trouver des pages de test réelles sur translate.wordpress.org).
-- **`hooks/`** — scripts déclenchés automatiquement (bannière de session, lint des fichiers édités).
-- **`settings.json`** — configuration Claude Code propre à ce dépôt.
+- **`CLAUDE.md`** — point d’entrée, toujours chargé.
+- **`ARCHITECTURE.md`** — ce fichier.
+- **`rules/`** — checklists bloquantes, chargées à chaque session.
+- **`skills/`** — procédures chargées à la demande.
+- **`hooks/`** — scripts automatiques (bannière de session, lint des fichiers édités).
+- **`settings.json`** — configuration Claude Code du dépôt.
 
 ## Repository layout
 

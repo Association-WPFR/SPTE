@@ -29,11 +29,11 @@
 ![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-1.png "Statistiques")
 ![Screenshot](https://raw.githubusercontent.com/Association-WPFR/SPTE/main/docs/screenshots/screenshot-2.png "Coloration syntaxique")
 
-Documentation complète sur le wiki : [Que fait SPTE](https://github.com/Association-WPFR/SPTE/wiki/Que-fait-SPTE), [Le fonctionnement de SPTE](https://github.com/Association-WPFR/SPTE/wiki/Le-fonctionnement-de-SPTE) (interface, GlotDict & SPTE, uBlock Origin).
+Documentation complète sur le wiki : [Que fait SPTE](https://github.com/Association-WPFR/SPTE/wiki/Que-fait-SPTE), [Le fonctionnement de SPTE](https://github.com/Association-WPFR/SPTE/wiki/Le-fonctionnement-de-SPTE) (interface, GlotDict & SPTE, uBlock Origin).
 
 ## Architecture
 
-Extension WebExtension bâtie avec [WXT](https://wxt.dev/). Stack, philosophie et structure du dossier `.claude/` : [`.claude/ARCHITECTURE.md`](.claude/ARCHITECTURE.md).
+Extension WebExtension bâtie avec [WXT](https://wxt.dev/). Stack, philosophie et structure du dossier `.claude/` : [`.claude/ARCHITECTURE.md`](.claude/ARCHITECTURE.md).
 
 ## Remerciements
 
