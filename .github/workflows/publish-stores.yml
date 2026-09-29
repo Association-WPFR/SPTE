@@ -17,6 +17,10 @@ on:
       tag:
         description: "Tag à publier (doit exister et correspondre à la version de package.json), ex: 3.1.0"
         required: true
+      dry_run:
+        description: "Test à blanc : vérifie l'authentification sans rien uploader"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -64,4 +68,5 @@ jobs:
             --firefox-extension-id "$FIREFOX_EXTENSION_ID" \
             --firefox-jwt-issuer "$FIREFOX_JWT_ISSUER" \
             --firefox-jwt-secret "$FIREFOX_JWT_SECRET" \
-            --firefox-skip-submit-review
+            --firefox-skip-submit-review \
+            --dry-run ${{ inputs.dry_run }}
