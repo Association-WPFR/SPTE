@@ -345,4 +345,26 @@ describe('checkTranslation', () => {
 		checkTranslation({ projectName: 'Plugin' }, translated, 'untranslated', 'current');
 		expect(badWords.counter).toBe(0);
 	});
+
+	// Le groupe capturant de rgxPeriod décale les arguments transmis par replace() (régression de la 3.1.0).
+	it('détecte trois points ASCII sans lever d\'exception', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Chargement...';
+		const ellipsis = rules.find((rule) => rule.id === 'ellipsis');
+
+		expect(() => checkTranslation({ projectName: '' }, translated, 'untranslated', 'current')).not.toThrow();
+
+		expect(ellipsis.counter).toBe(1);
+		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe('Chargement...');
+	});
+
+	it('détecte un point suivi d\'une espace finale sans lever d\'exception', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Fin de phrase. ';
+		const period = rules.find((rule) => rule.id === 'period');
+
+		expect(() => checkTranslation({ projectName: '' }, translated, 'untranslated', 'current')).not.toThrow();
+
+		expect(period.counter).toBe(1);
+	});
 });

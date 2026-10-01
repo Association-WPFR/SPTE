@@ -81,7 +81,14 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 
 	let textWithoutTags = text.replaceAll(/&lt;.*?(?<!\/)&gt;/gmi, '');
 	for (const rule of rules) {
-		text = text.replace(rule.regex, (string, offset, fullString) => {
+		text = text.replace(rule.regex, (string, ...replaceArgs) => {
+			// String.prototype.replace() transmet un argument par groupe capturant avant la position et la chaîne
+			// d'origine, puis un objet de groupes nommés le cas échéant (rgxPeriod contient un groupe capturant).
+			// La position et la chaîne sont donc lues à partir de la fin de la liste des arguments.
+			const positionalArgs = typeof replaceArgs.at(-1) === 'object' ? replaceArgs.slice(0, -1) : replaceArgs;
+			const offset = /** @type {number} */ (positionalArgs.at(-2));
+			const fullString = /** @type {string} */ (positionalArgs.at(-1));
+
 			// Un rule précédent dans cette même passe peut avoir injecté un <span ...> (attributs entre
 			// guillemets doubles) : ignorer tout match à l'intérieur de ce balisage déjà posé, sinon il est
 			// corrompu par un second <span> imbriqué dans ses propres attributs.
