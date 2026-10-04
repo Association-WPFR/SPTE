@@ -9,6 +9,7 @@ import {
 	rgxOpenParenthesis,
 	rgxOpenBrace,
 	rgxEllipsis,
+	rgxAsciiEllipsis,
 	rgxPeriod,
 	rgxComma,
 	rgxCloseHook,
@@ -276,10 +277,8 @@ describe('rgxEllipsis', () => {
 	it('ignore des points de suspension suivis d\'une espace', () => {
 		expect(matches(rgxEllipsis, 'et… puis')).toEqual([]);
 	});
-	// Issue #29 : trois points ASCII successifs devraient être remplacés par le caractère
-	// unique « … » et doivent donc être détectés au même titre.
-	it('détecte trois points ASCII successifs', () => {
-		expect(matches(rgxEllipsis, 'et...puis')).toEqual(['...']);
+	it('ne détecte pas trois points ASCII, traités par rgxAsciiEllipsis', () => {
+		expect(matches(rgxEllipsis, 'et...puis')).toEqual([]);
 	});
 	it('détecte des points de suspension précédés d’une espace', () => {
 		expect(matches(rgxEllipsis, 'mot …!')).toHaveLength(1);
@@ -294,6 +293,22 @@ describe('rgxEllipsis', () => {
 	it('détecte aussi des points de suspension collés à × ou ÷ (comportement actuel, pas un bug)', () => {
 		expect(matches(rgxEllipsis, 'et…×trois')).toHaveLength(1);
 		expect(matches(rgxEllipsis, 'et…÷trois')).toHaveLength(1);
+	});
+});
+
+// Issue #29 : trois points ASCII successifs doivent être remplacés par le caractère unique « … ».
+describe('rgxAsciiEllipsis', () => {
+	it('détecte trois points ASCII successifs', () => {
+		expect(matches(rgxAsciiEllipsis, 'et...puis')).toEqual(['...']);
+	});
+	it('détecte trois points ASCII en fin de chaîne', () => {
+		expect(matches(rgxAsciiEllipsis, 'Chargement...')).toEqual(['...']);
+	});
+	it('ne détecte pas le caractère points de suspension', () => {
+		expect(matches(rgxAsciiEllipsis, 'Chargement…')).toEqual([]);
+	});
+	it('ne détecte pas les deux points d\'un chemin relatif', () => {
+		expect(matches(rgxAsciiEllipsis, 'Copiez le fichier dans ../wp-content/')).toEqual([]);
 	});
 });
 
