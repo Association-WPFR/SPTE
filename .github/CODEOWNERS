@@ -1,1 +1,10 @@
 * @jaz-on
+
+# Les fichiers de dépendances n’ont volontairement pas de propriétaire : avec le `*`
+# ci-dessus, chaque PR Dependabot demandait une review (un email par PR), alors que
+# la protection de `main` n’exige aucune review. Une ligne sans propriétaire retire
+# la propriété (la dernière règle qui correspond l’emporte).
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json

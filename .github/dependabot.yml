@@ -6,5 +6,9 @@ updates:
       interval: "monthly"
     open-pull-requests-limit: 5
     groups:
-      dev-dependencies:
-        dependency-type: "development"
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
