@@ -341,6 +341,12 @@ describe('rgxPeriod', () => {
 	it('détecte un point suivi d’une espace insécable finale', () => {
 		expect(matches(rgxPeriod, 'Fin de phrase.' + '\u00a0')).toEqual(['.' + '\u00a0']);
 	});
+	it.each(['heic', 'json', 'tsv', 'webp', 'wpress'])(
+		'ignore un point suivi de l\'extension de fichier .%s',
+		(extension) => {
+			expect(matches(rgxPeriod, `Permet de téléverser des fichiers .${extension} dans la médiathèque.`)).toEqual([]);
+		},
+	);
 });
 
 describe('rgxComma', () => {
