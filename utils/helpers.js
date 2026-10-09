@@ -154,3 +154,18 @@ export function isInsideDoubleBracketBlock(text, offset) {
 	const insideSquare = SQUARE_OPEN_AT_END.test(before) && SQUARE_CLOSE_AT_START.test(after);
 	return insideCurly || insideSquare;
 }
+
+/**
+ * String.prototype.replace() transmet un argument par groupe capturant avant la position et la chaîne
+ * d'origine, puis un objet de groupes nommés le cas échéant (rgxPeriod contient un groupe capturant).
+ * La position et la chaîne sont donc lues à partir de la fin de la liste des arguments.
+ * @param {unknown[]} replaceArgs arguments transmis au callback de replace(), match exclu
+ * @returns {{offset: number, fullString: string}}
+ */
+export function getReplaceMatchPosition(replaceArgs) {
+	const positionalArgs = typeof replaceArgs.at(-1) === 'object' ? replaceArgs.slice(0, -1) : replaceArgs;
+	return {
+		offset: /** @type {number} */ (positionalArgs.at(-2)),
+		fullString: /** @type {string} */ (positionalArgs.at(-1)),
+	};
+}

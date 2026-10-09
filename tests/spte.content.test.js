@@ -243,6 +243,16 @@ describe('checkConsistencyTranslation(s)', () => {
 		expect(doubleQuotes.counter).toBe(0);
 	});
 
+	// Le groupe capturant de rgxPeriod décale les arguments transmis par replace() (même piège que checkTranslation).
+	it('détecte un point suivi d\'une espace finale sans lever d\'exception', () => {
+		const translation = document.querySelector('#t-2 strong');
+		translation.innerHTML = 'Fin de phrase. ';
+
+		expect(() => checkConsistencyTranslation({ projectName: '' }, translation)).not.toThrow();
+
+		expect(document.querySelector('#t-2 .sp-warning--char')).not.toBeNull();
+	});
+
 	it('parcourt tous les tr.new-translation th strong de la page', () => {
 		checkConsistencyTranslations({ projectName: '' });
 
