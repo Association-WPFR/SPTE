@@ -119,7 +119,11 @@ export const rgxOpenParenthesis = new RegExp(`(?<![ ]|^|<br>|<br/>|<br />)\\${da
 export const rgxOpenBrace = new RegExp(`(?<! |\\${data.openBrace}|^)\\${data.openBrace}(?!\\${data.openBrace})|\\${data.openBrace}(?=[ |\u00a0])(?![ \u00a0][a-zA-Z0-9]+\\${data.closeBrace})`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxEllipsis
-export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)|\\.\\.\\.`, 'gmi');
+export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)`, 'gmi');
+
+// Trois points ASCII employés à la place du caractère points de suspension (U+2026). Règle distincte de
+// rgxEllipsis, qui porte sur l'espacement : le message affiché doit désigner le caractère à utiliser. Voir issue #29.
+export const rgxAsciiEllipsis = /\.\.\./gm;
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxPeriod
 // La 2e alternative (point collé entre 2 mots, ex: "mot.mot") ne se déclenche jamais : son lookbehind
@@ -296,6 +300,16 @@ export const rules = [
 		cssClass: charClass,
 		counter: 0,
 		regex: rgxEllipsis,
+	},
+	{
+		id: 'asciiEllipsis',
+		name: 'trois points',
+		title: charTitle,
+		message: 'Trois points au lieu du caractère points de suspension (…)',
+		severity: 'toVerify',
+		cssClass: charClass,
+		counter: 0,
+		regex: rgxAsciiEllipsis,
 	},
 	{
 		id: 'period',

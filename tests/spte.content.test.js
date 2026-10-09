@@ -445,4 +445,40 @@ describe('checkTranslation', () => {
 		checkTranslation({ projectName: 'GeoDirectory - Plugin' }, translated, 'untranslated', 'current');
 		expect(badWords.counter).toBe(1);
 	});
+
+	// Le groupe capturant de rgxPeriod décale les arguments transmis par replace() (régression de la 3.1.0).
+	it('détecte trois points ASCII sans lever d\'exception', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Chargement...';
+		const asciiEllipsis = rules.find((rule) => rule.id === 'asciiEllipsis');
+		const ellipsis = rules.find((rule) => rule.id === 'ellipsis');
+
+		expect(() => checkTranslation({ projectName: '' }, translated, 'untranslated', 'current')).not.toThrow();
+
+		expect(asciiEllipsis.counter).toBe(1);
+		expect(ellipsis.counter).toBe(0);
+		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe('Chargement...');
+	});
+
+	// Issue #29 : l'infobulle doit désigner le caractère à utiliser, et non un problème d'espacement.
+	it('affiche pour trois points ASCII un message qui désigne le caractère points de suspension', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Chargement...';
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		const warning = document.querySelector('#preview-1-1 .sp-warning--char');
+		expect(warning.getAttribute('data-message')).toContain('Trois points au lieu du caractère points de suspension (…)');
+		expect(warning.getAttribute('data-message')).not.toContain('Précédé par une espace');
+	});
+
+	it('détecte un point suivi d\'une espace finale sans lever d\'exception', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Fin de phrase. ';
+		const period = rules.find((rule) => rule.id === 'period');
+
+		expect(() => checkTranslation({ projectName: '' }, translated, 'untranslated', 'current')).not.toThrow();
+
+		expect(period.counter).toBe(1);
+	});
 });
