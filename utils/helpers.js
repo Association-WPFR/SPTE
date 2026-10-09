@@ -89,7 +89,9 @@ export function isPartOfProjectName(text, offset, matchedLength, projectName) {
 // ceux de SPTE (classes sp-warning--*, sp-spaces--*, sp-nbkspaces--*) et ceux de GlotDict
 // (<span style="background-color:yellow"> autour des espaces insécables et des apostrophes courbes).
 const HIGHLIGHT_SPAN_REGEX = /<span\b(?:[^>"]|"[^"]*")*>[^<]*<\/span>/g;
-const HIGHLIGHT_MARKER_REGEX = /class="sp-(?:warning--|spaces--|nbkspaces--)[^"]*"|style="[^"]*background-color:\s*yellow/;
+// Guillemets simples ou doubles, casse indifférente : GlotDict ou une extension tierce peut générer
+// l'un ou l'autre.
+const HIGHLIGHT_MARKER_REGEX = /class=["']sp-(?:warning--|spaces--|nbkspaces--)[^"']*["']|style=["'][^"']*background-color:\s*yellow/i;
 
 /**
  * Retire les surlignages déjà posés (par SPTE ou par GlotDict) pour ne garder que le texte de la
@@ -99,6 +101,7 @@ const HIGHLIGHT_MARKER_REGEX = /class="sp-(?:warning--|spaces--|nbkspaces--)[^"]
  * @returns {string}
  */
 export function stripHighlightTags(html) {
+	if (!html.includes('<span')) { return html; }
 	return html.replace(HIGHLIGHT_SPAN_REGEX, (span) => {
 		if (!HIGHLIGHT_MARKER_REGEX.test(span)) { return span; }
 		return span.slice(span.indexOf('>') + 1, span.lastIndexOf('</span>'));

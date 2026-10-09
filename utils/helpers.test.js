@@ -101,6 +101,14 @@ describe('stripHighlightTags', () => {
 	it('ne fait rien sur un texte sans balise', () => {
 		expect(stripHighlightTags('Simple texte : « ok »')).toBe('Simple texte : « ok »');
 	});
+
+	it('retire un surlignage GlotDict même avec des guillemets simples ou une casse différente', () => {
+		expect(stripHighlightTags('Super<span style=\'background-color:YELLOW\'>&nbsp;</span>!')).toBe('Super&nbsp;!');
+	});
+
+	it('ne fait aucun travail regex si le texte ne contient aucun <span', () => {
+		expect(stripHighlightTags('Simple texte : « ok »')).toBe('Simple texte : « ok »');
+	});
 });
 
 describe('isInsideHtmlTag', () => {

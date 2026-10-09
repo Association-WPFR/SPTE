@@ -9,6 +9,25 @@
 - Les caractères de ponctuation à l'intérieur d'un bloc d'interpolation `{{ }}`/`[[ ]]` (ex. `{{count, plural, one{...} other{...}}}`) ne sont plus signalés à tort, quelle que soit la règle concernée (#27)
 - « entête » (sans trait d'union), la forme validée par le glossaire officiel, n'est plus signalée à tort : c'est désormais « en-tête » (avec trait d'union) qui est déconseillée (#93)
 - Un mot déconseillé n'est plus exempté à tort dans toutes les traductions d'un projet dont le nom contient ce mot (ex. « plugin » dans un projet nommé « GeoDirectory - Plugin ») : l'exemption ne s'applique désormais que si le nom du projet est cité tel quel dans la traduction (#95)
+- Les fichiers au format `.otf` ne sont plus signalés à tort comme contenant un point mal placé
+- Une traduction contenant trois points (« ... ») n'interrompt plus l'analyse de la page (#104)
+- Trois points successifs sont maintenant signalés avec un message dédié qui désigne le caractère points de suspension (…) à utiliser (#29)
+
+## [3.1.0] - 28 septembre 2026
+
+### Added
+- L'apostrophe courbe inversée (‘) est maintenant signalée comme telle, avec son propre message et son propre compteur, au lieu d'être présentée comme une apostrophe droite
+
+### Changed
+- GlotDict affiche désormais aussi son propre avertissement natif pour les apostrophes droites, en plus de celui de SPTE (effet de bord du réglage qui éteint son surlignage jaune, cf. #80) : redondant mais inoffensif
+
+### Fixed
+- Une traduction avec plusieurs erreurs typo (ex. un mot déconseillé et un guillemet droit) n'affiche plus de balisage HTML cassé et visible à l'écran : un rule ne signale plus à tort le contenu des attributs d'un `<span>` déjà posé par un rule précédent dans la même passe
+- Un terme du glossaire officiel polysémique (nom identique EN/FR, verbe différent, ex. « note »/« noter ») n'est plus signalé à tort quand il est utilisé comme nom (#63)
+- Les mots du glossaire officiel sont maintenant repérés quelle que soit leur casse (majuscule initiale, tout en majuscules…)
+- Les espaces insécables sont de nouveau reconnues comme telles par les règles de ponctuation (« : », « ; », « ! », « ? », « » »), au lieu d'être signalées manquantes à tort (régression de la 3.0.0, remonté par mikejpr, #79)
+- Les surlignages de GlotDict sur les espaces insécables et les apostrophes courbes sont de nouveau désactivés par SPTE, comme avant la 3.0.0 (les réglages utilisés n'étaient pas les bons, ce qui déformait le texte des traductions, remonté par mikejpr, #80)
+- Le texte des traductions n'est plus déformé (ex: `"background-color:yellow">` affiché à côté des espaces insécables) quand GlotDict ou SPTE a déjà surligné la ligne
 
 ## [3.0.1] - 23 septembre 2026
 
