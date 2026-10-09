@@ -17,7 +17,7 @@
     "lint:amo": "npm run build:firefox && addons-linter .output/firefox-mv3"
   },
   "dependencies": {
-    "dompurify": "^3.4.15"
+    "dompurify": "^3.4.16"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

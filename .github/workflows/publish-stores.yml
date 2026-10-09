@@ -1,0 +1,72 @@
+name: Publie vers les stores
+
+# Déclenchement manuel uniquement (issue #70) : upload des paquets en brouillon sur Chrome Web Store
+# et Firefox AMO, sans soumission automatique en review (--*-skip-submit-review). L'envoi en review
+# reste un clic manuel sur chaque dashboard, comme fait à la main pour la 3.1.0.
+#
+# Secrets requis (Settings > Secrets and variables > Actions) :
+#   CHROME_EXTENSION_ID (iemhkjiajghnamjfdhaejclbffnfhhkh, fiche validée par Google), CHROME_CLIENT_ID,
+#   CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN (OAuth installé via Google Cloud Console, cf.
+#   https://wxt.dev/guide/essentials/publishing.html)
+#   FIREFOX_EXTENSION_ID, FIREFOX_JWT_ISSUER, FIREFOX_JWT_SECRET (déjà configurés)
+#     (clé API générée sur https://addons.mozilla.org/developers/addon/api/key/)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag à publier (doit exister et correspondre à la version de package.json), ex: 3.1.0"
+        required: true
+      dry_run:
+        description: "Test à blanc : vérifie l'authentification sans rien uploader"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - name: Vérifie que le tag correspond à la version de package.json
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "${{ inputs.tag }}" != "$PKG_VERSION" ]; then
+            echo "::error::Tag (${{ inputs.tag }}) différent de la version de package.json ($PKG_VERSION)"
+            exit 1
+          fi
+      - run: npm run zip
+      - run: npm run zip:firefox
+      - name: Upload en brouillon sur Chrome Web Store et Firefox AMO (pas de soumission en review)
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+        run: |
+          npx wxt submit \
+            --chrome-zip .output/spte-*-chrome.zip \
+            --chrome-extension-id "$CHROME_EXTENSION_ID" \
+            --chrome-client-id "$CHROME_CLIENT_ID" \
+            --chrome-client-secret "$CHROME_CLIENT_SECRET" \
+            --chrome-refresh-token "$CHROME_REFRESH_TOKEN" \
+            --chrome-skip-submit-review \
+            --firefox-zip .output/spte-*-firefox.zip \
+            --firefox-sources-zip .output/spte-*-sources.zip \
+            --firefox-extension-id "$FIREFOX_EXTENSION_ID" \
+            --firefox-jwt-issuer "$FIREFOX_JWT_ISSUER" \
+            --firefox-jwt-secret "$FIREFOX_JWT_SECRET" \
+            --firefox-skip-submit-review \
+            --dry-run ${{ inputs.dry_run }}

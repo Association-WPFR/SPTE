@@ -2,6 +2,28 @@
 
 Comment ce dépôt est organisé, et pourquoi.
 
+## Stack & philosophie
+
+| | |
+|---|---|
+| **Langage** | JavaScript, typé par JSDoc (vérifié par `tsc`) |
+| **Framework** | [WXT](https://wxt.dev/) (un seul code source pour Chrome et Firefox) |
+| **Tests** | Vitest, à côté du code testé |
+| **Lint** | ESLint + `addons-linter` |
+| **Cible** | translate.wordpress.org uniquement, pas de serveur |
+| **Philosophie** | Un correcteur typographique, rien de plus : pas d’abstraction inutile, pas de dépendance sans raison, aucune donnée envoyée à un tiers. |
+
+## Dossier `.claude/`
+
+Contexte donné aux sessions Claude Code sur ce dépôt :
+
+- **`CLAUDE.md`** : point d’entrée, toujours chargé.
+- **`ARCHITECTURE.md`** : ce fichier.
+- **`rules/`** : checklists bloquantes, chargées à chaque session.
+- **`skills/`** : procédures chargées à la demande.
+- **`hooks/`** : scripts automatiques (bannière de session, lint des fichiers édités).
+- **`settings.json`** : configuration Claude Code du dépôt.
+
 ## Repository layout
 
 ```text
@@ -21,6 +43,8 @@ Comment ce dépôt est organisé, et pourquoi.
 ├── docs/                        # Ressources non buildées (captures d'écran, images du wiki)
 ├── public/                      # Icônes de l'extension, copiées telles quelles dans le build
 ├── .github/workflows/ci.yml     # CI GitHub Actions
+├── .github/workflows/release.yml         # Sur push d'un tag X.Y.Z : build les zips, crée une release GitHub en brouillon
+├── .github/workflows/publish-stores.yml  # Déclenchement manuel : upload (sans soumission review) vers Chrome Web Store et Firefox AMO
 ├── wxt.config.js                # Config WXT (manifest v3, permissions, id Firefox)
 ├── eslint.config.js             # Config ESLint (flat config)
 ├── tsconfig.json                # checkJs seul — pas de TypeScript, juste du typage JSDoc sur du JS
@@ -41,6 +65,10 @@ Comment ce dépôt est organisé, et pourquoi.
 ## CI/CD
 
 `.github/workflows/ci.yml`, déclenché sur les PR vers `main` : `npm ci` puis `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run build:firefox`, puis upload du rapport `coverage/` en artefact — dans cet ordre, tout doit passer avant merge.
+
+`.github/workflows/release.yml`, déclenché sur push d'un tag `X.Y.Z` (doit matcher `package.json`) : build les zips (Chrome, Firefox, sources), génère les notes (CHANGELOG + issues fermées + contributeurs) et crée une release GitHub en **brouillon** (jamais publiée automatiquement).
+
+`.github/workflows/publish-stores.yml`, déclenchement **manuel** uniquement (`workflow_dispatch`, tag en entrée) : upload les paquets en brouillon sur Chrome Web Store et Firefox AMO via `wxt submit`, sans soumission automatique en review (`--*-skip-submit-review`) — l'envoi en review reste un clic manuel sur chaque dashboard. Nécessite des secrets GitHub Actions (détail en commentaire dans le fichier). Voir issue #70.
 
 ## Known pitfalls
 
