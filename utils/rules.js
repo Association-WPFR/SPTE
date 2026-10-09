@@ -28,7 +28,7 @@ const data = {
 		'back-end',
 		'front-end',
 		'capabilities',
-		'entête',
+		'en-tête',
 		'et/ou',
 		'customizer',
 		'template',
@@ -57,7 +57,7 @@ const data = {
 		'avi', 'bak', 'bat', 'bin', 'bmp', 'css', 'csv', 'doc', 'docx', 'eot',
 		'exe', 'gif', 'git', 'github', 'htaccess', 'html', 'ico', 'ics', 'jpg',
 		'jpeg', 'js', 'log', 'maintenance', 'mail', 'mo', 'mov', 'mp3', 'mp4',
-		'mpeg', 'pdf', 'pem', 'php', 'po', 'pot', 'png', 'ppt', 'psd', 'ods',
+		'mpeg', 'otf', 'pdf', 'pem', 'php', 'po', 'pot', 'png', 'ppt', 'psd', 'ods',
 		'rar', 'rtf', 'svg', 'sql', 'tar', 'gz', 'tiff', 'tif', 'ttf', 'txt',
 		'vcf', 'wav', 'woff', 'xls', 'xlsx', 'xml', 'zip',
 	],
@@ -79,9 +79,6 @@ const NNBSP = '\u202f';
 const nbspAny = `(?:${NBSP}|${NNBSP})`;
 
 const fileExtensions = data.fileExtensions.join('|');
-
-// Contexte partagé par rgxColon/rgxComma : exclut un caractère entouré d'un bloc `{{ }}`/`[[ ]]` (interpolation JS, ex: {{foo:bar}}). Voir issue #27.
-const doubleBracketGuard = '(?:(?<=\\{\\{[a-zA-Z0-9:,]*)(?=[a-zA-Z0-9:,]*\\}\\})|(?<=\\[\\[[a-zA-Z0-9:,]*)(?=[a-zA-Z0-9:,]*\\]\\]))';
 
 // Contexte partagé par rgxOpenParenthesis/rgxCloseParenthesis : exclut un appel de fonction façon WPCS
 // (ex: registerBlockType( name, settings );), reconnu à sa parenthèse fermante suivie d'un point-virgule. Voir issue #8.
@@ -122,7 +119,11 @@ export const rgxOpenParenthesis = new RegExp(`(?<![ ]|^|<br>|<br/>|<br />)\\${da
 export const rgxOpenBrace = new RegExp(`(?<! |\\${data.openBrace}|^)\\${data.openBrace}(?!\\${data.openBrace})|\\${data.openBrace}(?=[ |\u00a0])(?![ \u00a0][a-zA-Z0-9]+\\${data.closeBrace})`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxEllipsis
-export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)|\\.\\.\\.`, 'gmi');
+export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${data.ellipsis}(?=[a-zÀ-ú0-9]| $|\u00a0$)`, 'gmi');
+
+// Trois points ASCII employés à la place du caractère points de suspension (U+2026). Règle distincte de
+// rgxEllipsis, qui porte sur l'espacement : le message affiché doit désigner le caractère à utiliser. Voir issue #29.
+export const rgxAsciiEllipsis = /\.\.\./gm;
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxPeriod
 // La 2e alternative (point collé entre 2 mots, ex: "mot.mot") ne se déclenche jamais : son lookbehind
@@ -130,7 +131,7 @@ export const rgxEllipsis = new RegExp(`(?<=[ |\u00a0])\\${data.ellipsis}|\\${dat
 export const rgxPeriod = new RegExp(`(?<= |\u00a0)\\${data.period}(?!${fileExtensions})|(?<![a-zÀ-ú0-9\\${data.period}]*?)\\${data.period}(?=[a-zÀ-ú0-9])|\\${data.period}( $|\u00a0$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxComma
-export const rgxComma = new RegExp(`(?<=[ |\u00a0])\\${data.comma}(?!${doubleBracketGuard})|\\${data.comma}(?!${doubleBracketGuard})(?=[a-zÀ-ú]| $|\u00a0$)`, 'gmi');
+export const rgxComma = new RegExp(`(?<=[ |\u00a0])\\${data.comma}|\\${data.comma}(?=[a-zÀ-ú]| $|\u00a0$)`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxCloseHook
 export const rgxCloseHook = new RegExp(`(?<=[ |\u00a0])\\${data.closeHook}|(?<!\\${data.closeHook})\\${data.closeHook}(?=[a-zÀ-ú0-9]| $|\u00a0$)`, 'gmi');
@@ -163,7 +164,7 @@ export const rgxQuestionMarkStrict = buildQuestionMarkRegex(NNBSP);
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxColon
 // U+00A0 reste la seule espace recommandée devant ":" (pas de variante stricte ici).
-export const rgxColon = new RegExp(`(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?= )|(?<=${nbspAny})${data.colon}(?! |$)|(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?!${doubleBracketGuard})(?! )`, 'gmi');
+export const rgxColon = new RegExp(`(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?= )|(?<=${nbspAny})${data.colon}(?! |$)|(?<!${nbspAny}|https|http| \\d{2}|\u00a0\\d{2}| hh|\u00a0hh| mm|\u00a0mm| aaaa|\u00a0aaaa|(?<![a-zA-Z])[gsiahymd])${data.colon}(?! )`, 'gmi');
 
 // https://github.com/Association-WPFR/SPTE/wiki/rgxSemiColon
 function buildSemiColonRegex(requiredNbsp) {
@@ -299,6 +300,16 @@ export const rules = [
 		cssClass: charClass,
 		counter: 0,
 		regex: rgxEllipsis,
+	},
+	{
+		id: 'asciiEllipsis',
+		name: 'trois points',
+		title: charTitle,
+		message: 'Trois points au lieu du caractère points de suspension (…)',
+		severity: 'toVerify',
+		cssClass: charClass,
+		counter: 0,
+		regex: rgxAsciiEllipsis,
 	},
 	{
 		id: 'period',

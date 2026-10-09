@@ -67,14 +67,22 @@ export function parseCsv(text) {
 }
 
 // Un mot signalé par badWords qui fait partie du nom du projet (ex: une extension "Widget") n'est pas un anglicisme. Voir issue #38.
+// Vérifie que CETTE occurrence précise est bien le nom du projet cité dans la traduction (le nom du
+// projet apparaît littéralement dans le texte, à cette position), pas juste que le mot matché est une
+// sous-chaîne du nom du projet : sinon un projet nommé "GeoDirectory - Plugin" exempterait "plugin"
+// dans toutes ses traductions, même utilisé comme mot normal. Voir issue #95.
 /**
- * @param {string} word
+ * @param {string} text texte complet de la traduction où le mot a été trouvé
+ * @param {number} offset position du mot trouvé dans text
+ * @param {number} matchedLength longueur du mot trouvé
  * @param {string} projectName
  * @returns {boolean}
  */
-export function isPartOfProjectName(word, projectName) {
+export function isPartOfProjectName(text, offset, matchedLength, projectName) {
 	if (!projectName) { return false; }
-	return projectName.toLowerCase().includes(word.toLowerCase());
+	const projectNameIndex = text.toLowerCase().indexOf(projectName.toLowerCase());
+	if (projectNameIndex === -1) { return false; }
+	return offset >= projectNameIndex && offset + matchedLength <= projectNameIndex + projectName.length;
 }
 
 // Surlignages qu'on sait poser dans une traduction et qui ne font pas partie de son contenu :
@@ -113,4 +121,51 @@ export function stripHighlightTags(html) {
  */
 export function isInsideHtmlTag(text, offset) {
 	return text.lastIndexOf('<', offset - 1) > text.lastIndexOf('>', offset - 1);
+}
+
+const HTML_TAG_REGEX = /<[^>]*>/g;
+// Contenu entre les délimiteurs doublés, avec tolérance à UN niveau de paire { }/[ ] imbriquée
+// (ex: ICU MessageFormat "{{count, plural, one{...} other{...}}}"). Un niveau de plus n'est pas
+// supporté (cas non rencontré en pratique à ce jour).
+const CURLY_INNER = '(?:[^{}]|\\{[^{}]*\\})*';
+const SQUARE_INNER = '(?:[^\\][]|\\[[^\\][]*\\])*';
+// « before » peut se terminer au milieu d'une paire imbriquée non refermée (ex: juste après "one{") ;
+// « after » peut symétriquement commencer par la fin de cette même paire (ex: "...}").
+const CURLY_OPEN_AT_END = new RegExp(`\\{\\{${CURLY_INNER}(?:\\{[^{}]*)?$`);
+const CURLY_CLOSE_AT_START = new RegExp(`^(?:[^{}]*\\})?${CURLY_INNER}\\}\\}`);
+const SQUARE_OPEN_AT_END = new RegExp(`\\[\\[${SQUARE_INNER}(?:\\[[^\\][]*)?$`);
+const SQUARE_CLOSE_AT_START = new RegExp(`^(?:[^\\][]*\\])?${SQUARE_INNER}\\]\\]`);
+
+/**
+ * Un bloc d'interpolation JS `{{ }}`/`[[ ]]` (ex: {{foo:bar}}, {{count, plural, one{...} other{...}}})
+ * n'est pas du texte français à vérifier : ignorer tout caractère de ponctuation à l'intérieur. Voir
+ * issue #27. Les balises HTML réelles (un <span> déjà injecté par un rule précédent dans la même passe,
+ * cf. isInsideHtmlTag) sont retirées avant de tester l'adjacence, sinon un rule antérieur qui a inséré
+ * un <span> autour d'un des deux caractères du délimiteur (ex: `{<span ...>{</span>`) casse cette
+ * adjacence textuelle et défait la détection.
+ * @param {string} text
+ * @param {number} offset
+ * @returns {boolean}
+ */
+export function isInsideDoubleBracketBlock(text, offset) {
+	const before = text.slice(0, offset).replace(HTML_TAG_REGEX, '');
+	const after = text.slice(offset).replace(HTML_TAG_REGEX, '');
+	const insideCurly = CURLY_OPEN_AT_END.test(before) && CURLY_CLOSE_AT_START.test(after);
+	const insideSquare = SQUARE_OPEN_AT_END.test(before) && SQUARE_CLOSE_AT_START.test(after);
+	return insideCurly || insideSquare;
+}
+
+/**
+ * String.prototype.replace() transmet un argument par groupe capturant avant la position et la chaîne
+ * d'origine, puis un objet de groupes nommés le cas échéant (rgxPeriod contient un groupe capturant).
+ * La position et la chaîne sont donc lues à partir de la fin de la liste des arguments.
+ * @param {unknown[]} replaceArgs arguments transmis au callback de replace(), match exclu
+ * @returns {{offset: number, fullString: string}}
+ */
+export function getReplaceMatchPosition(replaceArgs) {
+	const positionalArgs = typeof replaceArgs.at(-1) === 'object' ? replaceArgs.slice(0, -1) : replaceArgs;
+	return {
+		offset: /** @type {number} */ (positionalArgs.at(-2)),
+		fullString: /** @type {string} */ (positionalArgs.at(-1)),
+	};
 }

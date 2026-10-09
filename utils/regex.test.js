@@ -9,6 +9,7 @@ import {
 	rgxOpenParenthesis,
 	rgxOpenBrace,
 	rgxEllipsis,
+	rgxAsciiEllipsis,
 	rgxPeriod,
 	rgxComma,
 	rgxCloseHook,
@@ -52,7 +53,7 @@ describe('rgxBadWords', () => {
 		'plugin', 'greffon', 'uploader', 'downloader', 'customiser', 'updater', 'mr',
 		'sidebar', 'shortcode', 'tooltip', 'breadcrumb', 'changelog', 'thumbnail',
 		'addon', 'add-on', 'back-end', 'front-end', 'capabilities',
-		'entête', 'et/ou', 'customizer', 'template', 'templates', 'add-ons', 'événement',
+		'en-tête', 'et/ou', 'customizer', 'template', 'templates', 'add-ons', 'événement',
 	])('détecte l’anglicisme "%s"', (word) => {
 		expect(matches(rgxBadWords, `Un mot ici : ${word} et la suite.`)).toEqual([word]);
 	});
@@ -61,6 +62,13 @@ describe('rgxBadWords', () => {
 	// "événement" (accent aigu, forme désormais déconseillée).
 	it('ignore la forme correcte "évènement" (accent grave)', () => {
 		expect(matches(rgxBadWords, 'Un évènement important arrive.')).toEqual([]);
+	});
+
+	// Issue #93 : "entête" (sans trait d'union) est la forme validée par le glossaire officiel
+	// WordPress FR ("header") — ne doit jamais être signalée, contrairement à "en-tête" (avec
+	// trait d'union), désormais la forme déconseillée.
+	it('ignore la forme correcte "entête" (sans trait d\'union)', () => {
+		expect(matches(rgxBadWords, 'Cliquez sur l\'entête du tableau.')).toEqual([]);
 	});
 
 	// Tests transposés depuis le wiki (rgxBadWords.md) : le mot doit être détecté quand il est
@@ -276,10 +284,8 @@ describe('rgxEllipsis', () => {
 	it('ignore des points de suspension suivis d\'une espace', () => {
 		expect(matches(rgxEllipsis, 'et… puis')).toEqual([]);
 	});
-	// Issue #29 : trois points ASCII successifs devraient être remplacés par le caractère
-	// unique « … » et doivent donc être détectés au même titre.
-	it('détecte trois points ASCII successifs', () => {
-		expect(matches(rgxEllipsis, 'et...puis')).toEqual(['...']);
+	it('ne détecte pas trois points ASCII, traités par rgxAsciiEllipsis', () => {
+		expect(matches(rgxEllipsis, 'et...puis')).toEqual([]);
 	});
 	it('détecte des points de suspension précédés d’une espace', () => {
 		expect(matches(rgxEllipsis, 'mot …!')).toHaveLength(1);
@@ -297,6 +303,22 @@ describe('rgxEllipsis', () => {
 	});
 });
 
+// Issue #29 : trois points ASCII successifs doivent être remplacés par le caractère unique « … ».
+describe('rgxAsciiEllipsis', () => {
+	it('détecte trois points ASCII successifs', () => {
+		expect(matches(rgxAsciiEllipsis, 'et...puis')).toEqual(['...']);
+	});
+	it('détecte trois points ASCII en fin de chaîne', () => {
+		expect(matches(rgxAsciiEllipsis, 'Chargement...')).toEqual(['...']);
+	});
+	it('ne détecte pas le caractère points de suspension', () => {
+		expect(matches(rgxAsciiEllipsis, 'Chargement…')).toEqual([]);
+	});
+	it('ne détecte pas les deux points d\'un chemin relatif', () => {
+		expect(matches(rgxAsciiEllipsis, 'Copiez le fichier dans ../wp-content/')).toEqual([]);
+	});
+});
+
 describe('rgxPeriod', () => {
 	// La branche censée détecter "mot.mot" (point collé entre deux minuscules) ne se déclenche
 	// jamais en pratique — son lookbehind négatif matche toujours une chaîne vide. Comportement
@@ -309,6 +331,9 @@ describe('rgxPeriod', () => {
 	});
 	it('ignore un point suivi d\'une extension de fichier connue', () => {
 		expect(matches(rgxPeriod, 'lire le fichier readme.txt')).toEqual([]);
+	});
+	it('ignore un point suivi d\'une extension de police (.ttf, .otf, .woff, .woff2)', () => {
+		expect(matches(rgxPeriod, 'Formats pris en charge : .ttf, .otf, .woff et .woff2.')).toEqual([]);
 	});
 	it('détecte un point suivi d’une espace finale', () => {
 		expect(matches(rgxPeriod, 'Fin de phrase. ')).toEqual(['. ']);
@@ -324,11 +349,6 @@ describe('rgxComma', () => {
 	});
 	it('ignore une virgule suivie d\'une espace', () => {
 		expect(matches(rgxComma, 'un, deux')).toEqual([]);
-	});
-	// Issue #27 (partiel) : une virgule à l'intérieur d'un bloc [[ ]] (interpolation JS) ne doit
-	// pas être signalée, au même titre que le slash déjà exclu dans ce genre de bloc.
-	it('ignore une virgule à l\'intérieur d\'un bloc [[ ]]', () => {
-		expect(matches(rgxComma, '[[a,b]]')).toEqual([]);
 	});
 	it('détecte toujours une virgule dans un simple crochet [ ]', () => {
 		expect(matches(rgxComma, '[a,b]')).toHaveLength(1);
@@ -520,11 +540,6 @@ describe('rgxColon', () => {
 	// déclencher la règle, au même titre que hh/mm/aaaa déjà exclus.
 	it('ignore les deux-points d\'un format de date PHP (Y/m/d g:s:i A)', () => {
 		expect(matches(rgxColon, 'Y/m/d g:s:i A')).toEqual([]);
-	});
-	// Issue #27 (partiel) : un deux-points à l'intérieur d'un bloc {{ }} (interpolation JS) ne
-	// doit pas être signalé, au même titre que le slash déjà exclu dans ce genre de bloc.
-	it('ignore un deux-points à l\'intérieur d\'un bloc {{ }}', () => {
-		expect(matches(rgxColon, '{{foo:bar}}')).toEqual([]);
 	});
 	it('détecte toujours un deux-points dans une simple accolade { }', () => {
 		expect(matches(rgxColon, '{foo:bar}')).toHaveLength(1);
