@@ -57,7 +57,7 @@ const data = {
 		'avi', 'bak', 'bat', 'bin', 'bmp', 'css', 'csv', 'doc', 'docx', 'eot',
 		'exe', 'gif', 'git', 'github', 'htaccess', 'html', 'ico', 'ics', 'jpg',
 		'jpeg', 'js', 'log', 'maintenance', 'mail', 'mo', 'mov', 'mp3', 'mp4',
-		'mpeg', 'pdf', 'pem', 'php', 'po', 'pot', 'png', 'ppt', 'psd', 'ods',
+		'mpeg', 'otf', 'pdf', 'pem', 'php', 'po', 'pot', 'png', 'ppt', 'psd', 'ods',
 		'rar', 'rtf', 'svg', 'sql', 'tar', 'gz', 'tiff', 'tif', 'ttf', 'txt',
 		'vcf', 'wav', 'woff', 'xls', 'xlsx', 'xml', 'zip',
 	],

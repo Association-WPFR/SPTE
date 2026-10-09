@@ -317,6 +317,9 @@ describe('rgxPeriod', () => {
 	it('ignore un point suivi d\'une extension de fichier connue', () => {
 		expect(matches(rgxPeriod, 'lire le fichier readme.txt')).toEqual([]);
 	});
+	it('ignore un point suivi d\'une extension de police (.ttf, .otf, .woff, .woff2)', () => {
+		expect(matches(rgxPeriod, 'Formats pris en charge : .ttf, .otf, .woff et .woff2.')).toEqual([]);
+	});
 	it('détecte un point suivi d’une espace finale', () => {
 		expect(matches(rgxPeriod, 'Fin de phrase. ')).toEqual(['. ']);
 	});
