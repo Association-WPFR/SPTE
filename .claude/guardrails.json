@@ -1,0 +1,20 @@
+{
+  "banner": {
+    "title": "SPTE",
+    "runtimes": [
+      "node"
+    ],
+    "commits": 3
+  },
+  "lint": {
+    "rules": [
+      {
+        "match": [
+          "*.js"
+        ],
+        "run": "npx eslint --fix {file}",
+        "requires": "node_modules/.bin/eslint"
+      }
+    ]
+  }
+}
