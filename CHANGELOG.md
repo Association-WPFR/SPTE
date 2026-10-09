@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.1.1] - xx septembre 2026
+## [3.1.1] - 9 octobre 2026
 
 ### Added
 - SPTE signale maintenant les erreurs typo sur la page « Cohérence des traductions » (`/consistency/`), pas seulement dans l'éditeur de traduction classique (#75)
