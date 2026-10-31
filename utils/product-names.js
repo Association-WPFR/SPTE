@@ -41,6 +41,7 @@ export const productNames = [
 	'Query Monitor',
 	'Search & Filter',
 	'Smush',
+	'The Events Calendar',
 	'Ultimate Addons for Elementor',
 	'User Role Editor',
 	'WooCommerce Analytics',
