@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach } from 'vitest';
 import {
 	updateWarningFilterState,
 	rowsDisplay,
@@ -61,6 +61,36 @@ describe('getGlossaryRegex', () => {
 		const ctx = { rulesById: new Map([['badWords', badWords]]) };
 		getGlossaryRegex(ctx, ['notice']);
 		expect('Une Notice ici').toMatch(badWords.regex);
+	});
+
+	// Issue #116 : « (uploads) » et « uploads. » n'étaient pas repérés (parenthèses et point final absents des bornes,
+	// point final accepté seulement pour le dernier terme de la liste).
+	describe('bornes du terme', () => {
+		const glossaryMatches = (text) => {
+			const badWords = { regex: /^original$/gm };
+			const ctx = { rulesById: new Map([['badWords', badWords]]) };
+			getGlossaryRegex(ctx, ['upload', 'widget', 'notice']);
+			return [...text.matchAll(badWords.regex)].map((m) => m[0]);
+		};
+		it.each([
+			['entre parenthèses', 'le dossier de téléversement (uploads) est vide', ['uploads']],
+			['avant un point final', 'dans le dossier uploads.', ['uploads']],
+			['premier terme de la liste avant un point final', 'Un upload.', ['upload']],
+			['terme du milieu avant un point final', 'Un widget.', ['widget']],
+			['avant un point d’exclamation', 'Un widget!', ['widget']],
+			['en début de chaîne', 'widget ici', ['widget']],
+			['entre guillemets droits', 'Le "widget" ici', ['widget']],
+			['après une apostrophe courbe (élision)', 'Voir l’upload ici', ['upload']],
+		])('repère un terme %s', (_label, text, expected) => {
+			expect(glossaryMatches(text)).toEqual(expected);
+		});
+		it.each([
+			['dans un nom de fichier', 'Voir widget.php pour le détail'],
+			['dans un mot plus long', 'Un widgetisé ici'],
+			['dans une citation « … »', 'On dit « widget » ici'],
+		])('ne repère pas un terme %s', (_label, text) => {
+			expect(glossaryMatches(text)).toEqual([]);
+		});
 	});
 });
 
@@ -498,5 +528,37 @@ describe('checkTranslation', () => {
 		expect(() => checkTranslation({ projectName: '' }, translated, 'untranslated', 'current')).not.toThrow();
 
 		expect(period.counter).toBe(1);
+	});
+
+	describe('avec un terme du glossaire qui figure dans un nom de marque', () => {
+		const badWords = rules.find((rule) => rule.id === 'badWords');
+		let originalRegex;
+
+		beforeEach(() => {
+			originalRegex = badWords.regex;
+			getGlossaryRegex({ rulesById: new Map([['badWords', badWords]]) }, ['analytics']);
+		});
+
+		afterEach(() => {
+			badWords.regex = originalRegex;
+		});
+
+		it('ne signale pas le terme à l\'intérieur du nom de marque', () => {
+			const translated = document.querySelector('#preview-1-1 .translation-text');
+			translated.innerHTML = 'Activer Google Analytics';
+
+			checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+			expect(badWords.counter).toBe(0);
+		});
+
+		it('signale le terme en dehors d\'un nom de marque', () => {
+			const translated = document.querySelector('#preview-1-1 .translation-text');
+			translated.innerHTML = 'Le suivi Analytics';
+
+			checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+			expect(badWords.counter).toBe(1);
+		});
 	});
 });

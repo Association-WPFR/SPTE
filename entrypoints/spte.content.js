@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import { rules, charTitle, charClass, NBSP, rgxExclamationPointStrict, rgxQuestionMarkStrict, rgxSemiColonStrict } from '../utils/rules';
 import { addStyle, createElement, parseCsv, isPartOfProjectName, stripHighlightTags, isInsideHtmlTag, isInsideDoubleBracketBlock, getReplaceMatchPosition } from '../utils/helpers';
 import { buildWarningSpanHTML } from '../utils/warnings';
+import { isInsideProductName } from '../utils/product-names';
 import { createDefaultSettings } from '../utils/settings';
 import {
 	addForeignToolTip,
@@ -104,6 +105,11 @@ export function checkTranslation(ctx, translation, oldStatus, newStatus) {
 
 			// Le mot fait partie du nom du projet (ex: une extension nommée "Widget") : pas un anglicisme à corriger. Voir issue #38.
 			if (rule.id === 'badWords' && isPartOfProjectName(fullString, offset, string.length, ctx.projectName)) {
+				return string;
+			}
+
+			// Le mot fait partie d'un nom de marque ou d'extension cité dans la traduction (ex: « Search » dans « Google Search Console »).
+			if (rule.id === 'badWords' && isInsideProductName(fullString, offset, string.length)) {
 				return string;
 			}
 
@@ -323,9 +329,9 @@ function manageControls(ctx) {
 /** @param {ReturnType<typeof buildContext>} ctx */
 function frenchiesGoFirst(ctx) {
 	moveFrenchRowToFirst(ctx.frenchStatsGlobal, ctx.GDmayBeOnBoard);
-	// Pas de garde GlotDict ici : GlotDict n'a aucune emprise sur cette page
-	// (contrairement au tableau des locales d'un projet, où son réordonnancement peut entrer en conflit avec le nôtre).
-	moveFrenchLocaleCardToFirst(ctx.frenchLocaleCard, false);
+	// Garde GlotDict aussi ici : sur la page d'accueil, GlotDict clone la carte de la locale courante en tête de liste
+	// (gd_current_locale_first), ce qui donnait deux cartes fr_FR si SPTE déplaçait aussi l'originale. Issue #112.
+	moveFrenchLocaleCardToFirst(ctx.frenchLocaleCard, ctx.GDmayBeOnBoard);
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
@@ -543,7 +549,10 @@ export function getGlossaryRegex(ctx, glossary) {
 	const badWordsRegexPattern = ctx.rulesById.get('badWords').regex.source;
 	// On duplique chaque mot avec un s final pour pouvoir traiter les pluriels.
 	const glossaryWithPlurals = glossary.reduce((a, i) => a.concat(i, `${i}s`), []);
-	const glossaryRegexPattern = `${glossaryWithPlurals.join('(?=[\\s,:;"\']|$)|(?<=[\\s,:;"\']|^)(?<!«\\s)')}(?=[\\s,.:;"']|$)`;
+	// Un seul lookbehind/lookahead pour tous les termes (et non un par séparateur de jointure) : sinon le premier terme n'a pas
+	// de lookbehind et seul le dernier accepte un point final. Parenthèses et ponctuation finale acceptées (« (uploads) », « uploads. »).
+	// Le point n'est une borne que suivi d'un espace ou de la fin, pour ne pas signaler « widget.php ». Voir issue #116.
+	const glossaryRegexPattern = `(?<=[\\s,:;"'’(]|^)(?<!«\\s)(?:${glossaryWithPlurals.join('|')})(?=[\\s,:;!?)»"']|\\.(?:\\s|$)|$)`;
 	// Flag « i » indispensable : les termes du glossaire sont en minuscules (et rgxBadWords l'a déjà), sinon un mot capitalisé n'est pas repéré.
 	const newRgxBadWords = new RegExp(`${badWordsRegexPattern}|${glossaryRegexPattern}`, 'gmi');
 	ctx.rulesById.get('badWords').regex = newRgxBadWords;
