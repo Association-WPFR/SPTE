@@ -329,9 +329,9 @@ function manageControls(ctx) {
 /** @param {ReturnType<typeof buildContext>} ctx */
 function frenchiesGoFirst(ctx) {
 	moveFrenchRowToFirst(ctx.frenchStatsGlobal, ctx.GDmayBeOnBoard);
-	// Pas de garde GlotDict ici : GlotDict n'a aucune emprise sur cette page
-	// (contrairement au tableau des locales d'un projet, où son réordonnancement peut entrer en conflit avec le nôtre).
-	moveFrenchLocaleCardToFirst(ctx.frenchLocaleCard, false);
+	// Garde GlotDict aussi ici : sur la page d'accueil, GlotDict clone la carte de la locale courante en tête de liste
+	// (gd_current_locale_first), ce qui donnait deux cartes fr_FR si SPTE déplaçait aussi l'originale. Issue #112.
+	moveFrenchLocaleCardToFirst(ctx.frenchLocaleCard, ctx.GDmayBeOnBoard);
 }
 
 /** @param {ReturnType<typeof buildContext>} ctx */
