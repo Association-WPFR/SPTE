@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.1.2] - 1er novembre 2026
+
+### Changed
+- Mise à jour de DOMPurify (3.4.17) et des dépendances de développement, sans changement visible pour les utilisateurs
+
+### Fixed
+- Les termes inclus dans un nom de marque ou d’extension cité dans une traduction ne sont plus signalés à tort (ex. « Events » dans « The Events Calendar », « Search » dans « Google Search Console ») (#125)
+- Les termes du glossaire entre parenthèses ou suivis d’un point sont maintenant signalés (ex. « (uploads) », « dossier uploads. ») (#116, #119)
+- La locale `fr_FR` n’apparaît plus en double en tête de la page d’accueil quand GlotDict est installé (#112)
+
 ## [3.1.1] - 9 octobre 2026
 
 ### Added
