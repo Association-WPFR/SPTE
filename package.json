@@ -17,21 +17,21 @@
     "lint:amo": "npm run build:firefox && addons-linter .output/firefox-mv3"
   },
   "dependencies": {
-    "dompurify": "^3.4.16"
+    "dompurify": "^3.4.17"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^22.20.5",
-    "@vitest/coverage-v8": "^5.0.3",
-    "addons-linter": "^10.13.0",
-    "eslint": "^10.11.0",
+    "@vitest/coverage-v8": "^5.0.5",
+    "addons-linter": "^10.15.0",
+    "eslint": "^10.13.0",
     "eslint-plugin-no-unsanitized": "^4.1.5",
     "globals": "^17.13.0",
     "istanbul-badges-readme": "^1.9.0",
-    "jsdom": "^30.1.1",
+    "jsdom": "^30.1.3",
     "typescript": "^6.0.3",
     "vitest": "^5.0.0",
-    "wxt": "^0.21.4"
+    "wxt": "^0.21.5"
   },
   "overrides": {
     "esbuild": "^0.28.2"
