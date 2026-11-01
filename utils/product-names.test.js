@@ -32,10 +32,12 @@ describe('isInsideProductName', () => {
 	it('reconnaît un nom contenant « & » dans du HTML', () => {
 		expect(isWordInsideProductName('Avec Search &amp; Filter', 'Filter')).toBe(true);
 	});
-	it('reconnaît chacun des noms de la liste', () => {
+	it('reconnaît chaque mot de chacun des noms de la liste', () => {
 		for (const name of productNames) {
 			const html = `Avec ${name.replaceAll('&', '&amp;')} activé`;
-			expect(isInsideProductName(html, html.indexOf(name.charAt(0), 5), 1), name).toBe(true);
+			for (const word of name.split(' ').map((w) => w.replaceAll('&', '&amp;'))) {
+				expect(isWordInsideProductName(html, word), `${name} / ${word}`).toBe(true);
+			}
 		}
 	});
 });

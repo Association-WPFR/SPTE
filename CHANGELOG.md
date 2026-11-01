@@ -4,6 +4,7 @@
 
 ### Changed
 - Mise à jour de DOMPurify (3.4.17) et des dépendances de développement, sans changement visible pour les utilisateurs
+- `minimatch` forcé en 11.0.3 pour eslint (faille de sécurité dans un outil de développement), sans changement visible pour les utilisateurs
 
 ### Fixed
 - Les termes inclus dans un nom de marque ou d’extension cité dans une traduction ne sont plus signalés à tort (ex. « Events » dans « The Events Calendar », « Search » dans « Google Search Console ») (#125)

@@ -34,6 +34,9 @@
     "wxt": "^0.21.5"
   },
   "overrides": {
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "eslint": {
+      "minimatch": "^11.0.3"
+    }
   }
 }
