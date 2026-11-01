@@ -552,7 +552,7 @@ export function getGlossaryRegex(ctx, glossary) {
 	// Un seul lookbehind/lookahead pour tous les termes (et non un par séparateur de jointure) : sinon le premier terme n'a pas
 	// de lookbehind et seul le dernier accepte un point final. Parenthèses et ponctuation finale acceptées (« (uploads) », « uploads. »).
 	// Le point n'est une borne que suivi d'un espace ou de la fin, pour ne pas signaler « widget.php ». Voir issue #116.
-	const glossaryRegexPattern = `(?<=[\\s,:;"'(]|^)(?<!«\\s)(?:${glossaryWithPlurals.join('|')})(?=[\\s,:;!?)»"']|\\.(?:\\s|$)|$)`;
+	const glossaryRegexPattern = `(?<=[\\s,:;"'’(]|^)(?<!«\\s)(?:${glossaryWithPlurals.join('|')})(?=[\\s,:;!?)»"']|\\.(?:\\s|$)|$)`;
 	// Flag « i » indispensable : les termes du glossaire sont en minuscules (et rgxBadWords l'a déjà), sinon un mot capitalisé n'est pas repéré.
 	const newRgxBadWords = new RegExp(`${badWordsRegexPattern}|${glossaryRegexPattern}`, 'gmi');
 	ctx.rulesById.get('badWords').regex = newRgxBadWords;

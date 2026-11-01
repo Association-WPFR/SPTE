@@ -8,6 +8,7 @@
 ### Fixed
 - Les termes inclus dans un nom de marque ou d’extension cité dans une traduction ne sont plus signalés à tort (ex. « Events » dans « The Events Calendar », « Search » dans « Google Search Console ») (#125)
 - Les termes du glossaire entre parenthèses ou suivis d’un point sont maintenant signalés (ex. « (uploads) », « dossier uploads. ») (#116, #119)
+- Les termes du glossaire précédés d’une apostrophe courbe (ex. « l’upload ») sont maintenant signalés comme avec l’apostrophe droite
 - La locale `fr_FR` n’apparaît plus en double en tête de la page d’accueil quand GlotDict est installé (#112)
 
 ## [3.1.1] - 9 octobre 2026

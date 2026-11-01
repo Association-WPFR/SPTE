@@ -80,6 +80,7 @@ describe('getGlossaryRegex', () => {
 			['avant un point d’exclamation', 'Un widget!', ['widget']],
 			['en début de chaîne', 'widget ici', ['widget']],
 			['entre guillemets droits', 'Le "widget" ici', ['widget']],
+			['après une apostrophe courbe (élision)', 'Voir l’upload ici', ['upload']],
 		])('repère un terme %s', (_label, text, expected) => {
 			expect(glossaryMatches(text)).toEqual(expected);
 		});
