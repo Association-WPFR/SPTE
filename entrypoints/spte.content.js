@@ -11,6 +11,7 @@ import {
 	showAllRows,
 	moveFrenchRowToFirst,
 	moveFrenchLocaleCardToFirst,
+	sortWordPressVersionCardsAcrossPages,
 	setErrorRowsSelection,
 } from '../utils/dom';
 import './style.css';
@@ -600,6 +601,7 @@ function mainProcesses(ctx, spteSettings) {
 	if (ctx.onTranslateWordPressRoot && (ctx.frenchStatsGlobal || ctx.frenchLocaleCard)) {
 		frenchiesGoFirst(ctx);
 	}
+	sortWordPressVersionCardsAcrossPages(document.querySelector('#projects'));
 	frenchFlag(ctx, spteSettings.spteFrenchFlag);
 }
 

@@ -10,6 +10,8 @@ import {
 	showAllRows,
 	moveFrenchRowToFirst,
 	moveFrenchLocaleCardToFirst,
+	sortWordPressVersionCards,
+	sortWordPressVersionCardsAcrossPages,
 	setRowCheckboxSafely,
 	setErrorRowsSelection,
 } from './dom';
@@ -18,6 +20,8 @@ import {
 const translationsTableHTML = readFileSync(join(__dirname, 'fixtures/translations-table.html'), 'utf-8');
 const statsTableHTML = readFileSync(join(__dirname, 'fixtures/stats-table.html'), 'utf-8');
 const localesListHTML = readFileSync(join(__dirname, 'fixtures/locales-list.html'), 'utf-8');
+const wpVersionsListHTML = readFileSync(join(__dirname, 'fixtures/wp-versions-list.html'), 'utf-8');
+const wpVersionsListPage2HTML = readFileSync(join(__dirname, 'fixtures/wp-versions-list-page-2.html'), 'utf-8');
 
 describe('addForeignToolTip', () => {
 	beforeEach(() => {
@@ -265,5 +269,108 @@ describe('moveFrenchLocaleCardToFirst', () => {
 	it('ne plante pas si le lien français est absent (sélecteur mort)', () => {
 		expect(() => moveFrenchLocaleCardToFirst(null, false)).not.toThrow();
 		expect(moveFrenchLocaleCardToFirst(null, false)).toBe(false);
+	});
+});
+
+describe('sortWordPressVersionCards', () => {
+	beforeEach(() => {
+		document.body.innerHTML = wpVersionsListHTML;
+	});
+
+	const names = () => Array.from(document.querySelectorAll('#projects .project-name a'), (a) => a.textContent);
+
+	it('place la version en développement en premier puis trie les versions de la plus récente à la plus ancienne', () => {
+		const sorted = sortWordPressVersionCards(document.querySelector('#projects'));
+
+		expect(sorted).toBe(true);
+		expect(names()).toEqual(['7.1.x - Development', '7.0.x', '6.10.x', '6.9.x', '6.2.x', '4.8.x']);
+	});
+
+	it('ne fait rien si les cartes ne sont pas des versions (ex: liste de plugins)', () => {
+		document.querySelector('#projects .project-name a').textContent = 'Akismet';
+
+		expect(sortWordPressVersionCards(document.querySelector('#projects'))).toBe(false);
+		expect(names()[0]).toBe('Akismet');
+	});
+
+	it('ne fait rien si la liste est déjà triée', () => {
+		const list = document.querySelector('#projects');
+		sortWordPressVersionCards(list);
+
+		expect(sortWordPressVersionCards(list)).toBe(false);
+	});
+
+	it('laisse l’ordre du serveur quand un filtre de la barre de tri est appliqué', () => {
+		const before = names();
+
+		expect(sortWordPressVersionCards(document.querySelector('#projects'), '?s=&page=1&filter=strings-remaining')).toBe(false);
+		expect(names()).toEqual(before);
+	});
+
+	it('trie quand la query string ne contient pas de filtre (ex: pagination seule)', () => {
+		expect(sortWordPressVersionCards(document.querySelector('#projects'), '?page=2')).toBe(true);
+	});
+
+	it('ne plante pas sans liste', () => {
+		expect(sortWordPressVersionCards(null)).toBe(false);
+	});
+});
+
+describe('sortWordPressVersionCardsAcrossPages', () => {
+	beforeEach(() => {
+		document.body.innerHTML = wpVersionsListHTML;
+	});
+
+	const names = () => Array.from(document.querySelectorAll('#projects .project-name a'), (a) => a.textContent);
+	const list = () => document.querySelector('#projects');
+
+	it('ajoute les cartes des autres pages (sans doublon), trie le tout et masque la pagination', async () => {
+		const fetchPage = vi.fn().mockResolvedValue(wpVersionsListPage2HTML);
+
+		const added = await sortWordPressVersionCardsAcrossPages(list(), '', fetchPage);
+
+		expect(added).toBe(true);
+		expect(fetchPage).toHaveBeenCalledTimes(1);
+		expect(fetchPage).toHaveBeenCalledWith('http://localhost:3000/locale/fr/default/wp/?page=2');
+		expect(names()).toEqual(['7.2.x - Development', '7.1.x - Development', '7.0.x', '6.10.x', '6.9.x', '6.2.x', '4.8.x']);
+		expect(/** @type {HTMLElement} */ (document.querySelector('.paging')).style.display).toBe('none');
+	});
+
+	it('conserve le tri de la page courante si la récupération des autres pages échoue', async () => {
+		const fetchPage = vi.fn().mockRejectedValue(new Error('réseau'));
+
+		const added = await sortWordPressVersionCardsAcrossPages(list(), '', fetchPage);
+
+		expect(added).toBe(false);
+		expect(names()).toEqual(['7.1.x - Development', '7.0.x', '6.10.x', '6.9.x', '6.2.x', '4.8.x']);
+		expect(/** @type {HTMLElement} */ (document.querySelector('.paging')).style.display).toBe('');
+	});
+
+	it('ne fait rien quand un filtre de la barre de tri est appliqué', async () => {
+		const fetchPage = vi.fn();
+		const before = names();
+
+		const added = await sortWordPressVersionCardsAcrossPages(list(), '?filter=strings-remaining', fetchPage);
+
+		expect(added).toBe(false);
+		expect(fetchPage).not.toHaveBeenCalled();
+		expect(names()).toEqual(before);
+	});
+
+	it('ne fait rien si les cartes ne sont pas des versions (ex: liste de plugins)', async () => {
+		document.querySelector('#projects .project-name a').textContent = 'Akismet';
+		const fetchPage = vi.fn();
+
+		expect(await sortWordPressVersionCardsAcrossPages(list(), '', fetchPage)).toBe(false);
+		expect(fetchPage).not.toHaveBeenCalled();
+	});
+
+	it('ne récupère rien s\'il n\'y a pas de pagination', async () => {
+		document.querySelector('.paging').remove();
+		const fetchPage = vi.fn();
+
+		expect(await sortWordPressVersionCardsAcrossPages(list(), '', fetchPage)).toBe(false);
+		expect(fetchPage).not.toHaveBeenCalled();
+		expect(names()[0]).toBe('7.1.x - Development');
 	});
 });
