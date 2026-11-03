@@ -11,6 +11,7 @@ import {
 	showAllRows,
 	moveFrenchRowToFirst,
 	moveFrenchLocaleCardToFirst,
+	sortWordPressVersionCardsAcrossPages,
 	setErrorRowsSelection,
 } from '../utils/dom';
 import './style.css';
@@ -793,6 +794,10 @@ export default defineContentScript({
 	main() {
 		// Évite de réinsérer les éléments SPTE si l'extension est rechargée sans navigation (ex: about:debugging).
 		if (document.getElementById('sp-controls')) { return; }
+
+		// Indépendant des réglages et du glossaire : lancé tout de suite pour ne pas réordonner les cartes
+		// après leur affichage (le glossaire est téléchargé à la première visite de la journée).
+		sortWordPressVersionCardsAcrossPages(document.querySelector('#projects'));
 
 		const ctx = buildContext();
 

@@ -170,3 +170,104 @@ export function moveFrenchLocaleCardToFirst(frenchLink, glotDictPresent) {
 	}
 	return false;
 }
+
+// Cartes de versions de WordPress (page /locale/<locale>/default/wp/, liste #projects).
+/** @param {Element} card */
+function getVersionCardInfo(card) {
+	const name = card.querySelector('.project-name a')?.textContent?.trim() ?? '';
+	const match = name.match(/^(\d+(?:\.\d+)*)\.x\b/);
+	return { card, version: match ? match[1].split('.').map(Number) : null, isDevelopment: /development/i.test(name) };
+}
+
+/** @param {Element} projectsList */
+function isVersionList(projectsList) {
+	const cards = Array.from(projectsList.querySelectorAll(':scope > .project'));
+	return cards.length > 0 && cards.every((card) => getVersionCardInfo(card).version);
+}
+
+// Dès qu'un filtre de la barre de tri (.sort-bar, formulaire GET `?filter=…`) est appliqué, GlotPress renvoie
+// les cartes déjà triées selon ce filtre : on les laisse telles quelles.
+/** @param {string} search */
+function hasSortFilter(search) {
+	return Boolean(new URLSearchParams(search).get('filter'));
+}
+
+// Trie les cartes de versions de WordPress : la version en développement d'abord, puis les versions stables
+// de la plus récente à la plus ancienne. L'ordre par défaut de GlotPress mélange les précédentes versions et la version actuelle
+// (ex: 4.8.x en tête, la version en développement au milieu). Ne trie que les cartes de la page courante (cf. sortWordPressVersionCardsAcrossPages).
+// Tri par défaut uniquement (sans filtre de la .sort-bar). Ne fait rien si une carte n'est pas une version (ex: liste de plugins).
+/**
+ * @param {Element | null} projectsList
+ * @param {string} [search] Query string de la page (par défaut celle de la page courante).
+ * @returns {boolean} true si les cartes ont été réordonnées
+ */
+export function sortWordPressVersionCards(projectsList, search = location.search) {
+	if (!projectsList || hasSortFilter(search) || !isVersionList(projectsList)) { return false; }
+	const cards = Array.from(projectsList.querySelectorAll(':scope > .project'));
+	const entries = cards.map(getVersionCardInfo);
+
+	/** @param {number[]} a @param {number[]} b */
+	const compareVersions = (a, b) => {
+		for (let i = 0; i < Math.max(a.length, b.length); i++) {
+			const diff = (b[i] ?? 0) - (a[i] ?? 0);
+			if (diff !== 0) { return diff; }
+		}
+		return 0;
+	};
+	const sorted = [...entries].sort((a, b) => {
+		if (a.isDevelopment !== b.isDevelopment) { return a.isDevelopment ? -1 : 1; }
+		return compareVersions(/** @type {number[]} */ (a.version), /** @type {number[]} */ (b.version));
+	});
+	if (sorted.every((entry, i) => entry.card === cards[i])) { return false; }
+	projectsList.append(...sorted.map((entry) => entry.card));
+	return true;
+}
+
+/** @param {string} url */
+function fetchPageText(url) {
+	return fetch(url).then((response) => response.text());
+}
+
+// Rassemble sur la page courante les cartes des autres pages de la liste (pagination GlotPress), puis les trie :
+// la liste complète des versions s'affiche ainsi dans l'ordre, sur une seule page.
+// Trie d'abord la page courante pour éviter d'attendre le réseau ; si une récupération échoue, ce tri local est conservé.
+// Sans effet avec un filtre de la .sort-bar ni sur une liste qui n'est pas une liste de versions.
+/**
+ * @param {Element | null} projectsList
+ * @param {string} [search]
+ * @param {(url: string) => Promise<string>} [fetchPage]
+ * @returns {Promise<boolean>} true si des cartes d'autres pages ont été ajoutées
+ */
+export async function sortWordPressVersionCardsAcrossPages(projectsList, search = location.search, fetchPage = fetchPageText) {
+	if (!projectsList || hasSortFilter(search) || !isVersionList(projectsList)) { return false; }
+	sortWordPressVersionCards(projectsList, search);
+
+	const doc = projectsList.ownerDocument;
+	const pagings = Array.from(doc.querySelectorAll('.paging'));
+	const urls = new Set(Array.from(doc.querySelectorAll('.paging a[href]'), (link) => new URL(/** @type {string} */ (link.getAttribute('href')), doc.baseURI).href));
+	if (urls.size === 0) { return false; }
+
+	const knownLinks = new Set(Array.from(projectsList.querySelectorAll('.project-name a'), (link) => link.getAttribute('href')));
+	let added = false;
+	try {
+		const pages = await Promise.all(Array.from(urls, (url) => fetchPage(url)));
+		for (const html of pages) {
+			const otherDoc = new DOMParser().parseFromString(html, 'text/html');
+			for (const card of otherDoc.querySelectorAll('#projects > .project')) {
+				const href = card.querySelector('.project-name a')?.getAttribute('href');
+				if (href && !knownLinks.has(href)) {
+					knownLinks.add(href);
+					projectsList.append(doc.importNode(card, true));
+					added = true;
+				}
+			}
+		}
+	} catch {
+		return false;
+	}
+	if (added) {
+		for (const paging of pagings) { /** @type {HTMLElement} */ (paging).style.display = 'none'; }
+		sortWordPressVersionCards(projectsList, search);
+	}
+	return added;
+}
