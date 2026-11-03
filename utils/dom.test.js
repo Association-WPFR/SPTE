@@ -12,6 +12,7 @@ import {
 	moveFrenchLocaleCardToFirst,
 	setRowCheckboxSafely,
 	setErrorRowsSelection,
+	FRENCH_TRANSLATION_SET_LINK,
 } from './dom';
 
 // Fixtures réelles, cf. utils/fixtures/*.html pour leur provenance.
@@ -238,7 +239,7 @@ describe('moveFrenchRowToFirst', () => {
 
 	it('remonte la ligne française du tableau des locales d’une page de projet (#translation-sets)', () => {
 		document.body.innerHTML = translationSetsHTML;
-		const frenchLink = document.querySelector('#translation-sets tr a[href*="/fr/"]');
+		const frenchLink = document.querySelector(FRENCH_TRANSLATION_SET_LINK);
 		const tbody = document.querySelector('#translation-sets tbody');
 		expect(frenchLink.getAttribute('href')).toBe('/projects/wp/dev/admin/fr/default/');
 
@@ -247,6 +248,15 @@ describe('moveFrenchRowToFirst', () => {
 		expect(moved).toBe(true);
 		expect(tbody.querySelector('tr:first-child a')?.textContent).toBe('French (France)');
 		expect(tbody.querySelectorAll('tr')).toHaveLength(4);
+	});
+
+	it('trouve la ligne française même si le slug du projet contient « fr » (sélecteur sur la fin d’URL)', () => {
+		document.body.innerHTML = translationSetsHTML.replaceAll('/projects/wp/dev/admin/', '/projects/wp-plugins/fr/stable/');
+		const frenchLink = document.querySelector(FRENCH_TRANSLATION_SET_LINK);
+
+		expect(frenchLink?.textContent).toBe('French (France)');
+		// L'ancien sélecteur (« contient /fr/ ») tombait sur la première ligne.
+		expect(document.querySelector('#translation-sets tr a[href*="/fr/"]')?.textContent).toBe('Bulgarian');
 	});
 });
 

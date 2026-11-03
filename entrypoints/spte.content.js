@@ -12,6 +12,7 @@ import {
 	moveFrenchRowToFirst,
 	moveFrenchLocaleCardToFirst,
 	setErrorRowsSelection,
+	FRENCH_TRANSLATION_SET_LINK,
 } from '../utils/dom';
 import './style.css';
 
@@ -747,7 +748,7 @@ function buildContext() {
 
 	const frenchStatsGlobal = document.querySelector('#stats-table tr a[href*="/locale/fr/"]');
 	const frenchLocaleCard = document.querySelector('#locales a[href*="/locale/fr/"]');
-	const frenchStatsSpecific = document.querySelector('#translation-sets tr a[href*="/fr/"]');
+	const frenchStatsSpecific = document.querySelector(FRENCH_TRANSLATION_SET_LINK);
 
 	return {
 		rulesById,
