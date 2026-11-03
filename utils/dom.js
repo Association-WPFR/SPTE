@@ -135,6 +135,10 @@ export function setErrorRowsSelection(rows, checked) {
 	return count;
 }
 
+// Lien de la locale française dans le tableau des locales d'une page de projet (#translation-sets).
+// Fin d'URL plutôt que « contient /fr/ » : un projet dont le slug serait « fr » ferait correspondre toutes les lignes.
+export const FRENCH_TRANSLATION_SET_LINK = '#translation-sets tr a[href$="/fr/default/"]';
+
 // Remonte la ligne de la locale française en première position du tableau des locales d'un projet.
 // Ne fait rien si GlotDict est présent (évite un conflit avec son propre réordonnancement).
 /**

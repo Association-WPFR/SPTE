@@ -12,6 +12,7 @@ import {
 	moveFrenchRowToFirst,
 	moveFrenchLocaleCardToFirst,
 	setErrorRowsSelection,
+	FRENCH_TRANSLATION_SET_LINK,
 } from '../utils/dom';
 import './style.css';
 
@@ -325,10 +326,11 @@ function manageControls(ctx) {
 	});
 }
 
-// Page de présentation d'un projet (liste des locales) uniquement.
+// Page de présentation d'un projet (liste des locales) et pages de projet avec leur tableau des locales (#translation-sets).
 /** @param {ReturnType<typeof buildContext>} ctx */
 function frenchiesGoFirst(ctx) {
 	moveFrenchRowToFirst(ctx.frenchStatsGlobal, ctx.GDmayBeOnBoard);
+	moveFrenchRowToFirst(ctx.frenchStatsSpecific, ctx.GDmayBeOnBoard);
 	// Garde GlotDict aussi ici : sur la page d'accueil, GlotDict clone la carte de la locale courante en tête de liste
 	// (gd_current_locale_first), ce qui donnait deux cartes fr_FR si SPTE déplaçait aussi l'originale. Issue #112.
 	moveFrenchLocaleCardToFirst(ctx.frenchLocaleCard, ctx.GDmayBeOnBoard);
@@ -339,7 +341,14 @@ export function frenchFlag(ctx, spteFrenchFlag) {
 	if (spteFrenchFlag && spteFrenchFlag === 'false') { return; }
 
 	if (ctx.frenchStatsSpecific) {
-		ctx.frenchStatsSpecific.classList.add('sp-frenchies', 'sp-frenchies--long');
+		// Le drapeau suit la bulle de pourcentage (largeur variable) plutôt qu'une marge fixe sur le lien,
+		// qui n'est conservée que si la bulle est absente.
+		const bubble = ctx.frenchStatsSpecific.closest('td')?.querySelector('.bubble');
+		if (bubble) {
+			bubble.classList.add('sp-frenchies', 'sp-frenchies--bubble');
+		} else {
+			ctx.frenchStatsSpecific.classList.add('sp-frenchies', 'sp-frenchies--long');
+		}
 	}
 	if (ctx.frenchStatsGlobal) {
 		ctx.frenchStatsGlobal.classList.add('sp-frenchies');
@@ -597,7 +606,7 @@ function mainProcesses(ctx, spteSettings) {
 		checkConsistencyTranslations(ctx);
 	}
 
-	if (ctx.onTranslateWordPressRoot && (ctx.frenchStatsGlobal || ctx.frenchLocaleCard)) {
+	if (ctx.onTranslateWordPressRoot && (ctx.frenchStatsGlobal || ctx.frenchLocaleCard || ctx.frenchStatsSpecific)) {
 		frenchiesGoFirst(ctx);
 	}
 	frenchFlag(ctx, spteSettings.spteFrenchFlag);
@@ -739,7 +748,7 @@ function buildContext() {
 
 	const frenchStatsGlobal = document.querySelector('#stats-table tr a[href*="/locale/fr/"]');
 	const frenchLocaleCard = document.querySelector('#locales a[href*="/locale/fr/"]');
-	const frenchStatsSpecific = document.querySelector('#translation-sets tr a[href*="/fr/"]');
+	const frenchStatsSpecific = document.querySelector(FRENCH_TRANSLATION_SET_LINK);
 
 	return {
 		rulesById,
