@@ -193,8 +193,8 @@ function hasSortFilter(search) {
 }
 
 // Trie les cartes de versions de WordPress : la version en développement d'abord, puis les versions stables
-// de la plus récente à la plus ancienne. GlotPress les affiche dans l'ordre du filtre par défaut (chaînes restantes),
-// qui mélange anciennes et récentes versions. Ne trie que les cartes de la page courante (cf. sortWordPressVersionCardsAcrossPages).
+// de la plus récente à la plus ancienne. L'ordre par défaut de GlotPress mélange les précédentes versions et la version actuelle
+// (ex: 4.8.x en tête, la version en développement au milieu). Ne trie que les cartes de la page courante (cf. sortWordPressVersionCardsAcrossPages).
 // Tri par défaut uniquement (sans filtre de la .sort-bar). Ne fait rien si une carte n'est pas une version (ex: liste de plugins).
 /**
  * @param {Element | null} projectsList
@@ -229,7 +229,7 @@ function fetchPageText(url) {
 }
 
 // Rassemble sur la page courante les cartes des autres pages de la liste (pagination GlotPress), puis les trie :
-// la version en développement est ainsi toujours en tête, quelle que soit la page où GlotPress la place.
+// la liste complète des versions s'affiche ainsi dans l'ordre, sur une seule page.
 // Trie d'abord la page courante pour éviter d'attendre le réseau ; si une récupération échoue, ce tri local est conservé.
 // Sans effet avec un filtre de la .sort-bar ni sur une liste qui n'est pas une liste de versions.
 /**
