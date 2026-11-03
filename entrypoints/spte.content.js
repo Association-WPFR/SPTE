@@ -340,7 +340,14 @@ export function frenchFlag(ctx, spteFrenchFlag) {
 	if (spteFrenchFlag && spteFrenchFlag === 'false') { return; }
 
 	if (ctx.frenchStatsSpecific) {
-		ctx.frenchStatsSpecific.classList.add('sp-frenchies', 'sp-frenchies--long');
+		// Le drapeau suit la bulle de pourcentage (largeur variable) plutôt qu'une marge fixe sur le lien,
+		// qui n'est conservée que si la bulle est absente.
+		const bubble = ctx.frenchStatsSpecific.closest('td')?.querySelector('.bubble');
+		if (bubble) {
+			bubble.classList.add('sp-frenchies', 'sp-frenchies--bubble');
+		} else {
+			ctx.frenchStatsSpecific.classList.add('sp-frenchies', 'sp-frenchies--long');
+		}
 	}
 	if (ctx.frenchStatsGlobal) {
 		ctx.frenchStatsGlobal.classList.add('sp-frenchies');

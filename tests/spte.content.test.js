@@ -173,6 +173,16 @@ describe('frenchFlag', () => {
 		expect(ctx.frenchLocaleCard.classList.contains('sp-frenchies--locale-card')).toBe(true);
 	});
 
+	it('pose le drapeau sur la bulle de pourcentage du tableau des locales d\'un projet', () => {
+		document.body.innerHTML = '<div id="translation-sets"><table><tbody><tr><td><strong><a href="/projects/wp/dev/admin/fr/default/">French (France)</a></strong><span class="bubble morethan90">100%</span></td></tr></tbody></table></div>';
+		const ctx = { frenchStatsSpecific: document.querySelector('#translation-sets a'), frenchStatsGlobal: null, frenchLocaleCard: null };
+		frenchFlag(ctx, 'true');
+		const bubble = document.querySelector('.bubble');
+		expect(bubble.classList.contains('sp-frenchies')).toBe(true);
+		expect(bubble.classList.contains('sp-frenchies--bubble')).toBe(true);
+		expect(ctx.frenchStatsSpecific.classList.length).toBe(0);
+	});
+
 	it('ne touche rien quand spteFrenchFlag === "false"', () => {
 		const ctx = { frenchStatsSpecific: createElement('DIV'), frenchStatsGlobal: null, frenchLocaleCard: null };
 		frenchFlag(ctx, 'false');

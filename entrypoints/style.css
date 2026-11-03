@@ -478,11 +478,17 @@
 	margin: 3px 0 0 40px;
 }
 
-.sp-frenchies.sp-frenchies--locale-card:after {
+.sp-frenchies.sp-frenchies--locale-card:after,
+.sp-frenchies.sp-frenchies--bubble:after {
 	position: static;
 	display: inline-block;
 	vertical-align: middle;
 	margin: 0 0 0 6px;
+}
+
+/* Garde le drapeau sur la même ligne que le pourcentage, même dans une cellule étroite. */
+.sp-frenchies--bubble {
+	white-space: nowrap;
 }
 
 .sp-controls__pte {
