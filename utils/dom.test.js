@@ -17,6 +17,7 @@ import {
 // Fixtures réelles, cf. utils/fixtures/*.html pour leur provenance.
 const translationsTableHTML = readFileSync(join(__dirname, 'fixtures/translations-table.html'), 'utf-8');
 const statsTableHTML = readFileSync(join(__dirname, 'fixtures/stats-table.html'), 'utf-8');
+const translationSetsHTML = readFileSync(join(__dirname, 'fixtures/translation-sets.html'), 'utf-8');
 const localesListHTML = readFileSync(join(__dirname, 'fixtures/locales-list.html'), 'utf-8');
 
 describe('addForeignToolTip', () => {
@@ -233,6 +234,19 @@ describe('moveFrenchRowToFirst', () => {
 	it('ne plante pas si le lien français est absent (sélecteur mort, ex: #locales disparu)', () => {
 		expect(() => moveFrenchRowToFirst(null, false)).not.toThrow();
 		expect(moveFrenchRowToFirst(null, false)).toBe(false);
+	});
+
+	it('remonte la ligne française du tableau des locales d’une page de projet (#translation-sets)', () => {
+		document.body.innerHTML = translationSetsHTML;
+		const frenchLink = document.querySelector('#translation-sets tr a[href*="/fr/"]');
+		const tbody = document.querySelector('#translation-sets tbody');
+		expect(frenchLink.getAttribute('href')).toBe('/projects/wp/dev/admin/fr/default/');
+
+		const moved = moveFrenchRowToFirst(frenchLink, false);
+
+		expect(moved).toBe(true);
+		expect(tbody.querySelector('tr:first-child a')?.textContent).toBe('French (France)');
+		expect(tbody.querySelectorAll('tr')).toHaveLength(4);
 	});
 });
 

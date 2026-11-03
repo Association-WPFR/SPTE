@@ -325,10 +325,11 @@ function manageControls(ctx) {
 	});
 }
 
-// Page de présentation d'un projet (liste des locales) uniquement.
+// Page de présentation d'un projet (liste des locales) et pages de projet avec leur tableau des locales (#translation-sets).
 /** @param {ReturnType<typeof buildContext>} ctx */
 function frenchiesGoFirst(ctx) {
 	moveFrenchRowToFirst(ctx.frenchStatsGlobal, ctx.GDmayBeOnBoard);
+	moveFrenchRowToFirst(ctx.frenchStatsSpecific, ctx.GDmayBeOnBoard);
 	// Garde GlotDict aussi ici : sur la page d'accueil, GlotDict clone la carte de la locale courante en tête de liste
 	// (gd_current_locale_first), ce qui donnait deux cartes fr_FR si SPTE déplaçait aussi l'originale. Issue #112.
 	moveFrenchLocaleCardToFirst(ctx.frenchLocaleCard, ctx.GDmayBeOnBoard);
@@ -597,7 +598,7 @@ function mainProcesses(ctx, spteSettings) {
 		checkConsistencyTranslations(ctx);
 	}
 
-	if (ctx.onTranslateWordPressRoot && (ctx.frenchStatsGlobal || ctx.frenchLocaleCard)) {
+	if (ctx.onTranslateWordPressRoot && (ctx.frenchStatsGlobal || ctx.frenchLocaleCard || ctx.frenchStatsSpecific)) {
 		frenchiesGoFirst(ctx);
 	}
 	frenchFlag(ctx, spteSettings.spteFrenchFlag);
