@@ -8,6 +8,7 @@ import { escapeRegExp } from './rules';
 // signalés. Chaque nom est vérifié par utils/product-names.test.js.
 export const productNames = [
 	// Marques
+	'Claude Desktop',
 	'Google Analytics',
 	'Google News',
 	'Google Tag Manager',
@@ -47,6 +48,7 @@ export const productNames = [
 	'WooCommerce Analytics',
 	'WooCommerce Shipping',
 	'WooCommerce Subscriptions',
+	'WP Grid Builder',
 	'WP Mail SMTP',
 	'WPBakery Page Builder',
 	'WS Forms',
