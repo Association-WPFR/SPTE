@@ -8,6 +8,7 @@ import { escapeRegExp } from './rules';
 // signalés. Chaque nom est vérifié par utils/product-names.test.js.
 export const productNames = [
 	// Marques
+	'Claude Desktop',
 	'Google Analytics',
 	'Google News',
 	'Google Tag Manager',
@@ -17,6 +18,7 @@ export const productNames = [
 	'Search Console',
 
 	// Extensions
+	'Avada Builder',
 	'Beaver Builder',
 	'Better Search Replace',
 	'Bricks Builder',
@@ -24,10 +26,12 @@ export const productNames = [
 	'Custom Post Type UI',
 	'Divi Builder',
 	'Easy Digital Downloads',
+	'Elementor Website Builder',
 	'Everest Forms',
 	'Fluent Forms',
 	'Formidable Forms',
 	'Forminator Forms',
+	'Fusion Builder',
 	'Gravity Forms',
 	'Klarna Checkout for WooCommerce',
 	'Kustom Checkout for WooCommerce',
@@ -47,6 +51,7 @@ export const productNames = [
 	'WooCommerce Analytics',
 	'WooCommerce Shipping',
 	'WooCommerce Subscriptions',
+	'WP Grid Builder',
 	'WP Mail SMTP',
 	'WPBakery Page Builder',
 	'WS Forms',
