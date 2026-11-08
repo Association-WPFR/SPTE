@@ -335,12 +335,24 @@ describe('rgxPeriod', () => {
 	it('ignore un point suivi d\'une extension de police (.ttf, .otf, .woff, .woff2)', () => {
 		expect(matches(rgxPeriod, 'Formats pris en charge : .ttf, .otf, .woff et .woff2.')).toEqual([]);
 	});
+	it('ignore un point suivi de l\'extension d\'une vidéo WebM (.webm)', () => {
+		expect(matches(rgxPeriod, 'Téléverser le fichier .webm')).toEqual([]);
+	});
+	it('ignore un point suivi de l\'extension d\'une feuille de style XSL (.xsl)', () => {
+		expect(matches(rgxPeriod, 'Excluez les fichiers .xml et .xsl du cache.')).toEqual([]);
+	});
 	it('détecte un point suivi d’une espace finale', () => {
 		expect(matches(rgxPeriod, 'Fin de phrase. ')).toEqual(['. ']);
 	});
 	it('détecte un point suivi d’une espace insécable finale', () => {
 		expect(matches(rgxPeriod, 'Fin de phrase.' + '\u00a0')).toEqual(['.' + '\u00a0']);
 	});
+	it.each(['heic', 'json', 'tsv', 'webp', 'wpress'])(
+		'ignore un point suivi de l\'extension de fichier .%s',
+		(extension) => {
+			expect(matches(rgxPeriod, `Permet de téléverser des fichiers .${extension} dans la médiathèque.`)).toEqual([]);
+		},
+	);
 });
 
 describe('rgxComma', () => {

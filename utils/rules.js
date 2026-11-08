@@ -59,7 +59,8 @@ const data = {
 		'jpeg', 'js', 'log', 'maintenance', 'mail', 'mo', 'mov', 'mp3', 'mp4',
 		'mpeg', 'otf', 'pdf', 'pem', 'php', 'po', 'pot', 'png', 'ppt', 'psd', 'ods',
 		'rar', 'rtf', 'svg', 'sql', 'tar', 'gz', 'tiff', 'tif', 'ttf', 'txt',
-		'vcf', 'wav', 'woff', 'xls', 'xlsx', 'xml', 'zip',
+		'vcf', 'wav', 'woff', 'xls', 'xlsx', 'xml', 'xsl', 'zip',
+		'heic', 'tsv', 'webm', 'webp', 'wpress',
 	],
 };
 
