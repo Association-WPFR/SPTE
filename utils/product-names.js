@@ -18,6 +18,7 @@ export const productNames = [
 	'Search Console',
 
 	// Extensions
+	'Avada Builder',
 	'Beaver Builder',
 	'Better Search Replace',
 	'Bricks Builder',
@@ -25,10 +26,12 @@ export const productNames = [
 	'Custom Post Type UI',
 	'Divi Builder',
 	'Easy Digital Downloads',
+	'Elementor Website Builder',
 	'Everest Forms',
 	'Fluent Forms',
 	'Formidable Forms',
 	'Forminator Forms',
+	'Fusion Builder',
 	'Gravity Forms',
 	'Klarna Checkout for WooCommerce',
 	'Kustom Checkout for WooCommerce',
