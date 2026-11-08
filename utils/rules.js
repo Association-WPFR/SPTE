@@ -60,7 +60,7 @@ const data = {
 		'mpeg', 'otf', 'pdf', 'pem', 'php', 'po', 'pot', 'png', 'ppt', 'psd', 'ods',
 		'rar', 'rtf', 'svg', 'sql', 'tar', 'gz', 'tiff', 'tif', 'ttf', 'txt',
 		'vcf', 'wav', 'woff', 'xls', 'xlsx', 'xml', 'xsl', 'zip',
-		'heic', 'tsv', 'webp', 'wpress',
+		'heic', 'tsv', 'webm', 'webp', 'wpress',
 	],
 };
 
