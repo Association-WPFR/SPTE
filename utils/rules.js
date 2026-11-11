@@ -437,7 +437,7 @@ export const rules = [
 		id: 'epicenePunctuation',
 		name: 'point médian mal formé',
 		title: charTitle,
-		message: 'Le point médian de l’écriture inclusive doit utiliser le caractère · (U+00B7), pas un point, un tiret ou un astérisque',
+		message: 'Point, tiret ou astérisque au lieu du point médian · (U+00B7) de l’écriture inclusive',
 		severity: 'toVerify',
 		cssClass: charClass,
 		counter: 0,
