@@ -256,7 +256,7 @@ export const rules = [
 	},
 	{
 		id: 'inversionExtraT',
-		name: 't en trop (-t-il)',
+		name: 't en trop (est-il)',
 		title: charTitle,
 		message: 't en trop après un verbe terminé par t ou d (est-il)',
 		severity: 'toVerify',

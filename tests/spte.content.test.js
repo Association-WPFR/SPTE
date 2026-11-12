@@ -310,7 +310,7 @@ describe('checkTranslation', () => {
 	});
 
 	// inversionApostrophe tourne avant quotes : l'apostrophe droite de « Existe-t'il » est consommée par l'inversion,
-	// qui donne la bonne correction (un tiret), au lieu d'un avertissement apostrophe courbe qui mènerait à « t’il ».
+	// qui donne la bonne correction (un trait d'union), au lieu d'un avertissement apostrophe courbe qui mènerait à « t’il ».
 	it('signale « Existe-t\'il » comme inversion mal formée, pas comme apostrophe droite', () => {
 		const translated = document.querySelector('#preview-1-1 .translation-text');
 		translated.innerHTML = 'Existe-t\'il une pagination ?';
