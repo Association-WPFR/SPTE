@@ -185,12 +185,16 @@ export const rgxOpenFrQuote = new RegExp(`(?<! |^|&gt;)${data.openFrQuote}|${dat
 // l'écriture inclusive est déjà là ; ne détecte pas son absence (hors scope, volontaire).
 export const rgxEpicenePunctuation = /(?<=[a-zÀ-ú])[.\-*](?:e|rice|trice|ve|euse|esse|ale|ère|enne|ienne|elle)(?:[.\-*]s)?(?=[\s,.;:!?)»]|$)/gm;
 
-// Inversion verbale mal formée avec il, elle ou on (voir issue #102) : apostrophe à la place du tiret
-// (« existe-t’il », « existe t’il »), tiret manquant avant le t euphonique (« fonctionne t-elle »), ou t
-// euphonique en trop après un verbe déjà terminé par t ou d (« est-t-il », « prend-t-il »). Le t euphonique
-// manquant (« a-il ») n'est pas couvert : aucune occurrence réelle mesurée, et risque de faux positifs (URL).
-// Le caractère qui précède le t (espace ou tiret) est inclus dans le match pour rendre l'erreur visible.
-export const rgxVerbInversion = /(?<=[a-zà-ÿ])(?:[ -]?t['’]| t-|(?<=[td])-t-)(?:il|elle|on)(?![a-zà-ÿ])/gmi;
+// Inversions verbales mal formées avec il, elle ou on (voir issue #102), une règle par type d'erreur pour que
+// le message donne la bonne correction. Le t euphonique manquant (« a-il ») n'est pas couvert : aucune occurrence
+// réelle mesurée, et risque de faux positifs (URL). Le caractère qui précède le t (espace ou tiret) est inclus
+// dans le match pour rendre l'erreur visible.
+// Apostrophe à la place du tiret : « existe-t’il », « existe t’il ».
+export const rgxInversionApostrophe = /(?<=[a-zà-ÿ])[ -]?t['’](?:il|elle|on)(?![a-zà-ÿ])/gmi;
+// Espace à la place du tiret avant le t euphonique : « fonctionne t-elle ».
+export const rgxInversionMissingHyphen = /(?<=[a-zà-ÿ]) t-(?:il|elle|on)(?![a-zà-ÿ])/gmi;
+// T euphonique en trop après un verbe déjà terminé par t ou d : « est-t-il », « prend-t-elle ».
+export const rgxInversionExtraT = /(?<=[a-zà-ÿ][td])-t-(?:il|elle|on)(?![a-zà-ÿ])/gmi;
 
 export const charTitle = 'Caractères à vérifier : ';
 export const charClass = 'sp-warning--char';
@@ -228,17 +232,37 @@ export const rules = [
 		counter: 0,
 		regex: rgxBadWords,
 	},
-	// Placée avant 'quotes' : l'apostrophe droite de « existe-t'il » est signalée comme inversion (correction : un tiret),
+	// Placées avant 'quotes' : l'apostrophe droite de « existe-t'il » est signalée comme inversion (correction : un tiret),
 	// pas comme apostrophe droite (correction suggérée : apostrophe courbe, qui donnerait « t’il », tout aussi faux).
 	{
-		id: 'verbInversion',
-		name: 'inversion verbale mal formée',
+		id: 'inversionApostrophe',
+		name: 'apostrophe dans une inversion',
 		title: charTitle,
-		message: 'Inversion verbale mal formée au lieu de a-t-il, fonctionne-t-elle, est-il ou prend-on',
+		message: 'Apostrophe au lieu d’un tiret dans l’inversion (existe-t-il)',
 		severity: 'toVerify',
 		cssClass: charClass,
 		counter: 0,
-		regex: rgxVerbInversion,
+		regex: rgxInversionApostrophe,
+	},
+	{
+		id: 'inversionMissingHyphen',
+		name: 'tiret manquant dans une inversion',
+		title: charTitle,
+		message: 'Espace au lieu d’un tiret avant le t de l’inversion (fonctionne-t-elle)',
+		severity: 'toVerify',
+		cssClass: charClass,
+		counter: 0,
+		regex: rgxInversionMissingHyphen,
+	},
+	{
+		id: 'inversionExtraT',
+		name: 't euphonique en trop',
+		title: charTitle,
+		message: '-t- au lieu d’un simple tiret après un verbe en t ou d (est-il, prend-elle)',
+		severity: 'toVerify',
+		cssClass: charClass,
+		counter: 0,
+		regex: rgxInversionExtraT,
 	},
 	{
 		id: 'quotes',

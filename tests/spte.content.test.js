@@ -309,17 +309,17 @@ describe('checkTranslation', () => {
 		expect(warning).not.toBeNull();
 	});
 
-	// verbInversion tourne avant quotes : l'apostrophe droite de « Existe-t'il » est consommée par l'inversion,
+	// inversionApostrophe tourne avant quotes : l'apostrophe droite de « Existe-t'il » est consommée par l'inversion,
 	// qui donne la bonne correction (un tiret), au lieu d'un avertissement apostrophe courbe qui mènerait à « t’il ».
 	it('signale « Existe-t\'il » comme inversion mal formée, pas comme apostrophe droite', () => {
 		const translated = document.querySelector('#preview-1-1 .translation-text');
 		translated.innerHTML = 'Existe-t\'il une pagination ?';
-		const verbInversion = rules.find((rule) => rule.id === 'verbInversion');
+		const inversionApostrophe = rules.find((rule) => rule.id === 'inversionApostrophe');
 		const quotes = rules.find((rule) => rule.id === 'quotes');
 
 		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
 
-		expect(verbInversion.counter).toBe(1);
+		expect(inversionApostrophe.counter).toBe(1);
 		expect(quotes.counter).toBe(0);
 		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe('Existe-t\'il une pagination ?');
 	});
