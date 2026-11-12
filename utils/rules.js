@@ -183,7 +183,9 @@ export const rgxOpenFrQuote = new RegExp(`(?<! |^|&gt;)${data.openFrQuote}|${dat
 // Détecte un caractère de substitution (point, tiret, astérisque) à la place du vrai point
 // médian U+00B7 (·) en écriture épicène. Valide uniquement le caractère utilisé quand
 // l'écriture inclusive est déjà là ; ne détecte pas son absence (hors scope, volontaire).
-export const rgxEpicenePunctuation = /(?<=[a-zÀ-ú])[.\-*](?:e|rice|trice|ve|euse|esse|ale|ère|enne|ienne|elle)(?:[.\-*]s)?(?=[\s,.;:!?)»]|$)/gm;
+// `-elle` après t, d ou c est une inversion verbale (est-elle, prend-elle, vainc-elle, a-t-elle),
+// pas de l'écriture inclusive : l'exception ne vaut que pour le tiret, seul séparateur d'une inversion.
+export const rgxEpicenePunctuation = /(?<=[a-zÀ-ú])[.\-*](?:e|rice|trice|ve|euse|esse|ale|ère|enne|ienne|(?<![tdc]-)elle)(?:[.\-*]s)?(?=[\s,.;:!?)»]|$)/gm;
 
 export const charTitle = 'Caractères à vérifier : ';
 export const charClass = 'sp-warning--char';
@@ -435,7 +437,7 @@ export const rules = [
 		id: 'epicenePunctuation',
 		name: 'point médian mal formé',
 		title: charTitle,
-		message: 'Le point médian de l’écriture inclusive doit utiliser le caractère · (U+00B7), pas un point, un tiret ou un astérisque',
+		message: 'Point, tiret ou astérisque au lieu du point médian · (U+00B7) de l’écriture inclusive',
 		severity: 'toVerify',
 		cssClass: charClass,
 		counter: 0,

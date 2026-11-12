@@ -684,6 +684,36 @@ describe('rgxEpicenePunctuation', () => {
 	it('ignore "e-mail" (le e précède le tiret, pas l’inverse)', () => {
 		expect(matches(rgxEpicenePunctuation, 'Envoyer un e-mail de confirmation.')).toEqual([]);
 	});
+
+	// Issue #102 : chaînes réelles de translate.wordpress.org où « -elle » est une inversion
+	// verbale (verbe en t, d ou c, ou -t- euphonique), pas de l'écriture inclusive.
+	it.each([
+		['est-elle', 'La bibliothèque Imagick est-elle disponible ?'],
+		['peut-elle', 'La barre des filtres peut-elle être réduite ?'],
+		['doit-elle', 'L’image mise en avant doit-elle être liée au produit ?'],
+		['met-elle', 'L’extension met-elle en file d’attente JavaScript ?'],
+		['n’est-elle', 'Pourquoi l’extension n’est-elle plus nécessaire ?'],
+		['vend-elle', 'Quel type de biens ou de services votre entreprise vend-elle ?'],
+		['prend-elle', 'Breeze prend-elle en charge WooCommerce ?'],
+		['vainc-elle', 'Cette option vainc-elle les autres ?'],
+		['a-t-elle', 'L’intégration a-t-elle été terminée ou ignorée ?'],
+		['va-t-elle', 'Quelle correction va-t-elle être apportée ?'],
+		['sera-t-elle', 'Comment la connexion au serveur de messagerie sera-t-elle établie ?'],
+		['fonctionne-t-elle', 'Breeze fonctionne-t-elle avec CloudFlare ?'],
+		['nécessite-t-elle', 'Custom Post Type UI Extended nécessite-t-elle une installation multisite ?'],
+	])('ne signale pas l’inversion verbale « %s »', (_, text) => {
+		expect(matches(rgxEpicenePunctuation, text)).toEqual([]);
+	});
+	it('ne signale pas l’inversion verbale au pluriel (« sont-elles »)', () => {
+		expect(matches(rgxEpicenePunctuation, 'Mes données sont-elles en sécurité ?')).toEqual([]);
+	});
+	it('détecte toujours « -elle » en écriture inclusive après une autre lettre', () => {
+		expect(matches(rgxEpicenePunctuation, 'Bienvenue au nouveau-elle membre.')).toEqual(['-elle']);
+	});
+	it('détecte toujours « .elle » et « *elle » après t, d ou c (une inversion n’utilise que le tiret)', () => {
+		expect(matches(rgxEpicenePunctuation, 'Cette fonction est.elle activée ?')).toEqual(['.elle']);
+		expect(matches(rgxEpicenePunctuation, 'Cette fonction est*elle activée ?')).toEqual(['*elle']);
+	});
 });
 
 describe('règle Space (double espace interne)', () => {
