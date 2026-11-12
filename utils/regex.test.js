@@ -26,6 +26,7 @@ import {
 	rgxClosingFrQuote,
 	rgxOpenFrQuote,
 	rgxEpicenePunctuation,
+	rgxVerbInversion,
 	rules,
 } from './rules';
 
@@ -683,6 +684,46 @@ describe('rgxEpicenePunctuation', () => {
 	});
 	it('ignore "e-mail" (le e précède le tiret, pas l’inverse)', () => {
 		expect(matches(rgxEpicenePunctuation, 'Envoyer un e-mail de confirmation.')).toEqual([]);
+	});
+});
+
+describe('rgxVerbInversion', () => {
+	// Chaînes réelles relevées sur translate.wordpress.org (traductions validées, sous-projets stable et stable-readme).
+	it('détecte une apostrophe courbe à la place du tiret (Imagify)', () => {
+		expect(matches(rgxVerbInversion, 'Que se passe-t’il lorsque l’extension est désactivée ?')).toEqual(['-t’il']);
+	});
+	it('détecte une apostrophe droite à la place du tiret (NextGEN Gallery)', () => {
+		expect(matches(rgxVerbInversion, 'Existe-t\'il une pagination pour les galeries ?')).toEqual(['-t\'il']);
+	});
+	it('détecte une apostrophe sans tiret avant le t (GiveWP)', () => {
+		expect(matches(rgxVerbInversion, 'Existe t’il une démo ?')).toEqual([' t’il']);
+	});
+	it('détecte une apostrophe avec elle (Two-Factor)', () => {
+		expect(matches(rgxVerbInversion, 'Quelles versions de PHP l’extension prend-t’elle en charge ?')).toEqual(['-t’elle']);
+	});
+	it('détecte le tiret manquant avant le t euphonique (Ultimate Member)', () => {
+		expect(matches(rgxVerbInversion, 'L’extension fonctionne t-elle avec tous les thèmes WordPress ?')).toEqual([' t-elle']);
+	});
+	it('détecte le tiret manquant avant le t euphonique (WooCommerce)', () => {
+		expect(matches(rgxVerbInversion, 'L’outil a t-il été exécuté avec succès ?')).toEqual([' t-il']);
+	});
+	it('détecte le tiret manquant avec on', () => {
+		expect(matches(rgxVerbInversion, 'Comment modifie t-on ce réglage ?')).toEqual([' t-on']);
+	});
+	it('détecte un t euphonique en trop après un verbe en t (Burst Statistics)', () => {
+		expect(matches(rgxVerbInversion, 'Est-t-il possible d’installer Burst Statistics ?')).toEqual(['-t-il']);
+	});
+	it('détecte un t euphonique en trop après un verbe en d', () => {
+		expect(matches(rgxVerbInversion, 'Prend-t-elle en charge le multisite ?')).toEqual(['-t-elle']);
+	});
+	it('ne signale pas les inversions correctes', () => {
+		expect(matches(rgxVerbInversion, 'Y a-t-il une démo ? Fonctionne-t-elle hors ligne ? Que peut-on faire ? Est-il compatible ? Prend-elle en charge le multisite ?')).toEqual([]);
+	});
+	it('ne signale pas « t’ont » (pronom élidé suivi du verbe avoir)', () => {
+		expect(matches(rgxVerbInversion, 'Ils t’ont envoyé un message.')).toEqual([]);
+	});
+	it('ne signale pas un mot qui commence par « on » ou « il » après le t', () => {
+		expect(matches(rgxVerbInversion, 'Le compte t-online et le format t-ilot.')).toEqual([]);
 	});
 });
 
