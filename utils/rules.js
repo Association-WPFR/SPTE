@@ -185,6 +185,17 @@ export const rgxOpenFrQuote = new RegExp(`(?<! |^|&gt;)${data.openFrQuote}|${dat
 // l'écriture inclusive est déjà là ; ne détecte pas son absence (hors scope, volontaire).
 export const rgxEpicenePunctuation = /(?<=[a-zÀ-ú])[.\-*](?:e|rice|trice|ve|euse|esse|ale|ère|enne|ienne|elle)(?:[.\-*]s)?(?=[\s,.;:!?)»]|$)/gm;
 
+// Inversions verbales mal formées avec il, elle ou on (voir issue #102), une règle par type d'erreur pour que
+// le message donne la bonne correction. Le t euphonique manquant (« a-il ») n'est pas couvert : aucune occurrence
+// réelle mesurée, et risque de faux positifs (URL). Le caractère qui précède le t (espace ou trait d'union) est inclus
+// dans le match pour rendre l'erreur visible.
+// Apostrophe à la place du trait d'union : « existe-t’il », « existe t’il ».
+export const rgxInversionApostrophe = /(?<=[a-zà-ÿ])[ -]?t['’](?:il|elle|on)(?![a-zà-ÿ])/gmi;
+// Espace à la place du trait d'union avant le t euphonique : « fonctionne t-elle ».
+export const rgxInversionMissingHyphen = /(?<=[a-zà-ÿ]) t-(?:il|elle|on)(?![a-zà-ÿ])/gmi;
+// T euphonique en trop après un verbe déjà terminé par t ou d : « est-t-il », « prend-t-elle ».
+export const rgxInversionExtraT = /(?<=[a-zà-ÿ][td])-t-(?:il|elle|on)(?![a-zà-ÿ])/gmi;
+
 export const charTitle = 'Caractères à vérifier : ';
 export const charClass = 'sp-warning--char';
 const spaceBeforeTitle = 'Espace précédente manquante ou espace suivante en trop';
@@ -220,6 +231,38 @@ export const rules = [
 		cssClass: 'sp-warning--word',
 		counter: 0,
 		regex: rgxBadWords,
+	},
+	// Placées avant 'quotes' : l'apostrophe droite de « existe-t'il » est signalée comme inversion (correction : un trait d'union),
+	// pas comme apostrophe droite (correction suggérée : apostrophe courbe, qui donnerait « t’il », tout aussi faux).
+	{
+		id: 'inversionApostrophe',
+		name: 'apostrophe au lieu d’un trait d’union (-t-il)',
+		title: charTitle,
+		message: 'Apostrophe au lieu d’un trait d’union entre le t et le pronom (-t-il)',
+		severity: 'toVerify',
+		cssClass: charClass,
+		counter: 0,
+		regex: rgxInversionApostrophe,
+	},
+	{
+		id: 'inversionMissingHyphen',
+		name: 'trait d’union manquant avant le t (-t-il)',
+		title: charTitle,
+		message: 'Espace au lieu d’un trait d’union avant le t (-t-il)',
+		severity: 'toVerify',
+		cssClass: charClass,
+		counter: 0,
+		regex: rgxInversionMissingHyphen,
+	},
+	{
+		id: 'inversionExtraT',
+		name: 't en trop (est-il)',
+		title: charTitle,
+		message: 't en trop après un verbe terminé par t ou d (est-il)',
+		severity: 'toVerify',
+		cssClass: charClass,
+		counter: 0,
+		regex: rgxInversionExtraT,
 	},
 	{
 		id: 'quotes',

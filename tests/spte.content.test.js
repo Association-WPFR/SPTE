@@ -309,6 +309,21 @@ describe('checkTranslation', () => {
 		expect(warning).not.toBeNull();
 	});
 
+	// inversionApostrophe tourne avant quotes : l'apostrophe droite de « Existe-t'il » est consommée par l'inversion,
+	// qui donne la bonne correction (un trait d'union), au lieu d'un avertissement apostrophe courbe qui mènerait à « t’il ».
+	it('signale « Existe-t\'il » comme inversion mal formée, pas comme apostrophe droite', () => {
+		const translated = document.querySelector('#preview-1-1 .translation-text');
+		translated.innerHTML = 'Existe-t\'il une pagination ?';
+		const inversionApostrophe = rules.find((rule) => rule.id === 'inversionApostrophe');
+		const quotes = rules.find((rule) => rule.id === 'quotes');
+
+		checkTranslation({ projectName: '' }, translated, 'untranslated', 'current');
+
+		expect(inversionApostrophe.counter).toBe(1);
+		expect(quotes.counter).toBe(0);
+		expect(document.querySelector('#preview-1-1 .translation-text').textContent).toBe('Existe-t\'il une pagination ?');
+	});
+
 	// Bug trouvé en revue de la 3.1 (préexistant, identique sur main) : le <span> injecté par un rule a des
 	// attributs entre guillemets doubles (tabindex="0", aria-label="…") ; sans garde, le rule doubleQuotes qui
 	// tourne ensuite dans la même passe matche AUSSI ces guillemets d'attributs et corrompt le balisage déjà posé.
